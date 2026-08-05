@@ -124,29 +124,29 @@ function renderPhone() {
   const scene = state.scene;
   if ((!submittedSample && [0, 2, 3, 8, 10, 11].includes(scene)) || (scene === 0 && !submittedSample)) return renderSampleCard();
   if (scene === 0) return waiting('You’re ready', 'Keep this page open. Each new activity will appear here.');
-  if (scene === 1) return waiting('The yeast stopped glowing green', 'The DNA test found the added gene, but the yeast is no longer glowing green. Look at the main screen.');
-  if (scene === 2) return waiting('What we will do', 'We will check the DNA, measure the green light, train the AI model and then test the spacecraft’s possible orbits.');
-  if (scene === 3) return infoCard('TWO ADDED GENES', 'A test protein and green reporter light', 'One gene makes a test protein. A reporter gene makes the yeast glow green when the circuit is active.');
+  if (scene === 1) return waiting('The yeast stopped glowing green', 'PCR found one section of the added control gene, but the GFP light was low. Look at the main screen.');
+  if (scene === 2) return waiting('What we will do', 'We will check one control-gene section, measure GFP light, train the AI model and then test the spacecraft’s possible orbits.');
+  if (scene === 3) return infoCard('TWO ADDED GENES', 'The first gene switches on the second', 'The control gene makes a regulatory protein. That protein switches on the GFP reporter gene, which makes GFP. GFP gives off green light.');
   if (scene === 4) return renderVote('microscope', 'Can a microscope identify the A, T, C and G sequence?', 'Vote before we show the answer.', [
     ['yes', 'YES', 'A microscope is enough'], ['no', 'NO', 'Another test is needed']
   ]);
   if (scene === 5) return state.reveals?.pcrComplete || state.pcrTaps >= 120
-    ? metricScreen('1.07 BILLION', 'copies after 30 ideal PCR cycles', 'The animation is complete. In real PCR, temperature changes and enzymes copy the DNA; phone taps only control this demonstration.')
+    ? metricScreen('1.07 BILLION', 'copies of one control-gene section', 'PCR copied one short section of the control gene. Phone taps only controlled this demonstration.')
     : renderPCRControl();
   if (scene === 6) return renderVote('primer', 'Choose the matching DNA strand', 'Use the base-pair rules: A pairs with T, and C pairs with G.', [
     ['gacac', 'GACAC', 'Option A'], ['ctgtg', 'CTGTG', 'Option B'], ['gtgtg', 'GTGTG', 'Option C'], ['random', 'AACCT', 'Option D']
   ], 'two');
-  if (scene === 7) return metricScreen('1.07 BILLION', 'copies after 30 ideal PCR cycles', 'PCR confirms that the selected DNA section is present. Next, a sensor measures the green light and the AI compares both scores.');
+  if (scene === 7) return metricScreen('1.07 BILLION', 'copies of one control-gene section', 'PCR found its target, but it did not test either complete gene or either protein. Next, a sensor measures GFP’s green light.');
   if (scene === 8) return renderNanoQuiz();
   if (scene === 9) {
     if (state.reveals?.chip) return infoCard('CHIP PATTERN COMPLETE', 'The remaining manufacturing steps are shown', 'UV light changed the coating. Developing and etching then formed the chip structures.');
     if (state.photonCount >= 48) return infoCard('UV EXPOSURE COMPLETE', 'The UV exposure is complete', 'The presenter will now show the developing and etching steps on the main screen.');
     return renderPhotonControl();
   }
-  if (scene === 10) return infoCard('HOW THE SENSOR MEASURES LIGHT', 'The sensor records a green-light score', 'The sensor measures the light. The AI uses that score with the DNA-match score from PCR.');
+  if (scene === 10) return infoCard('HOW THE SENSOR MEASURES LIGHT', 'The sensor records a GFP-light score', 'The sensor measures green light from GFP. The AI uses that score with the control-gene PCR score.');
   if (scene === 11) {
     if (!submittedSample) return renderSampleCard();
-    return renderVote('architecture', 'How many hidden units should the model use?', 'The model uses DNA-match and green-light scores to predict WORKING or CHANGED. The presenter will start with the leading vote but can change the setting.', [
+    return renderVote('architecture', 'How many hidden neurons should the model use?', 'The model uses the control-gene PCR and GFP-light scores to predict WORKING or CHANGED. The presenter’s counter starts with the leading vote.', [
       ['two', '2', 'least complex'], ['four', '4', 'medium complexity'], ['eight', '8', 'most flexible']
     ], 'three');
   }
@@ -171,8 +171,8 @@ function renderSampleCard() {
     <p class="subhead">Use this rule for the first batch: choose WORKING only if both readings are 60 or higher. Otherwise choose CHANGED.</p>
     <div class="phone-card">
       <div class="sample-mini-plot"><i style="--x:${assignedSample.water}%;--y:${assignedSample.carbon}%"></i></div>
-      <div class="phone-slider"><label>DNA-MATCH SCORE · PCR <b>${assignedSample.water}/100</b></label><div class="phone-progress"><i style="--progress:${assignedSample.water}%"></i></div></div>
-      <div class="phone-slider"><label>GREEN-LIGHT SCORE · SENSOR <b>${assignedSample.carbon}/100</b></label><div class="phone-progress"><i style="--progress:${assignedSample.carbon}%"></i></div></div>
+      <div class="phone-slider"><label>CONTROL-GENE PCR SCORE <b>${assignedSample.water}/100</b></label><div class="phone-progress"><i style="--progress:${assignedSample.water}%"></i></div></div>
+      <div class="phone-slider"><label>GFP-LIGHT SCORE · SENSOR <b>${assignedSample.carbon}/100</b></label><div class="phone-progress"><i style="--progress:${assignedSample.carbon}%"></i></div></div>
       <div class="phone-choice two" role="radiogroup" aria-label="Choose a label for this sample"><button type="button" role="radio" aria-checked="false" data-sample="changed">CIRCUIT CHANGED</button><button type="button" role="radio" aria-checked="false" data-sample="working">CIRCUIT WORKING</button></div>
       <p class="subhead" id="sample-help" role="status" aria-live="polite" style="margin:12px 0 0"></p>
       <button class="phone-action" type="button" id="submit-sample" disabled>Send this label</button>
@@ -232,7 +232,7 @@ function renderPCRControl() {
   currentMode = 'pcr';
   root.innerHTML = `
     <div class="phone-kicker">PCR DEMONSTRATION</div><h2>Add taps to the<br><mark>PCR demonstration.</mark></h2>
-    <p class="subhead">The animation advances one cycle for every four audience taps. Real PCR uses temperature changes and an enzyme.</p>
+    <p class="subhead">The animation copies one short section of the control gene. It advances one cycle for every four audience taps.</p>
     <button class="tap-orb" type="button" id="pcr-tap">ADD ONE TAP</button>
     <div class="phone-metric"><strong id="my-pcr-taps">${pcrTaps}</strong><span>YOUR TAPS · MAXIMUM 24</span></div>
     <p class="subhead" style="text-align:center;margin-top:18px" id="crowd-pcr">${audienceTapLabel(state.pcrTaps)}</p>`;
@@ -325,7 +325,7 @@ function renderTrainingMonitor() {
     <div class="phone-kicker">AI TRAINING</div><h2 id="phone-training-title">${training.active ? 'The model is training.' : state.model ? 'Training complete.' : 'Ready to train.'}</h2>
     <div class="waiting-orb"></div>
     <div class="phone-card"><div class="phone-metric"><strong id="phone-epoch">${String(epoch).padStart(3,'0')}</strong><span>TRAINING ROUND / 500</span></div><div class="phone-progress" role="progressbar" aria-label="AI training progress" aria-valuemin="0" aria-valuemax="500" aria-valuenow="${epoch}"><i id="phone-train-progress" style="--progress:${epoch/5}%"></i></div><dl class="phone-readouts three"><div><dt>ERROR<small>lower is better</small></dt><dd id="phone-loss">${numberOrDash(training.loss,4)}</dd></div><div><dt>TRAINING ACCURACY<small>training samples</small></dt><dd id="phone-accuracy">${training.accuracy == null ? '—' : Math.round(training.accuracy*100)+'%'}</dd></div><div><dt>TEST ACCURACY<small>test samples</small></dt><dd id="phone-test-accuracy">${training.testAccuracy == null ? '—' : Math.round(training.testAccuracy*100)+'%'}</dd></div></dl></div>
-    <p class="subhead" style="margin-top:18px">The model is learning to predict WORKING or CHANGED from the DNA-match and green-light scores.</p>`;
+    <p class="subhead" style="margin-top:18px">The model is learning to predict WORKING or CHANGED from the control-gene PCR and GFP-light scores.</p>`;
 }
 
 function renderChallenge() {
@@ -335,8 +335,8 @@ function renderChallenge() {
     <div class="phone-kicker">TEST THE AI / NEW SAMPLE</div><h2>Choose values for<br><mark>a new sample.</mark></h2>
     <p class="subhead">Set the two input scores. The model will predict whether the circuit is WORKING or CHANGED.</p>
     <div class="phone-card">
-      ${sliderMarkup('challenge-water','DNA-match score · PCR',challenge.water)}
-      ${sliderMarkup('challenge-carbon','Green-light score · sensor',challenge.carbon)}
+      ${sliderMarkup('challenge-water','Control-gene PCR score',challenge.water)}
+      ${sliderMarkup('challenge-carbon','GFP-light score · sensor',challenge.carbon)}
       <div class="sample-mini-plot"><i id="challenge-dot" style="--x:${challenge.water}%;--y:${challenge.carbon}%"></i></div>
       <button class="phone-action" type="button" id="predict-button">Get a prediction</button>
       <div id="phone-prediction" role="status" aria-live="polite"></div>

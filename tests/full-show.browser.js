@@ -427,7 +427,7 @@ async function run() {
 
     // Trusted presenter navigation shortcuts and fullscreen user gesture.
     await navigate(stage, phones, 'ArrowRight', 1);
-    assert.match(await text(main, '#phone-content'), /no longer glowing green/i);
+    assert.match(await text(main, '#phone-content'), /stopped glowing green.*control gene.*GFP light was low/i);
     await navigate(stage, phones, 'PageDown', 2);
     await navigate(stage, phones, 'PageUp', 1);
     await navigate(stage, phones, 'ArrowRight', 2);
@@ -437,7 +437,7 @@ async function run() {
     await stage.evaluate('document.exitFullscreen()');
     await waitFor(() => stage.evaluate('!document.fullscreenElement'), 'Fullscreen cleanup did not finish');
     await navigate(stage, phones, 'ArrowRight', 3);
-    assert.match(await text(main, '#phone-content'), /green reporter light/i);
+    assert.match(await text(main, '#phone-content'), /regulatory protein.*GFP reporter gene/i);
     await takeShot(stage, 'scene-03-genetics');
 
     // Microscope: an offline vote is rejected, reconnect restores the control, and both choices work.
@@ -513,7 +513,7 @@ async function run() {
     await takeShot(stage, 'scene-06-dna-match');
 
     await navigate(stage, phones, 'ArrowRight', 7);
-    assert.match(await text(main, '#phone-content'), /sensor measures the green light.*AI compares both scores/i);
+    assert.match(await text(main, '#phone-content'), /did not test either complete gene or either protein.*GFP/i);
 
     // Real keyboard-driven stage range plus both wrong nano branches and solved lock.
     await navigate(stage, phones, 'ArrowRight', 8);
@@ -565,25 +565,51 @@ async function run() {
     assert.equal(await stage.evaluate('state.photonCount'), photonTotal);
 
     await navigate(stage, phones, 'ArrowRight', 10);
-    assert.match(await text(main, '#phone-content'), /sensor measures the light.*AI uses that score.*DNA-match score/i);
+    assert.match(await text(main, '#phone-content'), /sensor measures green light from GFP.*control-gene PCR score/i);
 
     // All model-size votes, passive result pills, and a presenter override.
     await navigate(stage, phones, 'ArrowRight', 11);
     for (const [index, choice] of ['two', 'four', 'eight'].entries()) await realClick(phones[index], `[data-vote="${choice}"]`);
     await waitFor(() => stage.evaluate('state.polls.architecture.two === 1 && state.polls.architecture.four === 1 && state.polls.architecture.eight === 1'), 'All architecture choices did not register');
-    assert.match(await text(stage, '#architecture-choice'), /4 HIDDEN UNITS · AUDIENCE RESULT/);
+    assert.match(await text(stage, '#architecture-choice'), /STARTING FROM AUDIENCE RESULT/);
+    assert.equal(await text(stage, '#hidden-neuron-count'), '4');
     assert.equal(await stage.evaluate("document.querySelector('[data-hidden-units=\"audience\"]').getAttribute('aria-pressed')"), 'true');
+    assert.deepEqual(await stage.evaluate("[...document.querySelectorAll('[data-neuron-step]')].map(button => button.getAttribute('aria-label'))"), ['Use one fewer hidden neuron', 'Use one more hidden neuron']);
     await assertPassive(stage, ['.architecture-results span:nth-child(1)', '.architecture-results span:nth-child(2)', '.architecture-results span:nth-child(3)'], 'Architecture results');
+
+    await realClick(stage, '[data-neuron-step="1"]');
+    assert.equal(await text(stage, '#hidden-neuron-count'), '5');
+    assert.match(await text(stage, '#architecture-choice'), /PRESENTER SETTING/);
+    assert.match(await text(stage, '#architecture-source'), /Audience result: 4.*presenter selected 5 hidden neurons/i);
+    assert.equal(await stage.evaluate("document.querySelector('[data-hidden-units=\"audience\"]').getAttribute('aria-pressed')"), 'false');
+
     await realClick(phones[3], '[data-vote="eight"]');
     await realClick(phones[4], '[data-vote="eight"]');
     await waitFor(() => stage.evaluate('state.polls.architecture.eight === 3'), 'The leading audience model size did not update');
-    assert.match(await text(stage, '#architecture-choice'), /8 HIDDEN UNITS · AUDIENCE RESULT/);
+    assert.equal(await text(stage, '#hidden-neuron-count'), '5', 'A later audience vote overwrote the presenter counter');
     assert.equal(await stage.evaluate("document.querySelector('.architecture-results span:nth-child(3)').classList.contains('winner')"), true);
-    await realClick(stage, '[data-hidden-units="2"]');
-    assert.match(await text(stage, '#architecture-choice'), /2 HIDDEN UNITS · PRESENTER CHOICE/);
-    assert.match(await text(stage, '#architecture-source'), /Audience result: 8.*presenter selected 2/i);
-    assert.equal(await stage.evaluate("document.querySelector('[data-hidden-units=\"2\"]').getAttribute('aria-pressed')"), 'true');
+
+    await realClick(stage, '[data-hidden-units="audience"]');
+    assert.equal(await text(stage, '#hidden-neuron-count'), '8');
+    assert.match(await text(stage, '#architecture-choice'), /STARTING FROM AUDIENCE RESULT/);
+    assert.equal(await stage.evaluate("document.querySelector('[data-hidden-units=\"audience\"]').getAttribute('aria-pressed')"), 'true');
+    assert.equal(await stage.evaluate("document.querySelector('[data-neuron-step=\"1\"]').disabled && !document.querySelector('[data-neuron-step=\"-1\"]').disabled"), true, 'The neuron counter did not enforce its upper limit');
+
+    await realClick(stage, '[data-neuron-step="-1"]');
+    assert.equal(await text(stage, '#hidden-neuron-count'), '7');
+    assert.match(await text(stage, '#architecture-source'), /Audience result: 8.*presenter selected 7 hidden neurons/i);
+    assert.equal(await stage.evaluate("document.querySelector('[data-hidden-units=\"audience\"]').getAttribute('aria-pressed')"), 'false');
     assert.equal(await stage.evaluate("document.querySelector('.architecture-results span:nth-child(3)').classList.contains('winner')"), true, 'Presenter override changed the displayed audience result');
+
+    await realClicks(stage, '[data-neuron-step="-1"]', 6);
+    assert.equal(await text(stage, '#hidden-neuron-count'), '1');
+    assert.match(await text(stage, '#architecture-source'), /presenter selected 1 hidden neuron/i);
+    assert.equal(await stage.evaluate("document.querySelector('[data-neuron-step=\"-1\"]').disabled && !document.querySelector('[data-neuron-step=\"1\"]').disabled"), true, 'The neuron counter did not enforce its lower limit');
+    assert.equal(await stage.evaluate("document.querySelectorAll('#network-svg circle').length === 4 && document.querySelectorAll('#network-svg circle')[2].getAttribute('cy') === '82'"), true, 'The one-neuron diagram was not centred');
+    await realClick(stage, '[data-neuron-step="-1"]', { allowDisabled: true });
+    assert.equal(await text(stage, '#hidden-neuron-count'), '1');
+    await realClicks(stage, '[data-neuron-step="1"]', 6);
+    assert.equal(await text(stage, '#hidden-neuron-count'), '7');
 
     // Training controls: passive phone readouts, disabled repeats, reset, and Enter retrain.
     await navigate(stage, phones, 'ArrowRight', 12);
@@ -593,18 +619,18 @@ async function run() {
     assert.equal(await stage.evaluate("document.querySelector('#reset-model-button').disabled"), true);
     await realClick(stage, '#train-model-button');
     await waitFor(() => stage.evaluate("trainingActive && document.querySelector('#train-model-button').disabled && document.querySelector('#train-model-button').textContent.includes('Training')"), 'Training did not visibly enter its busy state');
-    assert.equal(await stage.evaluate("currentModel.hidden === 2 && currentModel.layers[0].w.length === 2 && [...document.querySelectorAll('[data-hidden-units]')].every(button => button.disabled)"), true, 'Training did not capture and lock the presenter’s 2-unit setting');
+    assert.equal(await stage.evaluate("currentModel.hidden === 7 && currentModel.layers[0].w.length === 7 && currentModel.layers[1].w[0].length === 7 && [...document.querySelectorAll('[data-neuron-step],[data-hidden-units]')].every(button => button.disabled)"), true, 'Training did not capture and lock the presenter’s 7-neuron setting');
     await realClick(stage, '#train-model-button', { allowDisabled: true });
     await waitFor(() => stage.evaluate('state.training.epoch === 500 && Boolean(state.model)'), 'First training run did not finish', 12000);
-    assert.equal(await stage.evaluate('state.model.hidden'), 2);
+    assert.equal(await stage.evaluate('state.model.hidden'), 7);
     assert.equal(await text(stage, '#epoch-value'), '500');
     assert.notEqual(await text(stage, '#loss-value'), '—');
     assert.match(await text(main, '#phone-training-title'), /Training complete/);
     assert.equal(await text(stage, '#train-model-button'), 'Train again');
     await realClick(stage, '#reset-model-button');
     await waitFor(() => stage.evaluate('!state.model && state.training.epoch === 0'), 'Model reset did not clear training');
-    assert.equal(await stage.evaluate("document.querySelector('[data-hidden-units=\"2\"]').getAttribute('aria-pressed')"), 'true', 'Model reset did not retain the presenter setting');
-    assert.equal(await stage.evaluate("[...document.querySelectorAll('[data-hidden-units]')].every(button => !button.disabled)"), true, 'Model reset did not unlock the hidden-unit controls');
+    assert.equal(await text(stage, '#hidden-neuron-count'), '7', 'Model reset did not retain the presenter setting');
+    assert.equal(await stage.evaluate("[...document.querySelectorAll('[data-neuron-step],[data-hidden-units]')].every(button => !button.disabled)"), true, 'Model reset did not unlock the neuron counter');
     assert.equal(await text(stage, '#reset-model-button'), 'Model already reset');
     assert.equal(await stage.evaluate("document.querySelector('#reset-model-button').disabled"), true);
     await realClick(stage, '#reset-model-button', { allowDisabled: true });
@@ -612,7 +638,7 @@ async function run() {
     await pressKey(stage, 'Enter');
     await waitFor(() => stage.evaluate('trainingActive'), 'Enter did not start the scene 12 primary action');
     await waitFor(() => stage.evaluate('state.training.epoch === 500 && Boolean(state.model)'), 'Second training run did not finish', 12000);
-    assert.equal(await stage.evaluate('state.model.hidden'), 2);
+    assert.equal(await stage.evaluate('state.model.hidden'), 7);
 
     // Real challenge ranges, result lock/re-enable, update-in-place, and visible retraining feedback.
     await navigate(stage, phones, 'ArrowRight', 13);
@@ -638,7 +664,7 @@ async function run() {
     assert.equal(await stage.evaluate("document.querySelector('#contaminate-button').disabled"), true);
     assert.equal(await stage.evaluate("state.samples.filter(sample => sample.source === 'radiation').length"), 4);
     await waitFor(() => stage.evaluate(`state.model?.trainedAt > ${firstModelTime}`), 'Retraining with checked samples did not finish', 12000);
-    assert.equal(await stage.evaluate('state.model.hidden'), 2, 'Verified-sample retraining changed the selected model size');
+    assert.equal(await stage.evaluate('state.model.hidden'), 7, 'Verified-sample retraining changed the selected model size');
     assert.equal(await text(stage, '#contaminate-button'), '4 verified samples added');
     assert.match(await text(stage, '#retraining-status'), /score for the same sample changed from \d+\/100 to \d+\/100/i);
     await realClick(stage, '#contaminate-button', { allowDisabled: true });
@@ -741,7 +767,9 @@ async function run() {
     await pressKey(stage, 'R', 8);
     await waitFor(() => stage.evaluate('state.scene === 0 && state.samples.length === 0 && state.burns.length === 0'), 'Shift+R did not reset the mission');
     assert.equal(await stage.evaluate("manualArchitecture === null && document.querySelector('[data-hidden-units=\"audience\"]').getAttribute('aria-pressed') === 'true'"), true, 'Full reset did not restore audience-following mode');
-    assert.match(await text(stage, '#architecture-choice'), /4 HIDDEN UNITS · DEFAULT/);
+    assert.equal(await text(stage, '#hidden-neuron-count'), '4');
+    assert.match(await text(stage, '#architecture-choice'), /DEFAULT · NO VOTES YET/);
+    assert.equal(await stage.evaluate("[...document.querySelectorAll('[data-neuron-step]')].every(button => !button.disabled)"), true, 'Full reset did not unlock the default counter');
     assert.equal(await text(stage, '#flight-result'), 'WAITING FOR SPEEDS');
     assert.equal(await text(stage, '#telemetry-alt'), 'START: 400 km');
     assert.equal(await text(stage, '#scale-label'), '1 metre');

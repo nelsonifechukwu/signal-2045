@@ -41,7 +41,7 @@
         <div class="cold-open">
           <div class="distance">400 KM ABOVE EARTH / 27,600 KM·H⁻¹</div>
           <div class="signal-orb"><div></div><i></i><i></i><i></i></div>
-          <h1>The green reporter<br><mark>stopped glowing.</mark></h1>
+          <h1>The yeast stopped<br><mark>glowing green.</mark></h1>
           <div class="signal-readout"><span>HELIX–7 YEAST LAB / RADIATION DETECTED</span><canvas id="signal-canvas" width="820" height="110"></canvas></div>
         </div>
       </section>
@@ -60,10 +60,11 @@
         <div class="two-col">
           <div>
             <div class="kicker"><span>ACT I / GENETICS</span><em>STUDENT 01</em></div>
-            <h2>We added two genes<br>to the yeast.</h2>
-            <p class="subhead">One gene makes a test protein. A reporter gene makes the yeast glow green when the circuit is active. After a burst of radiation, the added DNA was detected, but the glow was low.</p>
-            <div class="gene-circuit"><span>START</span><i>→</i><span>TEST PROTEIN</span><i>→</i><span>GLOW GENE</span><i>→</i><span>STOP</span></div>
-            <div class="evidence-tags"><span>ADDED DNA <b>FOUND</b></span><span>GLOW <b>LOW</b></span><span>RADIATION <b>HIGH</b></span></div>
+            <h2>We inserted two genes<br>into the yeast’s DNA.</h2>
+            <p class="subhead">A gene is a long DNA sequence made from A, T, G and C. The control gene makes a regulatory protein, which switches on the GFP reporter gene.</p>
+            <div class="gene-circuit"><span>CONTROL GENE</span><i>→</i><span>REGULATORY PROTEIN</span><i>SWITCHES ON →</i><span>GFP REPORTER GENE</span><i>→</i><span>GFP</span><i>→</i><span>GREEN LIGHT</span></div>
+            <p class="circuit-caption">The reporter gene makes green fluorescent protein (GFP). GFP gives off the green light measured by the sensor.</p>
+            <div class="evidence-tags"><span>CONTROL-GENE PCR TARGET <b>FOUND</b></span><span>GFP LIGHT <b>LOW</b></span><span>RADIATION <b>HIGH</b></span></div>
           </div>
           <div class="sample-vial">
             <div class="vial"><div class="fluid"></div><i class="molecule m1"></i><i class="molecule m2"></i><i class="molecule m3"></i></div>
@@ -97,14 +98,14 @@
         <div class="pcr-layout">
           <div>
             <div class="kicker"><span>PCR / COPYING A DNA SECTION</span><em>PHONES ADD TAPS · PRESENTER RUNS STEPS</em></div>
-            <h2>PCR makes a DNA section<br><mark>easier to detect.</mark></h2>
-            <p class="subhead">Under ideal conditions, each PCR cycle doubles the selected DNA section. After 30 cycles, one copy would produce more than one billion copies.</p>
+            <h2>PCR copies one<br><mark>control-gene section.</mark></h2>
+            <p class="subhead">Here, PCR targets one short section of the control gene. It does not test either complete gene.</p>
             <div class="phase-row"><button data-phase="0" type="button" aria-pressed="false"><b>95°C</b><span>1. SEPARATE / DENATURE</span></button><button data-phase="1" type="button" aria-pressed="false"><b>55°C</b><span>2. PRIMERS BIND / ANNEAL</span></button><button data-phase="2" type="button" aria-pressed="false"><b>72°C</b><span>3. BUILD / EXTEND</span></button></div>
             <p class="interaction-feedback" id="pcr-phase-explanation" aria-live="polite">Choose a temperature step to see what it does.</p>
           </div>
           <div class="thermocycler glass">
             <div class="thermo-top"><span>THERMOCYCLER / LIVE</span><i id="pcr-live"></i></div>
-            <div class="pcr-metrics"><div><small>CYCLE</small><strong id="pcr-cycle">00</strong><em>/ 30</em></div><div><small>TARGET COPIES</small><strong id="pcr-copies">1</strong></div></div>
+            <div class="pcr-metrics"><div><small>CYCLE</small><strong id="pcr-cycle">00</strong><em>/ 30</em></div><div><small>CONTROL-GENE TARGET COPIES</small><strong id="pcr-copies">1</strong></div></div>
             <div class="dna-lanes" id="dna-lanes"></div>
             <div class="power-track"><i id="pcr-power"></i></div><small id="pcr-tap-label">0 audience taps</small>
             <div class="button-row"><button class="soft-button" id="pcr-cycle-button" data-action="pcr-cycle" type="button">Run 1 full cycle</button><button class="action-button" id="pcr-30-button" data-action="pcr-30" type="button">Jump to cycle 30</button></div>
@@ -118,7 +119,7 @@
             <div class="kicker"><span>DNA BASE PAIRING</span><em>QUESTION ON YOUR PHONE</em></div>
             <h2>Which strand pairs<br>with <mark>CTGTG?</mark></h2>
             <p class="subhead">For this short exercise, use the DNA pairing rules: A pairs with T, and C pairs with G. Real PCR uses two longer primers.</p>
-            <div class="sequence-card"><small>TARGET STRAND</small><code><b>5′</b> — C T G T G — <b>3′</b></code><div class="pair-marks">| &nbsp; | &nbsp; | &nbsp; | &nbsp; |</div><code class="primer-answer" id="primer-answer"><b>3′</b> — ? ? ? ? ? — <b>5′</b></code></div>
+            <div class="sequence-card"><small>CONTROL-GENE TARGET STRAND</small><code><b>5′</b> — C T G T G — <b>3′</b></code><div class="pair-marks">| &nbsp; | &nbsp; | &nbsp; | &nbsp; |</div><code class="primer-answer" id="primer-answer"><b>3′</b> — ? ? ? ? ? — <b>5′</b></code></div>
           </div>
           <div class="glass puzzle-panel">
             <div class="result-label">LIVE PHONE RESULTS</div>
@@ -138,8 +139,8 @@
         <div class="payoff-screen">
           <div class="kicker"><span>DNA CHECK COMPLETE</span><em>NEXT: STUDENT 02</em></div>
           <div class="equation"><span>1</span><i>× 2<sup>30</sup></i><strong>1,073,741,824</strong></div>
-          <h2>The target DNA is present.<br>Is the circuit <mark>active?</mark></h2>
-          <p>PCR found the selected DNA section, but it cannot show whether the reporter gene is active. Next, a chip sensor measures the green light, and the AI compares that score with the PCR result.</p>
+          <h2>PCR found part of the control gene.<br>Does the full circuit <mark>work?</mark></h2>
+          <p>PCR found one short section of the control gene. It does not show whether the rest of that gene works or whether the GFP reporter gene makes GFP. Next, the sensor measures GFP light so the AI can compare the two scores.</p>
         </div>
       </section>
 
@@ -178,15 +179,15 @@
 
       <section class="scene act-nano" data-scene="10">
         <div class="kicker"><span>MEASURING THE GLOW</span><em>FROM LIGHT TO DATA</em></div>
-        <h2>The sensor converts<br><mark>light into data.</mark></h2>
-        <p class="subhead">The sensor—not the AI—measures the yeast’s green reporter light. It records the light as a green-light score.</p>
+        <h2>The sensor converts<br><mark>GFP light into data.</mark></h2>
+        <p class="subhead">The sensor—not the AI—measures green light from GFP and records a GFP-light score.</p>
         <div class="pipeline">
-          <article><span>01</span><div class="pipe-symbol photon-symbol"></div><b>LIGHT</b><p>The sample emits green light</p></article><i></i>
+          <article><span>01</span><div class="pipe-symbol photon-symbol"></div><b>GFP LIGHT</b><p>GFP gives off green light</p></article><i></i>
           <article><span>02</span><div class="pipe-symbol gate-symbol"></div><b>SENSOR</b><p>Light becomes an electrical signal</p></article><i></i>
-          <article><span>03</span><div class="pipe-symbol matrix-symbol">×</div><b>GREEN-LIGHT SCORE</b><p>The measured light level is recorded</p></article><i></i>
+          <article><span>03</span><div class="pipe-symbol matrix-symbol">×</div><b>GFP-LIGHT SCORE</b><p>The measured light level is recorded</p></article><i></i>
           <article><span>04</span><div class="pipe-symbol output-symbol">?</div><b>MODEL PREDICTION</b><p>Uses the light and DNA scores</p></article>
         </div>
-        <div class="number-ribbon"><strong>2 INPUTS</strong><span>DNA-match score from PCR + green-light score from the sensor</span></div>
+        <div class="number-ribbon"><strong>2 INPUTS</strong><span>control-gene PCR score + GFP-light score from the sensor</span></div>
       </section>
 
       <section class="scene act-ai" data-scene="11">
@@ -196,30 +197,30 @@
             <h2>The model predicts:<br><mark>WORKING or CHANGED.</mark></h2>
             <p class="subhead">The chart only plots measurements already taken. Each dot’s colour is the known answer used for training.</p>
             <div class="model-purpose" aria-label="AI training inputs and target">
-              <div><small>INPUT X · PCR</small><b>DNA-match score</b></div>
-              <div><small>INPUT Y · SENSOR</small><b>Green-light score</b></div>
+              <div><small>INPUT X · PCR</small><b>Control-gene score</b></div>
+              <div><small>INPUT Y · SENSOR</small><b>GFP-light score</b></div>
               <div><small>TRAINING TARGET</small><b>Known label: working or changed</b></div>
             </div>
             <div class="legend"><span>KNOWN LABEL:</span><span><i class="working-dot"></i>CIRCUIT WORKING</span><span><i class="changed-dot"></i>CIRCUIT CHANGED</span><b id="dataset-count">0 TRAINING SAMPLES</b></div>
             <div class="architecture-vote glass">
-              <small>LIVE PHONE RESULTS · HOW MANY HIDDEN UNITS?</small>
+              <small>LIVE PHONE RESULTS · HOW MANY HIDDEN NEURONS?</small>
               <div class="architecture-results"><span>2 / simple <b id="arch-two">0</b></span><span>4 / medium <b id="arch-four">0</b></span><span>8 / flexible <b id="arch-eight">0</b></span></div>
-              <strong id="architecture-choice" role="status" aria-live="polite">4 HIDDEN UNITS · DEFAULT</strong>
-              <div class="architecture-controls" role="group" aria-label="Presenter hidden-unit setting"><span>PRESENTER SETTING</span><button type="button" data-hidden-units="audience" aria-pressed="true">FOLLOW VOTE</button><button type="button" data-hidden-units="2" aria-pressed="false">USE 2</button><button type="button" data-hidden-units="4" aria-pressed="false">USE 4</button><button type="button" data-hidden-units="8" aria-pressed="false">USE 8</button></div>
+              <strong id="architecture-choice" role="status" aria-live="polite">DEFAULT · NO VOTES YET</strong>
+              <div class="architecture-controls" role="group" aria-label="Presenter hidden-neuron counter"><span>PRESENTER COUNTER · 1–8</span><button type="button" data-neuron-step="-1" aria-label="Use one fewer hidden neuron">−</button><output aria-live="polite"><b id="hidden-neuron-count">4</b><small>HIDDEN NEURONS</small></output><button type="button" data-neuron-step="1" aria-label="Use one more hidden neuron">+</button><button type="button" data-hidden-units="audience" aria-pressed="true">FOLLOW VOTE</button></div>
               <p id="architecture-source">The audience’s leading choice becomes the starting setting. The presenter can change it before training.</p>
             </div>
           </div>
-          <div class="plot-shell"><canvas class="ai-canvas" id="dataset-canvas" width="560" height="440"></canvas><span class="axis-label y">GREEN-LIGHT SCORE (SENSOR) · 0–100 ↑</span><span class="axis-label x">DNA-MATCH SCORE (PCR) · 0–100 →</span></div>
+          <div class="plot-shell"><canvas class="ai-canvas" id="dataset-canvas" width="560" height="440"></canvas><span class="axis-label y">GFP-LIGHT SCORE (SENSOR) · 0–100 ↑</span><span class="axis-label x">CONTROL-GENE PCR SCORE · 0–100 →</span></div>
         </div>
       </section>
 
       <section class="scene act-ai" data-scene="12">
         <div class="training-layout">
-          <div class="plot-shell training-plot"><canvas class="ai-canvas" id="training-canvas" width="560" height="440"></canvas><span class="plot-output-key"><b>BACKGROUND = MODEL OUTPUT</b><i class="working-dot"></i>WORKING <i class="changed-dot"></i>CHANGED</span><span class="axis-label y">GREEN-LIGHT SCORE (SENSOR) · 0–100 ↑</span><span class="axis-label x">DNA-MATCH SCORE (PCR) · 0–100 →</span></div>
+          <div class="plot-shell training-plot"><canvas class="ai-canvas" id="training-canvas" width="560" height="440"></canvas><span class="plot-output-key"><b>BACKGROUND = MODEL OUTPUT</b><i class="working-dot"></i>WORKING <i class="changed-dot"></i>CHANGED</span><span class="axis-label y">GFP-LIGHT SCORE (SENSOR) · 0–100 ↑</span><span class="axis-label x">CONTROL-GENE PCR SCORE · 0–100 →</span></div>
           <div>
             <div class="kicker"><span>AI STEP 2 / TRAIN THE MODEL</span><em>LIVE NEURAL NETWORK</em></div>
             <h2>The model learns from<br><mark>the known labels.</mark></h2>
-            <p class="subhead">For each sample, it uses the DNA-match and green-light scores to predict WORKING or CHANGED, compares that prediction with the known label, then adjusts its weights.</p>
+            <p class="subhead">For each sample, it uses the control-gene PCR and GFP-light scores to predict WORKING or CHANGED, compares that prediction with the known label, then adjusts its weights.</p>
             <div class="network-viz glass"><svg id="network-svg" viewBox="0 0 420 160" aria-label="Neural network architecture"></svg></div>
             <div class="training-metrics"><div><small>TRAINING ROUND</small><strong id="epoch-value">000</strong><span>/ 500 epochs</span></div><div><small>ERROR</small><strong id="loss-value">—</strong><span>loss: lower is better</span></div><div><small>TRAINING SAMPLES</small><strong id="accuracy-value">—</strong><span>training accuracy</span></div><div><small>TEST SAMPLES</small><strong id="test-accuracy-value">—</strong><span>test accuracy</span></div></div>
             <div class="training-track" role="progressbar" aria-label="AI training rounds" aria-valuemin="0" aria-valuemax="500" aria-valuenow="0"><i id="training-progress"></i></div>
@@ -233,14 +234,14 @@
           <div>
             <div class="kicker"><span>AI STEP 3 / TEST A NEW SAMPLE</span><em>USE YOUR PHONE</em></div>
             <h2>Test the model with<br><mark>a new sample.</mark></h2>
-            <p class="subhead">Set a DNA-match score and a green-light score on your phone. The model will predict WORKING or CHANGED.</p>
+            <p class="subhead">Set a control-gene PCR score and a GFP-light score on your phone. The model will predict WORKING or CHANGED.</p>
             <div class="challenge-stats"><div><strong id="challenge-count">0</strong><span>audience tests</span></div></div>
-            <div class="helix-result glass"><small>INPUTS · DNA MATCH: 86 · GREEN LIGHT: 78</small><div><b id="helix-prediction">MODEL NOT TRAINED</b><span id="helix-score">—</span></div><em>WORKING SCORE · 0 = CHANGED · 100 = WORKING</em></div>
+            <div class="helix-result glass"><small>INPUTS · CONTROL-GENE PCR: 86 · GFP LIGHT: 78</small><div><b id="helix-prediction">MODEL NOT TRAINED</b><span id="helix-score">—</span></div><em>WORKING SCORE · 0 = CHANGED · 100 = WORKING</em></div>
             <div class="legend challenge-legend"><span><i class="checked-dot"></i>YELLOW RING = LABEL VERIFIED BY A SECOND TEST</span><span>★ HELIX–7 = NEW SAMPLE</span></div>
             <button class="soft-button" id="contaminate-button" data-action="contaminate-model" type="button">Add 4 verified samples and retrain</button>
             <p class="interaction-feedback" id="retraining-status" role="status" aria-live="polite">A second test identified four changed samples that were missing from the original training data.</p>
           </div>
-          <div class="plot-shell"><canvas class="ai-canvas" id="challenge-canvas" width="560" height="440"></canvas><span class="plot-output-key"><b>BACKGROUND = MODEL OUTPUT</b><i class="working-dot"></i>WORKING <i class="changed-dot"></i>CHANGED</span><span class="axis-label y">GREEN-LIGHT SCORE (SENSOR) · 0–100 ↑</span><span class="axis-label x">DNA-MATCH SCORE (PCR) · 0–100 →</span></div>
+          <div class="plot-shell"><canvas class="ai-canvas" id="challenge-canvas" width="560" height="440"></canvas><span class="plot-output-key"><b>BACKGROUND = MODEL OUTPUT</b><i class="working-dot"></i>WORKING <i class="changed-dot"></i>CHANGED</span><span class="axis-label y">GFP-LIGHT SCORE (SENSOR) · 0–100 ↑</span><span class="axis-label x">CONTROL-GENE PCR SCORE · 0–100 →</span></div>
         </div>
       </section>
 
@@ -308,7 +309,7 @@
         <div class="finale">
           <div class="kicker"><span>HOW THE SCIENCE CONNECTS</span><em>PRESENTATION COMPLETE</em></div>
           <h2>The investigation used<br>four areas of science.</h2>
-          <div class="final-chain"><span><b>GENETICS</b>checked the DNA</span><i>→</i><span><b>NANOTECH</b>measured the glow</span><i>→</i><span><b>AI</b>classified the data</span><i>→</i><span><b>ASTROPHYSICS</b>predicted the orbit</span></div>
+          <div class="final-chain"><span><b>GENETICS</b>checked one control-gene section</span><i>→</i><span><b>NANOTECH</b>measured GFP light</span><i>→</i><span><b>AI</b>classified the two scores</span><i>→</i><span><b>ASTROPHYSICS</b>predicted the orbit</span></div>
           <h1>Together, they helped us test<br><mark>the sample and make a decision.</mark></h1>
           <div class="final-credit"><span>03 PRESENTERS</span><span id="final-participants">0 PARTICIPANTS</span><span>01 FINAL DECISION</span></div>
         </div>
