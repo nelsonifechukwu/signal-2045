@@ -513,7 +513,7 @@ async function run() {
     await takeShot(stage, 'scene-06-dna-match');
 
     await navigate(stage, phones, 'ArrowRight', 7);
-    assert.match(await text(main, '#phone-content'), /not that the whole circuit works/i);
+    assert.match(await text(main, '#phone-content'), /sensor measures the green light.*AI compares both scores/i);
 
     // Real keyboard-driven stage range plus both wrong nano branches and solved lock.
     await navigate(stage, phones, 'ArrowRight', 8);
@@ -565,14 +565,25 @@ async function run() {
     assert.equal(await stage.evaluate('state.photonCount'), photonTotal);
 
     await navigate(stage, phones, 'ArrowRight', 10);
-    assert.match(await text(main, '#phone-content'), /sensor converts green light into an electrical signal/i);
+    assert.match(await text(main, '#phone-content'), /sensor measures the light.*AI uses that score.*DNA-match score/i);
 
-    // All model-size options and passive stage pills.
+    // All model-size votes, passive result pills, and a presenter override.
     await navigate(stage, phones, 'ArrowRight', 11);
     for (const [index, choice] of ['two', 'four', 'eight'].entries()) await realClick(phones[index], `[data-vote="${choice}"]`);
     await waitFor(() => stage.evaluate('state.polls.architecture.two === 1 && state.polls.architecture.four === 1 && state.polls.architecture.eight === 1'), 'All architecture choices did not register');
-    assert.match(await text(stage, '#architecture-choice'), /4 HIDDEN NEURONS/);
-    await assertPassive(stage, ['.architecture-vote span:nth-child(1)', '.architecture-vote span:nth-child(2)', '.architecture-vote span:nth-child(3)'], 'Architecture results');
+    assert.match(await text(stage, '#architecture-choice'), /4 HIDDEN UNITS · AUDIENCE RESULT/);
+    assert.equal(await stage.evaluate("document.querySelector('[data-hidden-units=\"audience\"]').getAttribute('aria-pressed')"), 'true');
+    await assertPassive(stage, ['.architecture-results span:nth-child(1)', '.architecture-results span:nth-child(2)', '.architecture-results span:nth-child(3)'], 'Architecture results');
+    await realClick(phones[3], '[data-vote="eight"]');
+    await realClick(phones[4], '[data-vote="eight"]');
+    await waitFor(() => stage.evaluate('state.polls.architecture.eight === 3'), 'The leading audience model size did not update');
+    assert.match(await text(stage, '#architecture-choice'), /8 HIDDEN UNITS · AUDIENCE RESULT/);
+    assert.equal(await stage.evaluate("document.querySelector('.architecture-results span:nth-child(3)').classList.contains('winner')"), true);
+    await realClick(stage, '[data-hidden-units="2"]');
+    assert.match(await text(stage, '#architecture-choice'), /2 HIDDEN UNITS · PRESENTER CHOICE/);
+    assert.match(await text(stage, '#architecture-source'), /Audience result: 8.*presenter selected 2/i);
+    assert.equal(await stage.evaluate("document.querySelector('[data-hidden-units=\"2\"]').getAttribute('aria-pressed')"), 'true');
+    assert.equal(await stage.evaluate("document.querySelector('.architecture-results span:nth-child(3)').classList.contains('winner')"), true, 'Presenter override changed the displayed audience result');
 
     // Training controls: passive phone readouts, disabled repeats, reset, and Enter retrain.
     await navigate(stage, phones, 'ArrowRight', 12);
@@ -582,14 +593,18 @@ async function run() {
     assert.equal(await stage.evaluate("document.querySelector('#reset-model-button').disabled"), true);
     await realClick(stage, '#train-model-button');
     await waitFor(() => stage.evaluate("trainingActive && document.querySelector('#train-model-button').disabled && document.querySelector('#train-model-button').textContent.includes('Training')"), 'Training did not visibly enter its busy state');
+    assert.equal(await stage.evaluate("currentModel.hidden === 2 && currentModel.layers[0].w.length === 2 && [...document.querySelectorAll('[data-hidden-units]')].every(button => button.disabled)"), true, 'Training did not capture and lock the presenter’s 2-unit setting');
     await realClick(stage, '#train-model-button', { allowDisabled: true });
     await waitFor(() => stage.evaluate('state.training.epoch === 500 && Boolean(state.model)'), 'First training run did not finish', 12000);
+    assert.equal(await stage.evaluate('state.model.hidden'), 2);
     assert.equal(await text(stage, '#epoch-value'), '500');
     assert.notEqual(await text(stage, '#loss-value'), '—');
     assert.match(await text(main, '#phone-training-title'), /Training complete/);
     assert.equal(await text(stage, '#train-model-button'), 'Train again');
     await realClick(stage, '#reset-model-button');
     await waitFor(() => stage.evaluate('!state.model && state.training.epoch === 0'), 'Model reset did not clear training');
+    assert.equal(await stage.evaluate("document.querySelector('[data-hidden-units=\"2\"]').getAttribute('aria-pressed')"), 'true', 'Model reset did not retain the presenter setting');
+    assert.equal(await stage.evaluate("[...document.querySelectorAll('[data-hidden-units]')].every(button => !button.disabled)"), true, 'Model reset did not unlock the hidden-unit controls');
     assert.equal(await text(stage, '#reset-model-button'), 'Model already reset');
     assert.equal(await stage.evaluate("document.querySelector('#reset-model-button').disabled"), true);
     await realClick(stage, '#reset-model-button', { allowDisabled: true });
@@ -597,6 +612,7 @@ async function run() {
     await pressKey(stage, 'Enter');
     await waitFor(() => stage.evaluate('trainingActive'), 'Enter did not start the scene 12 primary action');
     await waitFor(() => stage.evaluate('state.training.epoch === 500 && Boolean(state.model)'), 'Second training run did not finish', 12000);
+    assert.equal(await stage.evaluate('state.model.hidden'), 2);
 
     // Real challenge ranges, result lock/re-enable, update-in-place, and visible retraining feedback.
     await navigate(stage, phones, 'ArrowRight', 13);
@@ -622,6 +638,7 @@ async function run() {
     assert.equal(await stage.evaluate("document.querySelector('#contaminate-button').disabled"), true);
     assert.equal(await stage.evaluate("state.samples.filter(sample => sample.source === 'radiation').length"), 4);
     await waitFor(() => stage.evaluate(`state.model?.trainedAt > ${firstModelTime}`), 'Retraining with checked samples did not finish', 12000);
+    assert.equal(await stage.evaluate('state.model.hidden'), 2, 'Verified-sample retraining changed the selected model size');
     assert.equal(await text(stage, '#contaminate-button'), '4 verified samples added');
     assert.match(await text(stage, '#retraining-status'), /score for the same sample changed from \d+\/100 to \d+\/100/i);
     await realClick(stage, '#contaminate-button', { allowDisabled: true });
@@ -723,6 +740,8 @@ async function run() {
     await stage.evaluate("window.confirm = () => true; document.querySelector('#shortcut-test').remove(); document.activeElement?.blur()");
     await pressKey(stage, 'R', 8);
     await waitFor(() => stage.evaluate('state.scene === 0 && state.samples.length === 0 && state.burns.length === 0'), 'Shift+R did not reset the mission');
+    assert.equal(await stage.evaluate("manualArchitecture === null && document.querySelector('[data-hidden-units=\"audience\"]').getAttribute('aria-pressed') === 'true'"), true, 'Full reset did not restore audience-following mode');
+    assert.match(await text(stage, '#architecture-choice'), /4 HIDDEN UNITS · DEFAULT/);
     assert.equal(await text(stage, '#flight-result'), 'WAITING FOR SPEEDS');
     assert.equal(await text(stage, '#telemetry-alt'), 'START: 400 km');
     assert.equal(await text(stage, '#scale-label'), '1 metre');

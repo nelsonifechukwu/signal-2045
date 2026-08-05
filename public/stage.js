@@ -67,20 +67,20 @@ function showHostAccessPanel() {
 const slides = [
   { act: 'BEFORE START', rail: 'sample', presenter: ['00', 'PRESENTER'], time: 'Before start', title: 'Connect the audience', note: 'Ask everyone to scan the QR code. Their phones show the rule for labelling the first samples. If Wi-Fi fails, select “Load demo audience”.' },
   { act: 'PROBLEM', rail: 'sample', presenter: ['01', 'STUDENT ONE'], time: '0:00–0:30', title: 'Explain the problem', note: 'Pause, then say: “The added DNA is still present, but the yeast no longer glows green. We have 15 minutes to find out why.”' },
-  { act: 'PLAN', rail: 'sample', presenter: ['ALL', 'THREE PRESENTERS'], time: '0:30–1:05', title: 'Explain the three tasks', note: 'Introduce each role: “I will check the DNA. Student Two will measure the green light and train the AI model. Student Three will correct the orbit.”' },
+  { act: 'PLAN', rail: 'sample', presenter: ['ALL', 'THREE PRESENTERS'], time: '0:30–1:05', title: 'Explain the three tasks', note: 'Say: “First we check whether the target DNA is present. Then we measure the green light and train a model to combine both results. Finally, we test the possible orbits. The final decision uses the biological evidence and the orbital options.”' },
   { act: 'GENETIC ENGINEERING', rail: 'sample', presenter: ['01', 'GENETICS LEAD'], time: '1:05–1:50', title: 'Explain the two added genes', note: 'Say: “We added two genes to sealed yeast. One makes a test protein. The reporter gene makes the yeast glow green when the circuit is active.” This is a fictional classroom example, not medical research.' },
   { act: 'GENETICS', rail: 'amplify', presenter: ['01', 'GENETICS LEAD'], time: '1:50–2:30', title: 'Ask the microscope question', note: 'Wait for the phone votes, then show the answer. A classroom microscope can show DNA in a sample, but it cannot identify the A, T, C and G sequence. That requires other tests.' },
   { act: 'PCR', rail: 'amplify', presenter: ['01', 'GENETICS LEAD'], time: '2:30–3:30', title: 'Demonstrate one PCR cycle', note: 'Show the three steps in order. Say: “Under ideal conditions, each cycle doubles the selected DNA section. The phone taps only control this animation.” Then jump to cycle 30.' },
   { act: 'DNA MATCHING', rail: 'amplify', presenter: ['01', 'GENETICS LEAD'], time: '3:30–4:20', title: 'Choose the matching DNA strand', note: 'After the vote, show GACAC. This short exercise uses complementary DNA bases. Real PCR uses two longer primers, one at each end of the target.' },
-  { act: 'NEXT STEP', rail: 'amplify', presenter: ['01→02', 'GENETICS → CHIP'], time: '4:20–4:45', title: 'Explain what PCR tells us', note: 'Say: “PCR found the selected DNA section, but it does not explain why the yeast stopped glowing. Next, we will measure the green light.”' },
+  { act: 'NEXT STEP', rail: 'amplify', presenter: ['01→02', 'GENETICS → CHIP'], time: '4:20–4:45', title: 'Explain what PCR tells us', note: 'Student One: “PCR confirms that the selected DNA section is present, but it cannot show whether the reporter gene is active.” Student Two: “I will use a chip sensor to measure the green light, then compare that score with the PCR result using an AI model.”' },
   { act: 'NANOTECHNOLOGY', rail: 'sense', presenter: ['02', 'CHIP AND AI LEAD'], time: '4:45–5:25', title: 'Explain one nanometre', note: 'Move the slider from metres to nanometres. Say: “A fingernail grows about one nanometre each second.”' },
   { act: 'CHIP MAKING', rail: 'sense', presenter: ['02', 'CHIP AND AI LEAD'], time: '5:25–6:20', title: 'Show how UV light makes a chip pattern', note: 'Ask the audience to tap. Explain that the taps only control the animation. In chip production, UV light changes a light-sensitive coating. Developing and etching then form the chip structures.' },
-  { act: 'SENSOR AND AI', rail: 'sense', presenter: ['02', 'CHIP AND AI LEAD'], time: '6:20–6:55', title: 'Explain how light becomes data', note: 'Point to each step: “A sensor measures the yeast’s green light and converts it to a number. The chip was made using a different type of light: UV.”' },
-  { act: 'AI TRAINING', rail: 'learn', presenter: ['02', 'CHIP AND AI LEAD'], time: '6:55–7:40', title: 'Explain the training data', note: 'Say: “Each dot contains two measurements and a known result. A supervised model learns from examples with known results.” More hidden units allow a more complex classification boundary.' },
-  { act: 'AI TRAINING', rail: 'learn', presenter: ['02', 'CHIP AND AI LEAD'], time: '7:40–8:45', title: 'Train the model', note: 'Select Start training. One epoch is one pass through the training examples. Loss measures the model’s error. Training accuracy uses examples the model saw; test accuracy uses separate examples.' },
+  { act: 'SENSOR AND AI', rail: 'sense', presenter: ['02', 'CHIP AND AI LEAD'], time: '6:20–6:55', title: 'Explain how light becomes data', note: 'Point to each step: “The sensor—not the AI—measures the green light and records a green-light score. For every sample, the model receives that score and the DNA-match score from PCR.” UV was used earlier to make the chip; it is not the green light being measured.' },
+  { act: 'AI TRAINING', rail: 'learn', presenter: ['02', 'CHIP AND AI LEAD'], time: '6:55–7:40', title: 'Explain the inputs and target', note: 'Say: “The horizontal axis is the DNA-match score from PCR. The vertical axis is the green-light score from the sensor. The chart only plots those measurements. Each dot’s colour is its known label: WORKING or CHANGED. The model learns to predict that label from the two scores.” Start with the leading audience choice, or use the presenter buttons to choose 2, 4 or 8 hidden units.' },
+  { act: 'AI TRAINING', rail: 'learn', presenter: ['02', 'CHIP AND AI LEAD'], time: '7:40–8:45', title: 'Train the model', note: 'Select Start training. Say: “For each sample, the model predicts WORKING or CHANGED, compares that prediction with the known label and adjusts its weights.” One epoch is one pass through all training examples. Loss measures error. Test accuracy uses separate examples.' },
   { act: 'TEST THE AI', rail: 'learn', presenter: ['02', 'CHIP AND AI LEAD'], time: '8:45–9:35', title: 'Test, add evidence and retrain', note: 'Let the audience choose values for a new sample. Then add four samples verified by another test. Say: “The second test found changes in these samples even though their first two readings looked normal. Adding them changes how the model separates the groups.”' },
-  { act: 'CHECK THE RESULT', rail: 'learn', presenter: ['02', 'CHIP AND AI LEAD'], time: '9:35–10:20', title: 'Explain that a model score is not proof', note: 'Take the vote, then show the answer. A model score is one piece of evidence. Scientists repeat the test and use another method before deciding.' },
-  { act: 'ORBIT', rail: 'fly', presenter: ['03', 'SPACEFLIGHT LEAD'], time: '10:20–11:10', title: 'Explain orbit', note: 'Say: “A spacecraft stays in orbit because it moves sideways while gravity pulls it towards Earth.” At 400 km, gravity is still about 90% as strong as it is at Earth’s surface.' },
+  { act: 'CHECK THE RESULT', rail: 'learn', presenter: ['02', 'CHIP AND AI LEAD'], time: '9:35–10:20', title: 'Explain that a model score is not proof', note: 'Take the vote, then show the checks. Student Two: “The AI result adds evidence, but it does not settle the decision. We still need independent biological tests.” Student Three: “The decision also depends on where the laboratory can travel. I will use orbital physics to test the possible paths.”' },
+  { act: 'ORBIT', rail: 'fly', presenter: ['03', 'SPACEFLIGHT LEAD'], time: '10:20–11:10', title: 'Explain orbit', note: 'Say: “The biological tests tell us about the sample. Orbital physics tells us which paths the laboratory can take. A spacecraft stays in orbit because it moves sideways while gravity pulls it towards Earth.” At 400 km, gravity is still about 90% as strong as it is at Earth’s surface.' },
   { act: 'ORBIT TEST', rail: 'fly', presenter: ['03', 'SPACEFLIGHT LEAD'], time: '11:10–12:30', title: 'Test the chosen orbital speed', note: 'Wait for the audience’s choices, then test the median. Below about 0.99× circular-orbit speed, the spacecraft enters the atmosphere; 1.00× produces a circular orbit; 1.42× or above escapes Earth. Test again if needed.' },
   { act: 'DECISION', rail: 'decide', presenter: ['03', 'SPACEFLIGHT LEAD'], time: '12:30–13:30', title: 'Discuss the risks', note: 'Read the most popular choice and one alternative. Say: “Science can help us estimate the risks, but people must decide which risks are acceptable.”' },
   { act: 'FINISHED', rail: 'decide', presenter: ['ALL', 'THREE PRESENTERS'], time: '13:30–15:00', title: 'Summarise the activity', note: 'Student One: “We used genetics to check the DNA.” Student Two: “We used a sensor to measure the light and an AI model to compare samples.” Student Three: “We used physics to test the spacecraft’s path.” Together: “These subjects work well together.”' }
@@ -115,6 +115,8 @@ let trainingTimer = null;
 let pcrDemoTimer = null;
 let trainingActive = false;
 let pendingTraining = false;
+let manualArchitecture = null;
+let pendingHiddenUnits = null;
 let missionStartedAt = null;
 let orbitAnimating = false;
 let orbitRunToken = 0;
@@ -206,6 +208,15 @@ function setupInputs() {
   $('#seed-demo').addEventListener('click', () => socket.emit('host', { type: 'demo' }));
 
   $$('.phase-row button').forEach(button => button.addEventListener('click', () => selectPcrPhase(Number(button.dataset.phase))));
+
+  $$('[data-hidden-units]').forEach(button => button.addEventListener('click', () => {
+    if (button.disabled) return;
+    manualArchitecture = button.dataset.hiddenUnits === 'audience'
+      ? null
+      : validArchitecture(button.dataset.hiddenUnits);
+    renderPolls();
+    renderControlStates();
+  }));
 
   const scaleObjects = [
     ['10⁰ m', 'ABOUT ONE METRE', '1 metre'], ['10⁻¹ m', 'A HAND', '10 centimetres'],
@@ -315,6 +326,7 @@ function renderControlStates() {
   const hasModel = Boolean(currentModel || state.model);
   setControlState('#train-model-button', trainingActive || pendingTraining, pendingTraining ? 'Loading training samples…' : trainingActive ? 'Training…' : hasModel ? 'Train again' : 'Start training');
   setControlState('#reset-model-button', !trainingActive && !pendingTraining && !hasModel && !state.training.epoch, pendingTraining ? 'Cancel' : hasModel || trainingActive ? 'Reset model' : 'Model already reset');
+  $$('[data-hidden-units]').forEach(button => { button.disabled = trainingActive || pendingTraining || hasModel; });
   renderRetrainingState();
   setControlState('#simulate-orbit-button', orbitAnimating, orbitAnimating ? 'Simulating orbit…' : lastOrbitOutcome ? 'Simulate again' : 'Simulate this speed');
 }
@@ -331,11 +343,35 @@ function renderPolls() {
   $('#arch-four').textContent = arch.four;
   $('#arch-eight').textContent = arch.eight;
   const archVotes = arch.two + arch.four + arch.eight;
-  const hidden = currentModel?.hidden || chosenArchitecture();
-  $('#architecture-choice').textContent = archVotes
-    ? `${hidden} HIDDEN NEURONS ${currentModel ? 'USED BY THIS MODEL' : 'CHOSEN'}`
-    : 'WAITING FOR VOTES';
-  $$('.architecture-vote span').forEach((node, index) => node.classList.toggle('winner', [2, 4, 8][index] === hidden));
+  const audienceHidden = audienceArchitecture();
+  const modelHidden = validArchitecture(currentModel?.hidden || state.model?.hidden);
+  const hidden = modelHidden || pendingHiddenUnits || chosenArchitecture();
+  const tiedLeaders = archVotes
+    ? [2, 4, 8].filter(value => architectureVotes(value) === Math.max(arch.two, arch.four, arch.eight))
+    : [];
+  $('#architecture-choice').textContent = modelHidden
+    ? `${modelHidden} HIDDEN UNITS · CURRENT MODEL`
+    : manualArchitecture
+      ? `${hidden} HIDDEN UNITS · PRESENTER CHOICE`
+      : archVotes
+        ? `${hidden} HIDDEN UNITS · AUDIENCE RESULT`
+        : '4 HIDDEN UNITS · DEFAULT';
+  $('#architecture-source').textContent = modelHidden
+    ? `This model uses ${modelHidden} hidden units. Reset the model before choosing another size.`
+    : manualArchitecture
+      ? `${archVotes ? `Audience result: ${audienceHidden}. ` : ''}The presenter selected ${manualArchitecture} hidden units for the next training run.`
+      : !archVotes
+        ? 'No audience votes yet, so the starting setting is 4. The presenter can change it.'
+        : tiedLeaders.length > 1
+          ? `The audience vote is tied. The starting setting is ${audienceHidden}; the presenter can change it.`
+          : `Starting with the audience’s leading choice: ${audienceHidden}. The presenter can change it.`;
+  $$('.architecture-results span').forEach((node, index) => node.classList.toggle('winner', [2, 4, 8][index] === audienceHidden && archVotes > 0));
+  $$('[data-hidden-units]').forEach(button => {
+    const pressed = button.dataset.hiddenUnits === 'audience'
+      ? manualArchitecture === null
+      : Number(button.dataset.hiddenUnits) === manualArchitecture;
+    button.setAttribute('aria-pressed', String(pressed));
+  });
   drawNetwork(hidden);
   setPairBars('trust', state.polls.trust.deploy, state.polls.trust.verify, 'deploy', 'verify');
 
@@ -527,14 +563,30 @@ function modelAccuracy(model, data) {
   return correct / data.length;
 }
 
+function validArchitecture(value) {
+  const hidden = Number(value);
+  return [2, 4, 8].includes(hidden) ? hidden : null;
+}
+
+function architectureVotes(hidden) {
+  return state.polls.architecture[{ 2: 'two', 4: 'four', 8: 'eight' }[hidden]] || 0;
+}
+
+function audienceArchitecture() {
+  return [4, 2, 8].reduce((leader, hidden) => (
+    architectureVotes(hidden) > architectureVotes(leader) ? hidden : leader
+  ), 4);
+}
+
 function chosenArchitecture() {
-  const values = [[2, state.polls.architecture.two], [4, state.polls.architecture.four], [8, state.polls.architecture.eight]];
-  values.sort((a, b) => b[1] - a[1] || (a[0] === 4 ? -1 : 1));
-  return values[0][1] === 0 ? 4 : values[0][0];
+  return validArchitecture(manualArchitecture) || audienceArchitecture();
 }
 
 function startTraining() {
   if (trainingActive) return;
+  pendingHiddenUnits = validArchitecture(pendingHiddenUnits)
+    || validArchitecture(currentModel?.hidden)
+    || chosenArchitecture();
   if (state.samples.length < 6) {
     pendingTraining = true;
     renderControlStates();
@@ -542,7 +594,9 @@ function startTraining() {
     return;
   }
   if (trainingTimer) window.clearInterval(trainingTimer);
-  currentModel = createNetwork(chosenArchitecture());
+  const hiddenUnits = pendingHiddenUnits;
+  pendingHiddenUnits = null;
+  currentModel = createNetwork(hiddenUnits);
   trainingActive = true;
   if (preRetrainScore !== null) retrainSummary = 'Retraining the model with the four newly verified samples.';
   let epoch = 0;
@@ -580,6 +634,7 @@ function resetModel() {
   trainingTimer = null;
   trainingActive = false;
   pendingTraining = false;
+  pendingHiddenUnits = null;
   preRetrainScore = null;
   retrainSummary = '';
   currentModel = null;
@@ -615,14 +670,12 @@ function renderAIState() {
   const scoreNode = $('#helix-score');
   if (currentModel) {
     const score = forwardNetwork(currentModel, [.86, .78]).out;
-    label.textContent = score >= .5 ? 'PREDICTED: WORKING' : 'PREDICTED: CHANGED';
+    label.textContent = score >= .5 ? 'MODEL OUTPUT: WORKING' : 'MODEL OUTPUT: CHANGED';
     scoreNode.textContent = `${Math.round(score * 100)}`;
-    $('#model-confidence').textContent = `${Math.round(score * 100)}/100`;
     $('#trust-model-claim').textContent = `CURRENT MODEL PREDICTION: ${score >= .5 ? 'WORKING' : 'CHANGED'} · ${Math.round(score * 100)}/100`;
   } else {
     label.textContent = 'MODEL NOT TRAINED';
     scoreNode.textContent = '—';
-    $('#model-confidence').textContent = '—';
     $('#trust-model-claim').textContent = 'IF THE MODEL GIVES A HIGH SCORE, IS THAT ENOUGH EVIDENCE?';
   }
   renderRetrainingState();
@@ -745,7 +798,7 @@ function drawNetwork(hidden) {
   input.forEach(a => middle.forEach(b => { html += `<line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" />`; }));
   middle.forEach(a => output.forEach(b => { html += `<line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" />`; }));
   [...input, ...middle, ...output].forEach(node => { html += `<circle cx="${node.x}" cy="${node.y}" r="7" />`; });
-  html += '<text x="45" y="150" text-anchor="middle">TWO READINGS</text><text x="210" y="150" text-anchor="middle">HIDDEN NEURONS</text><text x="375" y="150" text-anchor="middle">MODEL SCORE</text>';
+  html += '<text x="45" y="150" text-anchor="middle">TWO INPUT SCORES</text><text x="210" y="150" text-anchor="middle">HIDDEN UNITS</text><text x="375" y="150" text-anchor="middle">PREDICTED LABEL</text>';
   svg.innerHTML = html;
 }
 
@@ -912,6 +965,7 @@ function runAction(action) {
   if (action === 'reset-model') resetModel();
   if (action === 'contaminate-model' && !state.samples.some(sample => sample.source === 'radiation') && currentModel) {
     preRetrainScore = forwardNetwork(currentModel, [.86, .78]).out;
+    pendingHiddenUnits = validArchitecture(currentModel.hidden);
     retrainSummary = 'Adding four samples that a second test verified as changed…';
     pendingTraining = true;
     renderRetrainingState();
@@ -942,6 +996,8 @@ function resetLocalState() {
   currentModel = null;
   trainingActive = false;
   pendingTraining = false;
+  manualArchitecture = null;
+  pendingHiddenUnits = null;
   preRetrainScore = null;
   retrainSummary = '';
   missionStartedAt = null;

@@ -139,7 +139,7 @@
           <div class="kicker"><span>DNA CHECK COMPLETE</span><em>NEXT: STUDENT 02</em></div>
           <div class="equation"><span>1</span><i>× 2<sup>30</sup></i><strong>1,073,741,824</strong></div>
           <h2>The target DNA is present.<br>Is the circuit <mark>active?</mark></h2>
-          <p>PCR detected the selected DNA section. It cannot explain the low reporter glow, so we now measure the light.</p>
+          <p>PCR found the selected DNA section, but it cannot show whether the reporter gene is active. Next, a chip sensor measures the green light, and the AI compares that score with the PCR result.</p>
         </div>
       </section>
 
@@ -179,36 +179,47 @@
       <section class="scene act-nano" data-scene="10">
         <div class="kicker"><span>MEASURING THE GLOW</span><em>FROM LIGHT TO DATA</em></div>
         <h2>The sensor converts<br><mark>light into data.</mark></h2>
-        <p class="subhead">UV light was used to make the chip. The finished sensor measures the yeast’s green reporter light and converts it into a number.</p>
+        <p class="subhead">The sensor—not the AI—measures the yeast’s green reporter light. It records the light as a green-light score.</p>
         <div class="pipeline">
           <article><span>01</span><div class="pipe-symbol photon-symbol"></div><b>LIGHT</b><p>The sample emits green light</p></article><i></i>
           <article><span>02</span><div class="pipe-symbol gate-symbol"></div><b>SENSOR</b><p>Light becomes an electrical signal</p></article><i></i>
-          <article><span>03</span><div class="pipe-symbol matrix-symbol">×</div><b>DIGITAL READING</b><p>The light level is recorded</p></article><i></i>
-          <article><span>04</span><div class="pipe-symbol output-symbol">?</div><b>MODEL RESULT</b><p>Compared with the DNA reading</p></article>
+          <article><span>03</span><div class="pipe-symbol matrix-symbol">×</div><b>GREEN-LIGHT SCORE</b><p>The measured light level is recorded</p></article><i></i>
+          <article><span>04</span><div class="pipe-symbol output-symbol">?</div><b>MODEL PREDICTION</b><p>Uses the light and DNA scores</p></article>
         </div>
-        <div class="number-ribbon"><strong>BILLIONS</strong><span>of transistors can fit on a modern chip</span></div>
+        <div class="number-ribbon"><strong>2 INPUTS</strong><span>DNA-match score from PCR + green-light score from the sensor</span></div>
       </section>
 
       <section class="scene act-ai" data-scene="11">
         <div class="ai-lab-layout">
           <div>
             <div class="kicker"><span>AI STEP 1 / LABELLED SAMPLES</span><em>YOUR LABELS PROVIDE DATA</em></div>
-            <h2>The model trains on<br><mark>labelled samples.</mark></h2>
-            <p class="subhead">Each dot is one sample. Its position shows the two measurements, and its colour shows the known label.</p>
-            <div class="legend"><span><i class="working-dot"></i>CIRCUIT WORKING</span><span><i class="changed-dot"></i>CIRCUIT CHANGED</span><b id="dataset-count">0 TRAINING SAMPLES</b></div>
-            <div class="architecture-vote glass"><small>LIVE PHONE RESULTS · HOW MANY HIDDEN UNITS?</small><div><span>2 / simple <b id="arch-two">0</b></span><span>4 / medium <b id="arch-four">0</b></span><span>8 / flexible <b id="arch-eight">0</b></span></div><strong id="architecture-choice">WAITING FOR VOTES</strong></div>
+            <h2>The model predicts:<br><mark>WORKING or CHANGED.</mark></h2>
+            <p class="subhead">The chart only plots measurements already taken. Each dot’s colour is the known answer used for training.</p>
+            <div class="model-purpose" aria-label="AI training inputs and target">
+              <div><small>INPUT X · PCR</small><b>DNA-match score</b></div>
+              <div><small>INPUT Y · SENSOR</small><b>Green-light score</b></div>
+              <div><small>TRAINING TARGET</small><b>Known label: working or changed</b></div>
+            </div>
+            <div class="legend"><span>KNOWN LABEL:</span><span><i class="working-dot"></i>CIRCUIT WORKING</span><span><i class="changed-dot"></i>CIRCUIT CHANGED</span><b id="dataset-count">0 TRAINING SAMPLES</b></div>
+            <div class="architecture-vote glass">
+              <small>LIVE PHONE RESULTS · HOW MANY HIDDEN UNITS?</small>
+              <div class="architecture-results"><span>2 / simple <b id="arch-two">0</b></span><span>4 / medium <b id="arch-four">0</b></span><span>8 / flexible <b id="arch-eight">0</b></span></div>
+              <strong id="architecture-choice" role="status" aria-live="polite">4 HIDDEN UNITS · DEFAULT</strong>
+              <div class="architecture-controls" role="group" aria-label="Presenter hidden-unit setting"><span>PRESENTER SETTING</span><button type="button" data-hidden-units="audience" aria-pressed="true">FOLLOW VOTE</button><button type="button" data-hidden-units="2" aria-pressed="false">USE 2</button><button type="button" data-hidden-units="4" aria-pressed="false">USE 4</button><button type="button" data-hidden-units="8" aria-pressed="false">USE 8</button></div>
+              <p id="architecture-source">The audience’s leading choice becomes the starting setting. The presenter can change it before training.</p>
+            </div>
           </div>
-          <div class="plot-shell"><canvas class="ai-canvas" id="dataset-canvas" width="560" height="440"></canvas><span class="axis-label y">REPORTER LIGHT ↑</span><span class="axis-label x">PCR TARGET MATCH →</span></div>
+          <div class="plot-shell"><canvas class="ai-canvas" id="dataset-canvas" width="560" height="440"></canvas><span class="axis-label y">GREEN-LIGHT SCORE (SENSOR) · 0–100 ↑</span><span class="axis-label x">DNA-MATCH SCORE (PCR) · 0–100 →</span></div>
         </div>
       </section>
 
       <section class="scene act-ai" data-scene="12">
         <div class="training-layout">
-          <div class="plot-shell training-plot"><canvas class="ai-canvas" id="training-canvas" width="560" height="440"></canvas><span class="axis-label y">REPORTER LIGHT ↑</span><span class="axis-label x">PCR TARGET MATCH →</span></div>
+          <div class="plot-shell training-plot"><canvas class="ai-canvas" id="training-canvas" width="560" height="440"></canvas><span class="plot-output-key"><b>BACKGROUND = MODEL OUTPUT</b><i class="working-dot"></i>WORKING <i class="changed-dot"></i>CHANGED</span><span class="axis-label y">GREEN-LIGHT SCORE (SENSOR) · 0–100 ↑</span><span class="axis-label x">DNA-MATCH SCORE (PCR) · 0–100 →</span></div>
           <div>
             <div class="kicker"><span>AI STEP 2 / TRAIN THE MODEL</span><em>LIVE NEURAL NETWORK</em></div>
-            <h2>Train the model to<br><mark>classify the samples.</mark></h2>
-            <p class="subhead">In each round, the model predicts a label, checks it against the known label and adjusts. The coloured map shows its current classifications.</p>
+            <h2>The model learns from<br><mark>the known labels.</mark></h2>
+            <p class="subhead">For each sample, it uses the DNA-match and green-light scores to predict WORKING or CHANGED, compares that prediction with the known label, then adjusts its weights.</p>
             <div class="network-viz glass"><svg id="network-svg" viewBox="0 0 420 160" aria-label="Neural network architecture"></svg></div>
             <div class="training-metrics"><div><small>TRAINING ROUND</small><strong id="epoch-value">000</strong><span>/ 500 epochs</span></div><div><small>ERROR</small><strong id="loss-value">—</strong><span>loss: lower is better</span></div><div><small>TRAINING SAMPLES</small><strong id="accuracy-value">—</strong><span>training accuracy</span></div><div><small>TEST SAMPLES</small><strong id="test-accuracy-value">—</strong><span>test accuracy</span></div></div>
             <div class="training-track" role="progressbar" aria-label="AI training rounds" aria-valuemin="0" aria-valuemax="500" aria-valuenow="0"><i id="training-progress"></i></div>
@@ -222,14 +233,14 @@
           <div>
             <div class="kicker"><span>AI STEP 3 / TEST A NEW SAMPLE</span><em>USE YOUR PHONE</em></div>
             <h2>Test the model with<br><mark>a new sample.</mark></h2>
-            <p class="subhead">Set two measurements on your phone. The model will classify the new sample using what it learned from the training data.</p>
-            <div class="challenge-stats"><div><strong id="challenge-count">0</strong><span>audience tests</span></div><div><strong id="model-confidence">—</strong><span>HELIX–7 model score</span></div></div>
-            <div class="helix-result glass"><small>UNKNOWN HELIX–7 SAMPLE / 86 PCR MATCH · 78 REPORTER LIGHT</small><div><b id="helix-prediction">MODEL NOT TRAINED</b><span id="helix-score">—</span></div></div>
-            <div class="legend challenge-legend"><span><i class="checked-dot"></i>YELLOW RING = LABEL VERIFIED BY A SECOND TEST</span></div>
+            <p class="subhead">Set a DNA-match score and a green-light score on your phone. The model will predict WORKING or CHANGED.</p>
+            <div class="challenge-stats"><div><strong id="challenge-count">0</strong><span>audience tests</span></div></div>
+            <div class="helix-result glass"><small>INPUTS · DNA MATCH: 86 · GREEN LIGHT: 78</small><div><b id="helix-prediction">MODEL NOT TRAINED</b><span id="helix-score">—</span></div><em>WORKING SCORE · 0 = CHANGED · 100 = WORKING</em></div>
+            <div class="legend challenge-legend"><span><i class="checked-dot"></i>YELLOW RING = LABEL VERIFIED BY A SECOND TEST</span><span>★ HELIX–7 = NEW SAMPLE</span></div>
             <button class="soft-button" id="contaminate-button" data-action="contaminate-model" type="button">Add 4 verified samples and retrain</button>
             <p class="interaction-feedback" id="retraining-status" role="status" aria-live="polite">A second test identified four changed samples that were missing from the original training data.</p>
           </div>
-          <div class="plot-shell"><canvas class="ai-canvas" id="challenge-canvas" width="560" height="440"></canvas><span class="axis-label y">REPORTER LIGHT ↑</span><span class="axis-label x">PCR TARGET MATCH →</span></div>
+          <div class="plot-shell"><canvas class="ai-canvas" id="challenge-canvas" width="560" height="440"></canvas><span class="plot-output-key"><b>BACKGROUND = MODEL OUTPUT</b><i class="working-dot"></i>WORKING <i class="changed-dot"></i>CHANGED</span><span class="axis-label y">GREEN-LIGHT SCORE (SENSOR) · 0–100 ↑</span><span class="axis-label x">DNA-MATCH SCORE (PCR) · 0–100 →</span></div>
         </div>
       </section>
 
@@ -238,7 +249,7 @@
           <div>
             <div class="kicker"><span>CHECK THE AI RESULT</span><em>VERIFY WITH OTHER TESTS</em></div>
             <h2>A high model score<br>is <mark>not proof.</mark></h2>
-            <p class="subhead">The model learned from the labels it received. Missing or incorrect examples can produce unreliable results.</p>
+            <p class="subhead">The model learned from the labels it received, so its result needs independent checks. We also need to test the laboratory’s possible orbits before making the final decision.</p>
             <div class="confusion-card glass"><div><span></span><b>PREDICTED: WORKING</b><b>PREDICTED: CHANGED</b></div><div><b>LABEL: WORKING</b><strong>CORRECT</strong><em>FALSE ALARM</em></div><div><b>LABEL: CHANGED</b><em>MISSED PROBLEM</em><strong>CORRECT</strong></div></div>
           </div>
           <div class="decision-panel glass">
@@ -253,9 +264,9 @@
       <section class="scene act-astro" data-scene="15">
         <div class="orbit-concept-layout">
           <div>
-            <div class="kicker"><span>ACT III / ASTROPHYSICS</span><em>TRY ALL THREE SPEEDS</em></div>
+            <div class="kicker"><span>ACT III / ASTROPHYSICS</span><em>BIOLOGY CHECKED · NOW TEST THE ORBIT</em></div>
             <h2>An orbit needs the right<br><mark>sideways speed.</mark></h2>
-            <p class="subhead">Gravity accelerates the spacecraft towards Earth. With the right sideways speed, it travels around Earth instead of entering the atmosphere.</p>
+            <p class="subhead">The biological evidence tells us about the sample. Orbital physics tells us where the laboratory can travel. We need both for the final decision.</p>
             <div class="speed-presets"><button data-orbit-speed="97" type="button" aria-pressed="false">TOO SLOW</button><button data-orbit-speed="100" type="button" class="selected" aria-pressed="true">CIRCULAR ORBIT</button><button data-orbit-speed="142" type="button" aria-pressed="false">ESCAPE</button></div>
             <div class="orbit-equation" id="orbit-concept-result" role="status" aria-live="polite">CIRCULAR ORBIT: the spacecraft remains at a steady altitude.</div>
           </div>
