@@ -26,6 +26,7 @@ const state = {
   runId: 1,
   scene: 0,
   participants: 0,
+  contributorCount: 0,
   samples: [],
   challenges: [],
   polls: emptyPolls(),
@@ -35,10 +36,20 @@ const state = {
   reveals: {},
   training: { epoch: 0, loss: null, accuracy: null, testAccuracy: null, active: false },
   model: null,
-  demo: false
+  demo: false,
+  demoComplete: false
 };
 const audienceConnections = new Map();
 const voteLedger = Object.fromEntries(Object.keys(emptyPolls()).map(key => [key, new Set()]));
+const contributors = new Set();
+const pcrLedger = new Map();
+const photonLedger = new Map();
+const pollScenes = { microscope: 4, primer: 6, architecture: 11, trust: 14, return: 17 };
+
+function markContributor(clientId) {
+  contributors.add(clientId);
+  state.contributorCount = contributors.size;
+}
 
 function localAddress() {
   const interfaces = os.networkInterfaces();
@@ -116,8 +127,8 @@ io.on('connection', socket => {
   socket.data.role = role;
   socket.data.clientId = clientId;
   socket.data.votes = {};
-  socket.data.pcrTaps = 0;
-  socket.data.photons = 0;
+  socket.data.pcrTaps = pcrLedger.get(clientId) || 0;
+  socket.data.photons = photonLedger.get(clientId) || 0;
 
   if (role === 'audience') {
     audienceConnections.set(clientId, (audienceConnections.get(clientId) || 0) + 1);
@@ -137,15 +148,16 @@ io.on('connection', socket => {
   });
 
   socket.on('sample', payload => {
-    if (role !== 'audience' || state.samples.some(sample => sample.id === clientId)) return;
+    if (role !== 'audience' || state.scene > 11 || state.samples.some(sample => sample.id === clientId)) return;
     const sample = {
       id: clientId,
       water: clamp(payload?.water),
       carbon: clamp(payload?.carbon),
-      label: payload?.label === 'life' ? 1 : 0,
+      label: payload?.label === 'working' ? 1 : 0,
       source: 'audience'
     };
     state.samples.push(sample);
+    markContributor(clientId);
     emitState();
   });
 
@@ -153,24 +165,42 @@ io.on('connection', socket => {
     if (role !== 'audience') return;
     const poll = payload?.poll;
     const choice = payload?.choice;
-    if (!state.polls[poll] || !(choice in state.polls[poll]) || voteLedger[poll].has(clientId)) return;
+    if (!state.polls[poll] || pollScenes[poll] !== state.scene || !(choice in state.polls[poll]) || voteLedger[poll].has(clientId)) return;
     socket.data.votes[poll] = choice;
     voteLedger[poll].add(clientId);
     state.polls[poll][choice] += 1;
+    markContributor(clientId);
     emitState();
   });
 
   socket.on('pcr-tap', () => {
-    if (role !== 'audience' || socket.data.pcrTaps >= 24) return;
+    if (
+      role !== 'audience' ||
+      state.scene !== 5 ||
+      state.reveals.pcrComplete ||
+      state.pcrTaps >= 120 ||
+      socket.data.pcrTaps >= 24
+    ) return;
     socket.data.pcrTaps += 1;
+    pcrLedger.set(clientId, socket.data.pcrTaps);
     state.pcrTaps += 1;
+    if (state.pcrTaps >= 120) state.reveals.pcrComplete = true;
+    markContributor(clientId);
     emitState();
   });
 
   socket.on('photon', payload => {
-    if (role !== 'audience' || socket.data.photons >= 24) return;
+    if (
+      role !== 'audience' ||
+      state.scene !== 9 ||
+      state.reveals.chip ||
+      state.photonCount >= 48 ||
+      socket.data.photons >= 24
+    ) return;
     socket.data.photons += 1;
+    photonLedger.set(clientId, socket.data.photons);
     state.photonCount += 1;
+    markContributor(clientId);
     io.emit('photon', {
       x: clamp(payload?.x),
       color: ['cyan', 'violet', 'gold'][state.photonCount % 3],
@@ -180,16 +210,17 @@ io.on('connection', socket => {
   });
 
   socket.on('burn', payload => {
-    if (role !== 'audience') return;
-    const value = Math.max(50, Math.min(150, Number(payload?.value) || 100));
+    if (role !== 'audience' || state.scene !== 16) return;
+    const value = Math.max(96, Math.min(145, Number(payload?.value) || 100));
     const previous = state.burns.find(item => item.id === clientId);
     if (previous) previous.value = value;
     else state.burns.push({ id: clientId, value });
+    markContributor(clientId);
     emitState();
   });
 
   socket.on('challenge', payload => {
-    if (role !== 'audience' || !state.model) return;
+    if (role !== 'audience' || state.scene !== 13 || !state.model) return;
     const challenge = {
       id: clientId,
       water: clamp(payload?.water),
@@ -199,6 +230,7 @@ io.on('connection', socket => {
     const previous = state.challenges.find(item => item.id === clientId);
     if (previous) Object.assign(previous, challenge);
     else state.challenges.push(challenge);
+    markContributor(clientId);
     emitState();
   });
 
@@ -229,9 +261,10 @@ io.on('connection', socket => {
         state.challenges = [];
         break;
       case 'demo':
-        seedDemoData();
+        seedDemoData(command.scope);
         break;
       case 'contaminate':
+        if (state.samples.length < 2) seedDemoData('samples');
         injectRadiationControls();
         state.model = null;
         state.training = { epoch: 0, loss: null, accuracy: null, testAccuracy: null, active: false };
@@ -254,29 +287,41 @@ function validModel(model) {
   return Boolean(model && Array.isArray(model.layers) && model.layers.length && model.layers.length <= 3);
 }
 
-function seedDemoData() {
-  if (state.samples.filter(sample => sample.source === 'demo').length) return;
+function seedDemoData(scope = 'all') {
   const demo = [
     [18, 22, 0], [26, 31, 0], [34, 18, 0], [41, 29, 0], [52, 22, 0],
     [20, 62, 0], [33, 73, 0], [46, 68, 0], [58, 79, 0],
-    [59, 52, 1], [64, 64, 1], [70, 58, 1], [73, 72, 1], [78, 67, 1],
+    [61, 62, 1], [64, 64, 1], [70, 61, 1], [73, 72, 1], [78, 67, 1],
     [82, 81, 1], [88, 72, 1], [67, 86, 1], [91, 89, 1],
     [83, 31, 0], [92, 44, 0], [72, 24, 0]
   ];
-  demo.forEach((row, index) => state.samples.push({
-    id: `demo-${index}`,
-    water: row[0],
-    carbon: row[1],
-    label: row[2],
-    source: 'demo'
-  }));
-  state.polls.microscope = { yes: 7, no: 13 };
-  state.polls.primer = { gacac: 14, ctgtg: 3, gtgtg: 2, random: 1 };
-  state.polls.architecture = { two: 3, four: 9, eight: 8 };
-  state.polls.trust = { deploy: 5, verify: 15 };
-  state.polls.return = { earth: 4, orbit: 10, remote: 6 };
-  state.burns = [72, 84, 91, 96, 99, 100, 103, 106, 112, 121, 128].map((value, index) => ({ id: `demo-${index}`, value }));
+  if (!state.samples.some(sample => sample.source === 'demo')) {
+    demo.forEach((row, index) => state.samples.push({
+      id: `demo-${index}`,
+      water: row[0],
+      carbon: row[1],
+      label: row[2],
+      source: 'demo'
+    }));
+  }
+  if (scope === 'samples') {
+    state.demo = true;
+    return;
+  }
+  const fillEmptyPoll = (key, values) => {
+    const total = Object.values(state.polls[key]).reduce((sum, value) => sum + value, 0);
+    if (total === 0) state.polls[key] = { ...values };
+  };
+  fillEmptyPoll('microscope', { yes: 7, no: 13 });
+  fillEmptyPoll('primer', { gacac: 14, ctgtg: 3, gtgtg: 2, random: 1 });
+  fillEmptyPoll('architecture', { two: 3, four: 9, eight: 8 });
+  fillEmptyPoll('trust', { deploy: 5, verify: 15 });
+  fillEmptyPoll('return', { earth: 4, orbit: 10, remote: 6 });
+  if (!state.burns.length) {
+    state.burns = [97, 98, 99, 99, 100, 100, 101, 102, 104, 108, 115].map((value, index) => ({ id: `demo-${index}`, value }));
+  }
   state.demo = true;
+  state.demoComplete = true;
 }
 
 function injectRadiationControls() {
@@ -295,6 +340,7 @@ function injectRadiationControls() {
 function resetMission() {
   state.runId += 1;
   state.scene = 0;
+  state.contributorCount = 0;
   state.samples = [];
   state.challenges = [];
   state.polls = emptyPolls();
@@ -305,6 +351,10 @@ function resetMission() {
   state.training = { epoch: 0, loss: null, accuracy: null, testAccuracy: null, active: false };
   state.model = null;
   state.demo = false;
+  state.demoComplete = false;
+  contributors.clear();
+  pcrLedger.clear();
+  photonLedger.clear();
   Object.values(voteLedger).forEach(ledger => ledger.clear());
   for (const connected of io.sockets.sockets.values()) {
     connected.data.votes = {};

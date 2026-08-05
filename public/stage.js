@@ -34,12 +34,15 @@ function showHostAccessPanel() {
   const form = panel.querySelector('form');
   const input = panel.querySelector('input');
   const errorLabel = panel.querySelector('.host-access-error');
+  const submitButton = panel.querySelector('button[type="submit"]');
   input.focus();
   form.addEventListener('submit', event => {
     event.preventDefault();
     const token = input.value.trim();
     if (!token) return;
     errorLabel.textContent = 'Checking code…';
+    submitButton.disabled = true;
+    submitButton.textContent = 'Checking…';
     socket.auth.token = token;
     socket.connect();
     const handleConnect = () => {
@@ -51,6 +54,8 @@ function showHostAccessPanel() {
       socket.off('connect', handleConnect);
       if (nextError?.data?.code === 'HOST_AUTH_REQUIRED') {
         errorLabel.textContent = 'That code was not accepted. Check the HOST_TOKEN in Render.';
+        submitButton.disabled = false;
+        submitButton.textContent = 'Unlock controls';
         input.select();
       }
     };
@@ -60,42 +65,43 @@ function showHostAccessPanel() {
 }
 
 const slides = [
-  { act: 'PRE-SHOW', rail: 'sample', presenter: ['00', 'MISSION CONTROL'], time: 'Before start', title: 'Recruit the room', note: 'Leave this screen up as people arrive. Ask everyone to scan and label one synthetic control. If phones cannot connect, press D or use the fallback button.' },
-  { act: 'ANOMALY', rail: 'sample', presenter: ['01', 'STUDENT ONE'], time: '0:00–0:30', title: 'Cold open', note: 'Pause for the alert. Say: “At 08:17, a laboratory the size of a shoebox gave two answers to one question. Its DNA test looked normal. Its light signal did not.”' },
-  { act: 'MISSION MAP', rail: 'sample', presenter: ['ALL', 'THREE-STUDENT TEAM'], time: '0:30–1:05', title: 'Establish the three leads', note: 'Each student takes one step forward when their role appears. The promise: this is not four mini-talks; each system needs the result of the one before it.' },
-  { act: 'GENETIC ENGINEERING', rail: 'sample', presenter: ['01', 'MOLECULAR SYSTEMS'], time: '1:05–1:50', title: 'What we engineered', note: 'Explain the gene circuit as an instruction plus a status light. This is a fictional, sealed yeast experiment producing a model protein—not a human medicine.' },
-  { act: 'GENETICS', rail: 'amplify', presenter: ['01', 'MOLECULAR SYSTEMS'], time: '1:50–2:30', title: 'The visibility problem', note: 'Take the phone poll before revealing. Use the video’s hook: seeing stringy DNA is not reading its code—like seeing a whole library without reading one sentence.' },
-  { act: 'GENETICS', rail: 'amplify', presenter: ['01', 'MOLECULAR SYSTEMS'], time: '2:30–3:30', title: 'PCR amplification', note: 'Demonstrate exactly one full cycle: 95°C denature, about 55–65°C anneal, 72°C extend. Then let the crowd power the remaining cycles. 2³⁰ is an ideal maximum; real PCR eventually plateaus.' },
-  { act: 'GENETICS', rail: 'amplify', presenter: ['01', 'MOLECULAR SYSTEMS'], time: '3:30–4:20', title: 'Primer puzzle', note: 'A–T and C–G. The complement of CTGTG is GACAC. Primers define the paragraph that PCR copies; PCR does not verify the whole genome.' },
-  { act: 'HANDOFF', rail: 'amplify', presenter: ['01→02', 'MOLECULAR → NANO'], time: '4:20–4:45', title: 'Evidence, not function', note: 'Handoff line: “The page is in the book. I still cannot tell whether the cell read it. Turn biology into a signal.”' },
-  { act: 'NANOTECH', rail: 'sense', presenter: ['02', 'NANO + INTELLIGENCE'], time: '4:45–5:25', title: 'Dive to the nanoscale', note: 'Move the scale slider. A nanometre is one-billionth of a metre. A fingernail grows roughly a nanometre each second—a memorable scale anchor.' },
-  { act: 'NANOTECH', rail: 'sense', presenter: ['02', 'NANO + INTELLIGENCE'], time: '5:25–6:20', title: 'Photolithography', note: 'Invite everyone to fire photons. Clarify: light changes photoresist; developing, etching and deposition turn that transferred pattern into structures. Shorter wavelength helps resolution, but optics and processing matter too.' },
-  { act: 'NANO → AI', rail: 'sense', presenter: ['02', 'NANO + INTELLIGENCE'], time: '6:20–6:55', title: 'Photon to number', note: 'Trace the causal chain slowly: light pattern → transistor → matrix multiplication → prediction. The chip counts; it does not understand.' },
-  { act: 'ARTIFICIAL INTELLIGENCE', rail: 'learn', presenter: ['02', 'NANO + INTELLIGENCE'], time: '6:55–7:40', title: 'Build the dataset', note: 'Every audience label becomes a dot. Say explicitly: supervised learning needs examples and labels. Human judgement enters before the machine learns anything.' },
-  { act: 'ARTIFICIAL INTELLIGENCE', rail: 'learn', presenter: ['02', 'NANO + INTELLIGENCE'], time: '7:40–8:45', title: 'Train in public', note: 'Start training and narrate: random weights → prediction → error → weight adjustment. One pass over all points is an epoch. Loss should fall as the real heatmap changes.' },
-  { act: 'AI AUDIT', rail: 'learn', presenter: ['02', 'NANO + INTELLIGENCE'], time: '8:45–9:35', title: 'Challenge and break the model', note: 'Let phones test the boundary. Then inject radiation-damaged controls and retrain. Memorable line: “The satellite did not change. The dataset did.” The output is a model score, not proof or a calibrated probability.' },
-  { act: 'AI GOVERNANCE', rail: 'learn', presenter: ['02', 'NANO + INTELLIGENCE'], time: '9:35–10:20', title: 'Evidence has limits', note: 'Ask for the vote, then reveal protocol. Strong science tries to disprove itself: independent controls, contamination checks, sequencing and repetition.' },
-  { act: 'ASTROPHYSICS', rail: 'fly', presenter: ['03', 'FLIGHT DYNAMICS'], time: '10:20–11:10', title: 'How orbit works', note: 'Do not say there is no gravity. At low orbit, gravity is still strong. Crew and spacecraft feel weightless because they fall together. Click slow, orbit and escape.' },
-  { act: 'ASTROPHYSICS', rail: 'fly', presenter: ['03', 'FLIGHT DYNAMICS'], time: '11:10–12:30', title: 'Collective orbital burn', note: 'The room chooses sideways speed; the median drives a real two-body simulation. Let the first attempt fail if it fails, then invite one correction. There is no universal “burn is correct”—the outcome depends on speed and direction.' },
-  { act: 'RESPONSIBLE SCIENCE', rail: 'decide', presenter: ['03', 'FLIGHT DYNAMICS'], time: '12:30–13:30', title: 'The human decision', note: 'No option is cost-free. Ask one person to defend the leading option and one to defend the runner-up. Science constrains choices; society still decides acceptable risk.' },
-  { act: 'MISSION COMPLETE', rail: 'decide', presenter: ['ALL', 'THREE-STUDENT TEAM'], time: '13:30–15:00', title: 'The handoff is the future', note: 'Each student owns one closing line. Finish together: “The future is not one science. It is what happens between them.” Hold the final screen for applause.' }
+  { act: 'PRE-SHOW', rail: 'sample', presenter: ['00', 'MISSION CONTROL'], time: 'Before start', title: 'Get the room connected', note: 'Ask people to scan the code. The starter-batch answer key is on each phone. If the Wi-Fi fails, click “Load demo audience”.' },
+  { act: 'ANOMALY', rail: 'sample', presenter: ['01', 'STUDENT ONE'], time: '0:00–0:30', title: 'Start with the mystery', note: 'Pause, then say: “The DNA we added is still there, but its green status light has gone dark. We have fifteen minutes to work out what that means.”' },
+  { act: 'MISSION MAP', rail: 'sample', presenter: ['ALL', 'THREE-STUDENT TEAM'], time: '0:30–1:05', title: 'Introduce the three jobs', note: 'Point to each role. Say: “I check the DNA. Student Two measures the glow and trains the AI. Student Three corrects the orbit.”' },
+  { act: 'GENETIC ENGINEERING', rail: 'sample', presenter: ['01', 'GENETICS LEAD'], time: '1:05–1:50', title: 'Explain the gene circuit', note: 'Say: “We gave sealed yeast two added instructions: make a test protein, and glow green when the circuit is working.” This is a made-up classroom experiment, not medicine.' },
+  { act: 'GENETICS', rail: 'amplify', presenter: ['01', 'GENETICS LEAD'], time: '1:50–2:30', title: 'Ask before revealing', note: 'Wait for the phone vote. Then reveal: a classroom microscope can show DNA material, but reading A, T, C and G needs other tests.' },
+  { act: 'GENETICS', rail: 'amplify', presenter: ['01', 'GENETICS LEAD'], time: '2:30–3:30', title: 'Show one PCR cycle', note: 'Click unzip, primers stick, copy. Say: “An ideal cycle can roughly double our chosen DNA section. The phone taps only control this animation.” Then jump to cycle 30.' },
+  { act: 'GENETICS', rail: 'amplify', presenter: ['01', 'GENETICS LEAD'], time: '3:30–4:20', title: 'Match the DNA bases', note: 'Reveal GACAC after the vote. This is a short complementary-strand puzzle. Real PCR uses two much longer primers, one on each side of the target.' },
+  { act: 'HANDOFF', rail: 'amplify', presenter: ['01→02', 'GENETICS → CHIP'], time: '4:20–4:45', title: 'Pass on the clue', note: 'Say: “PCR found the DNA section. That still does not tell us why the green light stopped. Now we need to measure the glow.”' },
+  { act: 'NANOTECH', rail: 'sense', presenter: ['02', 'CHIP + AI LEAD'], time: '4:45–5:25', title: 'Make a nanometre feel real', note: 'Move the slider from metres to nanometres. Say: “A fingernail grows about one nanometre each second.”' },
+  { act: 'NANOTECH', rail: 'sense', presenter: ['02', 'CHIP + AI LEAD'], time: '5:25–6:20', title: 'Print a chip pattern with light', note: 'Ask the room to tap. Explain that their taps are symbolic. Real UV changes a light-sensitive coating; later developing and etching turn the pattern into chip structures.' },
+  { act: 'NANO → AI', rail: 'sense', presenter: ['02', 'CHIP + AI LEAD'], time: '6:20–6:55', title: 'Follow the measurement', note: 'Point across the row: “UV light helped build the chip. A different light—the yeast’s green glow—is measured by a sensor and turned into a number.”' },
+  { act: 'ARTIFICIAL INTELLIGENCE', rail: 'learn', presenter: ['02', 'CHIP + AI LEAD'], time: '6:55–7:40', title: 'Show what the dots mean', note: 'Say: “Each dot has two readings and a known answer. That is what supervised learning needs: examples with answers.” Explain that more hidden units can make a bendier dividing line.' },
+  { act: 'ARTIFICIAL INTELLIGENCE', rail: 'learn', presenter: ['02', 'CHIP + AI LEAD'], time: '7:40–8:45', title: 'Train the model', note: 'Click Start training. One epoch is one practice round through the examples. Loss means how wrong the guesses are. Seen dots are training; new dots are the separate test.' },
+  { act: 'AI CHECK', rail: 'learn', presenter: ['02', 'CHIP + AI LEAD'], time: '8:45–9:35', title: 'Test and retrain', note: 'Let phones make a new point. Then add the checked tricky samples. Say: “Another test says these are changed, even though their two readings look normal. New evidence moves the boundary.”' },
+  { act: 'AI CHECK', rail: 'learn', presenter: ['02', 'CHIP + AI LEAD'], time: '9:35–10:20', title: 'Do not confuse a score with proof', note: 'Take the vote, then reveal. A model score is one clue. Scientists repeat the test and check it with another method.' },
+  { act: 'ASTROPHYSICS', rail: 'fly', presenter: ['03', 'SPACEFLIGHT LEAD'], time: '10:20–11:10', title: 'Explain orbit in one sentence', note: 'Say: “Gravity pulls the spacecraft down, while sideways speed keeps making it miss Earth.” At 400 km, gravity is still about 90% as strong as at the surface.' },
+  { act: 'ASTROPHYSICS', rail: 'fly', presenter: ['03', 'SPACEFLIGHT LEAD'], time: '11:10–12:30', title: 'Correct the orbit', note: 'The guidance system needs a correction. Wait for speed choices, then test the room’s middle choice. Below about 0.99× hits Earth; 1.00× circles; 1.42× escapes. Retry if needed.' },
+  { act: 'RESPONSIBLE SCIENCE', rail: 'decide', presenter: ['03', 'SPACEFLIGHT LEAD'], time: '12:30–13:30', title: 'Let the room weigh the risk', note: 'Read the leading choice and one alternative. Say: “Science helps us predict each risk, but people still have to decide which risk is acceptable.”' },
+  { act: 'MISSION COMPLETE', rail: 'decide', presenter: ['ALL', 'THREE STUDENTS'], time: '13:30–15:00', title: 'Close in your own voices', note: 'Student One: genetics checked the DNA. Student Two: the sensor measured light and the AI compared patterns. Student Three: physics tested the path. Together: “These subjects work better together.”' }
 ];
 
 const defaultState = {
-  runId: 0, scene: 0, participants: 0, samples: [], challenges: [],
+  runId: 0, scene: 0, participants: 0, contributorCount: 0, samples: [], challenges: [],
   polls: {
     microscope: { yes: 0, no: 0 }, primer: { gacac: 0, ctgtg: 0, gtgtg: 0, random: 0 },
     architecture: { two: 0, four: 0, eight: 0 }, trust: { deploy: 0, verify: 0 },
     return: { earth: 0, orbit: 0, remote: 0 }
   },
   pcrTaps: 0, photonCount: 0, burns: [], reveals: {},
-  training: { epoch: 0, loss: null, accuracy: null, testAccuracy: null, active: false }, model: null
+  training: { epoch: 0, loss: null, accuracy: null, testAccuracy: null, active: false }, model: null,
+  demo: false, demoComplete: false
 };
 
 const withheldControls = [
   { water: 21, carbon: 25, label: 0 }, { water: 38, carbon: 27, label: 0 },
   { water: 29, carbon: 69, label: 0 }, { water: 49, carbon: 75, label: 0 },
-  { water: 61, carbon: 56, label: 1 }, { water: 69, carbon: 63, label: 1 },
+  { water: 61, carbon: 61, label: 1 }, { water: 69, carbon: 63, label: 1 },
   { water: 77, carbon: 75, label: 1 }, { water: 86, carbon: 85, label: 1 },
   { water: 90, carbon: 36, label: 0 }
 ];
@@ -106,11 +112,18 @@ let localPcrCycle = 0;
 let forcedExposure = false;
 let currentModel = null;
 let trainingTimer = null;
+let pcrDemoTimer = null;
 let trainingActive = false;
 let pendingTraining = false;
 let missionStartedAt = null;
 let orbitAnimating = false;
+let orbitRunToken = 0;
+let activeOrbitSpeed = null;
+let lastOrbitOutcome = null;
+let lastOrbitSpeed = null;
 let notesVisible = false;
+let preRetrainScore = null;
+let retrainSummary = '';
 
 const scenes = [...document.querySelectorAll('.scene')];
 const $ = selector => document.querySelector(selector);
@@ -176,6 +189,8 @@ function applyShowConfig() {
 
 function setupInputs() {
   document.addEventListener('keydown', event => {
+    const target = event.target;
+    if (target?.closest?.('button, a, input, textarea, select, [role="button"], [contenteditable="true"]')) return;
     if (['ArrowRight', 'PageDown'].includes(event.key)) setScene(state.scene + 1);
     if (['ArrowLeft', 'PageUp'].includes(event.key)) setScene(state.scene - 1);
     if (event.key === 'Enter') runPrimaryAction();
@@ -204,13 +219,17 @@ function setupInputs() {
     $('#scale-power').textContent = scaleObjects[index][0];
     $('#scale-object').textContent = scaleObjects[index][1];
     $('#scale-label').textContent = scaleObjects[index][2];
+    event.target.setAttribute('aria-valuetext', `${scaleObjects[index][2]} — ${scaleObjects[index][1].toLowerCase()}`);
     $('#scale-tunnel').classList.toggle('zoomed', index > 5);
     $('#scale-tunnel').style.transform = `scale(${1 + index * .018}) rotate(${index * .6}deg)`;
   });
 
   $$('.speed-presets button').forEach(button => button.addEventListener('click', () => {
-    $$('.speed-presets button').forEach(item => item.classList.toggle('selected', item === button));
-    drawOrbit($('#orbit-demo-canvas'), Number(button.dataset.orbitSpeed) / 100, 1);
+    $$('.speed-presets button').forEach(item => {
+      item.classList.toggle('selected', item === button);
+      item.setAttribute('aria-pressed', String(item === button));
+    });
+    updateOrbitConcept(Number(button.dataset.orbitSpeed) / 100);
   }));
 }
 
@@ -218,13 +237,21 @@ function setScene(index, broadcast = true) {
   const next = Math.max(0, Math.min(scenes.length - 1, Number(index) || 0));
   if (next >= 1 && !missionStartedAt) missionStartedAt = Date.now();
   state.scene = next;
-  scenes.forEach((scene, i) => scene.classList.toggle('active', i === next));
+  scenes.forEach((scene, i) => {
+    const active = i === next;
+    scene.classList.toggle('active', active);
+    scene.inert = !active;
+    scene.setAttribute('aria-hidden', String(!active));
+  });
   updateChrome();
   if (next === 11) drawAI($('#dataset-canvas'), { model: null });
   if (next === 12) drawAI($('#training-canvas'), { model: currentModel, heatmap: true });
   if (next === 13) drawAI($('#challenge-canvas'), { model: currentModel, heatmap: true, challenges: true, mystery: true });
-  if (next === 15) drawOrbit($('#orbit-demo-canvas'), 1, 1);
-  if (next === 16 && !orbitAnimating) drawOrbit($('#mission-orbit-canvas'), medianBurn(), 1);
+  if (next === 15) {
+    const selected = $('.speed-presets button.selected') || $('.speed-presets button[data-orbit-speed="100"]');
+    updateOrbitConcept(Number(selected.dataset.orbitSpeed) / 100);
+  }
+  if (next === 16 && !orbitAnimating) drawOrbit($('#mission-orbit-canvas'), medianBurn(), .01);
   if (broadcast) socket.emit('host', { type: 'scene', value: next });
   flashScene();
 }
@@ -254,14 +281,42 @@ function updateChrome() {
 function renderAll() {
   $('#online-count').textContent = `${state.participants} LINKED`;
   $('#lobby-people').textContent = state.participants;
-  $('#lobby-samples').textContent = state.samples.filter(sample => sample.source === 'audience').length;
-  $('#final-participants').textContent = `${state.participants} SCIENTISTS`;
+  $('#lobby-samples').textContent = state.samples.length;
+  $('#final-participants').textContent = `${state.contributorCount || state.participants} CONTRIBUTORS`;
   renderPolls();
   renderPCR();
   renderPhotolithography();
   renderAIState();
   renderOrbitState();
   renderReveals();
+  renderControlStates();
+}
+
+function setControlState(selector, disabled, label) {
+  const button = $(selector);
+  if (!button) return;
+  button.disabled = Boolean(disabled);
+  if (label) button.textContent = label;
+}
+
+function renderControlStates() {
+  setControlState('#seed-demo', state.demoComplete, state.demoComplete ? 'Demo audience loaded' : 'Load demo audience');
+  setControlState('#reveal-microscope-button', state.reveals.microscope, state.reveals.microscope ? 'Answer shown' : 'Show the answer');
+  setControlState('#reveal-primer-button', state.reveals.primer, state.reveals.primer ? 'Match shown' : 'Show the match');
+  setControlState('#reveal-trust-button', state.reveals.trust, state.reveals.trust ? 'Checks shown' : 'Show what scientists do next');
+  setControlState('#expose-chip-button', forcedExposure || state.reveals.chip, forcedExposure || state.reveals.chip ? 'Later steps shown' : 'Show the later factory steps');
+
+  const cycle = Math.max(localPcrCycle, crowdPcrCycle());
+  const pcrComplete = cycle >= 30 || state.reveals.pcrComplete;
+  setControlState('#pcr-cycle-button', pcrComplete || Boolean(pcrDemoTimer), pcrComplete ? 'Cycle 30 reached' : pcrDemoTimer ? 'Running one cycle…' : 'Show 1 full cycle');
+  setControlState('#pcr-30-button', pcrComplete, pcrComplete ? 'Cycle 30 reached' : 'Jump to cycle 30');
+  $$('.phase-row button').forEach(button => { button.disabled = Boolean(pcrDemoTimer); });
+
+  const hasModel = Boolean(currentModel || state.model);
+  setControlState('#train-model-button', trainingActive || pendingTraining, pendingTraining ? 'Loading practice samples…' : trainingActive ? 'Training…' : hasModel ? 'Train again' : 'Start training');
+  setControlState('#reset-model-button', !trainingActive && !pendingTraining && !hasModel && !state.training.epoch, pendingTraining ? 'Cancel' : hasModel || trainingActive ? 'Start over' : 'Already reset');
+  renderRetrainingState();
+  setControlState('#simulate-orbit-button', orbitAnimating, orbitAnimating ? 'Testing path…' : lastOrbitOutcome ? 'Test again' : 'Test our speed');
 }
 
 function renderPolls() {
@@ -275,8 +330,11 @@ function renderPolls() {
   $('#arch-two').textContent = arch.two;
   $('#arch-four').textContent = arch.four;
   $('#arch-eight').textContent = arch.eight;
-  const hidden = chosenArchitecture();
-  $('#architecture-choice').textContent = `${hidden}-NEURON HIDDEN LAYER SELECTED`;
+  const archVotes = arch.two + arch.four + arch.eight;
+  const hidden = currentModel?.hidden || chosenArchitecture();
+  $('#architecture-choice').textContent = archVotes
+    ? `${hidden} HIDDEN NEURONS ${currentModel ? 'USED BY THIS MODEL' : 'CHOSEN'}`
+    : 'WAITING FOR VOTES';
   $$('.architecture-vote span').forEach((node, index) => node.classList.toggle('winner', [2, 4, 8][index] === hidden));
   drawNetwork(hidden);
   setPairBars('trust', state.polls.trust.deploy, state.polls.trust.verify, 'deploy', 'verify');
@@ -299,17 +357,23 @@ function setPairBars(prefix, a, b, aKey, bKey) {
 }
 
 function renderReveals() {
-  $('#microscope-reveal').classList.toggle('shown', Boolean(state.reveals.microscope));
-  $('#primer-reveal').classList.toggle('shown', Boolean(state.reveals.primer));
+  const microscopeShown = Boolean(state.reveals.microscope);
+  const primerShown = Boolean(state.reveals.primer);
+  const trustShown = Boolean(state.reveals.trust);
+  $('#microscope-reveal').classList.toggle('shown', microscopeShown);
+  $('#microscope-reveal').setAttribute('aria-hidden', String(!microscopeShown));
+  $('#primer-reveal').classList.toggle('shown', primerShown);
+  $('#primer-reveal').setAttribute('aria-hidden', String(!primerShown));
   $('#primer-answer').innerHTML = state.reveals.primer ? '<b>3′</b> — G A C A C — <b>5′</b>' : '<b>3′</b> — ? ? ? ? ? — <b>5′</b>';
   $('#primer-options [data-choice="gacac"]').classList.toggle('correct', Boolean(state.reveals.primer));
-  $('#trust-reveal').classList.toggle('shown', Boolean(state.reveals.trust));
+  $('#trust-reveal').classList.toggle('shown', trustShown);
+  $('#trust-reveal').setAttribute('aria-hidden', String(!trustShown));
   if (state.reveals.chip) forcedExposure = true;
+  renderControlStates();
 }
 
 function crowdPcrCycle() {
-  const tapsPerCycle = Math.max(3, Math.ceil(Math.max(1, state.participants) * .45));
-  return Math.min(30, Math.floor(state.pcrTaps / tapsPerCycle));
+  return Math.min(30, Math.floor(state.pcrTaps / 4));
 }
 
 function renderPCR() {
@@ -317,7 +381,7 @@ function renderPCR() {
   const copies = 2 ** cycle;
   $('#pcr-cycle').textContent = String(cycle).padStart(2, '0');
   $('#pcr-copies').textContent = formatCopies(copies);
-  $('#pcr-tap-label').textContent = `${state.pcrTaps} crowd pulses received`;
+  $('#pcr-tap-label').textContent = `${state.pcrTaps} audience taps`;
   $('#pcr-power').style.width = `${Math.min(100, cycle / 30 * 100)}%`;
   const lanes = $('#dna-lanes');
   lanes.innerHTML = '';
@@ -328,6 +392,7 @@ function renderPCR() {
     bar.style.opacity = completed ? String(.3 + index / 43) : '.12';
     lanes.appendChild(bar);
   }
+  renderControlStates();
 }
 
 function formatCopies(value) {
@@ -337,38 +402,62 @@ function formatCopies(value) {
   return value.toLocaleString();
 }
 
-function selectPcrPhase(index) {
-  $$('.phase-row button').forEach((button, i) => button.classList.toggle('active', i === index));
+function selectPcrPhase(index, finished = false) {
+  const explanations = [
+    '95°C: heat unzips the two DNA strands.',
+    '55°C: cooling lets short primers stick to their matching letters.',
+    '72°C: an enzyme starts at each primer and builds a matching strand.'
+  ];
+  $$('.phase-row button').forEach((button, i) => {
+    const active = i === index;
+    button.classList.toggle('active', active);
+    button.setAttribute('aria-pressed', String(active));
+  });
+  $('#pcr-phase-explanation').textContent = index >= 0
+    ? explanations[index]
+    : finished
+      ? 'One cycle complete: one target copy can become two.'
+      : 'Choose a temperature step to see what it does.';
 }
 
 function demonstratePcrCycle() {
+  if (pcrDemoTimer || Math.max(localPcrCycle, crowdPcrCycle()) >= 30) return;
   let phase = 0;
   selectPcrPhase(phase);
-  const timer = window.setInterval(() => {
+  pcrDemoTimer = window.setInterval(() => {
     phase += 1;
     if (phase < 3) selectPcrPhase(phase);
     else {
-      window.clearInterval(timer);
+      window.clearInterval(pcrDemoTimer);
+      pcrDemoTimer = null;
       localPcrCycle = Math.min(30, Math.max(localPcrCycle, crowdPcrCycle()) + 1);
-      selectPcrPhase(-1);
+      selectPcrPhase(-1, true);
       renderPCR();
     }
   }, 650);
+  renderControlStates();
 }
 
 function renderPhotolithography() {
-  const target = Math.max(24, state.participants * 6);
+  const target = 48;
   const percent = forcedExposure ? 100 : Math.min(100, state.photonCount / target * 100);
-  $('#photon-count').textContent = `${state.photonCount} PHOTONS`;
+  $('#photon-count').textContent = `${state.photonCount} TAPS`;
   $('#exposure-bar').style.width = `${percent}%`;
+  $('#exposure-bar').parentElement.setAttribute('aria-valuenow', String(forcedExposure ? target : Math.min(state.photonCount, target)));
   $('#wafer').style.setProperty('--exposure', String(percent / 100));
-  $$('.litho-steps span').forEach((step, index) => step.classList.toggle('on', percent >= [0, 25, 70, 96][index]));
+  $$('.litho-steps span').forEach((step, index) => {
+    const complete = forcedExposure ? true : index === 0 || (index === 1 && percent > 0);
+    step.classList.toggle('on', complete);
+  });
+  renderControlStates();
 }
 
 function spawnPhoton(payload = {}) {
   const photon = document.createElement('i');
   photon.className = 'fired-photon';
-  photon.style.left = `${8 + (Number(payload.x) || Math.random() * 84)}%`;
+  const suppliedX = Number(payload.x);
+  const x = Number.isFinite(suppliedX) ? Math.max(0, Math.min(100, suppliedX)) : Math.random() * 100;
+  photon.style.left = `${8 + x * .84}%`;
   photon.style.setProperty('--drift', `${(Math.random() - .5) * 80}px`);
   if (payload.color === 'violet') photon.style.background = 'var(--violet)';
   if (payload.color === 'gold') photon.style.background = 'var(--gold)';
@@ -448,15 +537,18 @@ function startTraining() {
   if (trainingActive) return;
   if (state.samples.length < 6) {
     pendingTraining = true;
-    socket.emit('host', { type: 'demo' });
+    renderControlStates();
+    socket.emit('host', { type: 'demo', scope: 'samples' });
     return;
   }
   if (trainingTimer) window.clearInterval(trainingTimer);
   currentModel = createNetwork(chosenArchitecture());
   trainingActive = true;
+  if (preRetrainScore !== null) retrainSummary = 'Retraining now: the AI is learning from the four newly checked samples.';
   let epoch = 0;
   let loss = null;
   renderTrainingMetrics(epoch, loss, 0, 0, true);
+  renderControlStates();
   trainingTimer = window.setInterval(() => {
     for (let step = 0; step < 5; step += 1) loss = trainBatch(currentModel, state.samples);
     epoch += 5;
@@ -471,8 +563,14 @@ function startTraining() {
       trainingTimer = null;
       trainingActive = false;
       currentModel.trainedAt = Date.now();
+      if (preRetrainScore !== null) {
+        const nextScore = forwardNetwork(currentModel, [.86, .78]).out;
+        retrainSummary = `The same sample moved from ${Math.round(preRetrainScore * 100)}/100 to ${Math.round(nextScore * 100)}/100 after the new evidence.`;
+        preRetrainScore = null;
+      }
       socket.emit('host', { type: 'model', model: currentModel });
       renderAIState();
+      renderControlStates();
     }
   }, 34);
 }
@@ -481,10 +579,16 @@ function resetModel() {
   if (trainingTimer) window.clearInterval(trainingTimer);
   trainingTimer = null;
   trainingActive = false;
+  pendingTraining = false;
+  preRetrainScore = null;
+  retrainSummary = '';
   currentModel = null;
+  state.model = null;
+  state.training = { epoch: 0, loss: null, accuracy: null, testAccuracy: null, active: false };
   socket.emit('host', { type: 'clear-model' });
   renderTrainingMetrics(0, null, null, null, false);
   drawAI($('#training-canvas'), { model: null });
+  renderControlStates();
 }
 
 function renderTrainingMetrics(epoch, loss, accuracy, testAccuracy, active) {
@@ -493,7 +597,9 @@ function renderTrainingMetrics(epoch, loss, accuracy, testAccuracy, active) {
   $('#accuracy-value').textContent = Number.isFinite(accuracy) ? `${Math.round(accuracy * 100)}%` : '—';
   $('#test-accuracy-value').textContent = Number.isFinite(testAccuracy) ? `${Math.round(testAccuracy * 100)}%` : '—';
   $('#training-progress').style.width = `${Math.min(100, (epoch || 0) / 5)}%`;
+  $('#training-progress').parentElement.setAttribute('aria-valuenow', String(epoch || 0));
   $('#training-progress').style.filter = active ? 'brightness(1.2)' : 'none';
+  renderControlStates();
 }
 
 function renderAIState() {
@@ -505,18 +611,46 @@ function renderAIState() {
   }
   drawAI($('#dataset-canvas'), { model: null });
   drawAI($('#challenge-canvas'), { model: currentModel, heatmap: Boolean(currentModel), challenges: true, mystery: true });
-  const label = $('#europa-prediction');
-  const scoreNode = $('#europa-probability');
+  const label = $('#helix-prediction');
+  const scoreNode = $('#helix-score');
   if (currentModel) {
     const score = forwardNetwork(currentModel, [.86, .78]).out;
-    label.textContent = score >= .5 ? 'CIRCUIT INTACT–LIKE' : 'ALTERED / REVIEW';
+    label.textContent = score >= .5 ? 'LOOKS WORKING' : 'LOOKS CHANGED';
     scoreNode.textContent = `${Math.round(score * 100)}`;
     $('#model-confidence').textContent = `${Math.round(score * 100)}/100`;
+    $('#trust-model-claim').textContent = `CURRENT AI ANSWER: ${score >= .5 ? 'LOOKS WORKING' : 'LOOKS CHANGED'} · ${Math.round(score * 100)}/100`;
   } else {
     label.textContent = 'MODEL NOT TRAINED';
     scoreNode.textContent = '—';
     $('#model-confidence').textContent = '—';
+    $('#trust-model-claim').textContent = 'THE MODEL GIVES AN ANSWER — WOULD THAT BE ENOUGH?';
   }
+  renderRetrainingState();
+}
+
+function renderRetrainingState() {
+  const button = $('#contaminate-button');
+  const status = $('#retraining-status');
+  if (!button || !status) return;
+  const hasCheckedSamples = state.samples.some(sample => sample.source === 'radiation');
+  const hasModel = Boolean(currentModel || state.model);
+  const retraining = hasCheckedSamples && (pendingTraining || trainingActive || state.training.active || !hasModel);
+
+  if (retraining) {
+    button.disabled = true;
+    button.textContent = 'Retraining with 4 checked samples…';
+    status.textContent = retrainSummary || 'The four checked samples are being added. Watch the boundary move.';
+    return;
+  }
+  if (hasCheckedSamples) {
+    button.disabled = true;
+    button.textContent = '4 checked samples added';
+    status.textContent = retrainSummary || 'The retrained model now includes the four samples checked by a second test.';
+    return;
+  }
+  button.disabled = !hasModel || pendingTraining || trainingActive;
+  button.textContent = hasModel ? 'Add 4 checked samples + retrain' : 'Train the first model first';
+  status.textContent = 'A second lab test found four changed samples that the first model had never seen.';
 }
 
 function drawAI(canvas, options = {}) {
@@ -611,11 +745,14 @@ function drawNetwork(hidden) {
   input.forEach(a => middle.forEach(b => { html += `<line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" />`; }));
   middle.forEach(a => output.forEach(b => { html += `<line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" />`; }));
   [...input, ...middle, ...output].forEach(node => { html += `<circle cx="${node.x}" cy="${node.y}" r="7" />`; });
-  html += '<text x="45" y="150" text-anchor="middle">2 INPUTS</text><text x="210" y="150" text-anchor="middle">HIDDEN LAYER</text><text x="375" y="150" text-anchor="middle">1 SCORE</text>';
+  html += '<text x="45" y="150" text-anchor="middle">2 READINGS</text><text x="210" y="150" text-anchor="middle">PATTERN UNITS</text><text x="375" y="150" text-anchor="middle">1 SCORE</text>';
   svg.innerHTML = html;
 }
 
-/* Orbit simulation: dimensionless two-body dynamics, circular speed = 1. */
+/* Orbit simulation: starts 400 km above Earth; circular speed = 1. */
+const EARTH_RADIUS_RATIO = 6371 / 6771;
+const ATMOSPHERE_RADIUS_RATIO = 6471 / 6771;
+
 function makeTrajectory(speed) {
   let position = { x: 1, y: 0 };
   let velocity = { x: 0, y: speed };
@@ -630,10 +767,11 @@ function makeTrajectory(speed) {
     position = { x: position.x + velocity.x * dt, y: position.y + velocity.y * dt };
     if (step % 2 === 0) points.push({ ...position });
     const newRadius = Math.hypot(position.x, position.y);
-    if (newRadius < .43) { outcome = 'CRASH'; break; }
+    if (newRadius < ATMOSPHERE_RADIUS_RATIO) { outcome = 'CRASH'; break; }
     if (newRadius > 3.2) { outcome = speed >= Math.SQRT2 ? 'ESCAPE' : 'HIGH ORBIT'; break; }
   }
-  if (speed > 1.405 && outcome !== 'CRASH') outcome = 'ESCAPE';
+  if (speed >= Math.SQRT2 && outcome !== 'CRASH') outcome = 'ESCAPE';
+  else if (outcome === 'ORBIT' && speed > 1.05) outcome = 'HIGH ORBIT';
   return { points, outcome, speed };
 }
 
@@ -653,9 +791,12 @@ function drawOrbit(canvas, speed = 1, progress = 1) {
     context.fillStyle = `rgba(220,235,255,${.1 + (index % 5) * .04})`;
     context.fillRect(x, y, 1, 1);
   }
-  const gradient = context.createRadialGradient(centre.x - scale * .13, centre.y - scale * .13, 3, centre.x, centre.y, scale * .43);
+  const earthRadius = scale * EARTH_RADIUS_RATIO;
+  const gradient = context.createRadialGradient(centre.x - earthRadius * .3, centre.y - earthRadius * .3, 3, centre.x, centre.y, earthRadius);
   gradient.addColorStop(0, '#d0f6ef'); gradient.addColorStop(.15, '#7aa9b5'); gradient.addColorStop(.48, '#294a68'); gradient.addColorStop(1, '#07100f');
-  context.beginPath(); context.arc(centre.x, centre.y, scale * .43, 0, Math.PI * 2); context.fillStyle = gradient; context.fill();
+  context.beginPath(); context.arc(centre.x, centre.y, earthRadius, 0, Math.PI * 2); context.fillStyle = gradient; context.fill();
+  context.beginPath(); context.arc(centre.x, centre.y, scale * ATMOSPHERE_RADIUS_RATIO, 0, Math.PI * 2);
+  context.strokeStyle = 'rgba(103,232,249,.18)'; context.lineWidth = 2; context.stroke();
   context.strokeStyle = 'rgba(159,168,255,.12)'; context.lineWidth = 1;
   context.beginPath(); context.arc(centre.x, centre.y, scale, 0, Math.PI * 2); context.stroke();
   const count = Math.max(2, Math.floor(trajectory.points.length * progress));
@@ -672,6 +813,17 @@ function drawOrbit(canvas, speed = 1, progress = 1) {
   return trajectory;
 }
 
+function updateOrbitConcept(speed) {
+  const trajectory = drawOrbit($('#orbit-demo-canvas'), speed, 1);
+  const messages = {
+    CRASH: 'TOO SLOW: gravity pulls the path into the atmosphere.',
+    ORBIT: 'ORBIT: gravity keeps bending the sideways motion around Earth.',
+    'HIGH ORBIT': 'FASTER: the spacecraft stays in orbit, but follows a much larger ellipse.',
+    ESCAPE: 'ESCAPE SPEED: the spacecraft is moving fast enough to leave Earth.'
+  };
+  $('#orbit-concept-result').textContent = messages[trajectory?.outcome] || 'Change the speed to see how the path changes.';
+}
+
 function medianBurn() {
   if (!state.burns.length) return 1;
   const values = state.burns.map(item => item.value).sort((a, b) => a - b);
@@ -682,37 +834,61 @@ function medianBurn() {
 
 function renderOrbitState() {
   const speed = medianBurn();
-  $('#median-burn').textContent = `${speed.toFixed(2)}×`;
+  const shownSpeed = activeOrbitSpeed ?? speed;
+  $('#median-burn').textContent = state.burns.length ? `${shownSpeed.toFixed(2)}×` : '—';
   $('#burn-count').textContent = state.burns.length;
-  $('#telemetry-vel').textContent = `${(7.67 * speed).toFixed(2)} km/s`;
-  if (!orbitAnimating) drawOrbit($('#mission-orbit-canvas'), speed, 1);
+  $('#telemetry-vel').textContent = state.burns.length ? `${(7.67 * shownSpeed).toFixed(2)} km/s` : '—';
+  if (!orbitAnimating) {
+    const sameAsLastRun = lastOrbitOutcome && Math.abs((lastOrbitSpeed ?? -1) - speed) < .0001;
+    drawOrbit($('#mission-orbit-canvas'), speed, sameAsLastRun ? 1 : .01);
+    if (lastOrbitOutcome && !sameAsLastRun) {
+      lastOrbitOutcome = null;
+      lastOrbitSpeed = null;
+      $('#flight-result').textContent = 'SPEED CHANGED — TEST THE NEW PATH';
+      $('#telemetry-alt').textContent = 'START: 400 km';
+      $('#telemetry-status').textContent = 'READY';
+    }
+  }
+  renderControlStates();
 }
 
 function simulateOrbit() {
   if (orbitAnimating) return;
+  if (!state.burns.length) {
+    $('#flight-result').textContent = 'WAITING FOR AT LEAST ONE SPEED CHOICE';
+    return;
+  }
   orbitAnimating = true;
   const speed = medianBurn();
+  activeOrbitSpeed = speed;
+  const runToken = ++orbitRunToken;
   const trajectory = makeTrajectory(speed);
   const start = performance.now();
   const duration = 4200;
-  $('#flight-result').textContent = 'EXECUTING CLASS TRAJECTORY…';
+  $('#flight-result').textContent = `TESTING THE ROOM’S ${speed.toFixed(2)}× SPEED…`;
   $('#telemetry-status').textContent = 'BURN';
+  renderControlStates();
   function frame(now) {
+    if (runToken !== orbitRunToken) return;
     const progress = Math.min(1, (now - start) / duration);
     drawOrbit($('#mission-orbit-canvas'), speed, progress);
     $('#telemetry-status').textContent = progress < .15 ? 'BURN' : 'COAST';
     if (progress < 1) requestAnimationFrame(frame);
     else {
       orbitAnimating = false;
+      activeOrbitSpeed = null;
+      lastOrbitOutcome = trajectory.outcome;
+      lastOrbitSpeed = speed;
       const messages = {
-        CRASH: 'TRAJECTORY INTERSECTS ATMOSPHERE — SPEED TOO LOW',
-        ESCAPE: 'SPACECRAFT ESCAPES — SPEED EXCEEDS LOCAL ESCAPE WINDOW',
-        'HIGH ORBIT': 'BOUND ELLIPTICAL ORBIT — SAFE, BUT FAR FROM THE TARGET PATH',
-        ORBIT: 'STABLE ORBIT ACQUIRED — EVIDENCE LINK PRESERVED'
+        CRASH: `AT ${speed.toFixed(2)}×: TOO SLOW — THE PATH HITS THE ATMOSPHERE`,
+        ESCAPE: `AT ${speed.toFixed(2)}×: TOO FAST — THE SPACECRAFT ESCAPES`,
+        'HIGH ORBIT': `AT ${speed.toFixed(2)}×: STILL ORBITING — BUT ON A LARGE ELLIPSE`,
+        ORBIT: `AT ${speed.toFixed(2)}×: ORBIT — IT KEEPS MISSING EARTH`
       };
       $('#flight-result').textContent = messages[trajectory.outcome];
       $('#telemetry-status').textContent = trajectory.outcome;
-      $('#telemetry-alt').textContent = trajectory.outcome === 'ORBIT' ? '400 km' : trajectory.outcome === 'CRASH' ? '<80 km' : trajectory.outcome === 'HIGH ORBIT' ? '>2,000 km' : 'ESCAPE';
+      $('#telemetry-alt').textContent = trajectory.outcome === 'ORBIT' ? 'SAFE ORBIT' : trajectory.outcome === 'CRASH' ? '<100 km' : trajectory.outcome === 'HIGH ORBIT' ? 'LARGE ELLIPSE' : 'ESCAPE';
+      renderOrbitState();
     }
   }
   requestAnimationFrame(frame);
@@ -727,21 +903,30 @@ function runPrimaryAction() {
 }
 
 function runAction(action) {
-  if (action === 'reveal-microscope') socket.emit('host', { type: 'reveal', key: 'microscope', value: true });
+  if (action === 'reveal-microscope' && !state.reveals.microscope) socket.emit('host', { type: 'reveal', key: 'microscope', value: true });
   if (action === 'pcr-cycle') demonstratePcrCycle();
-  if (action === 'pcr-30') { localPcrCycle = 30; renderPCR(); }
-  if (action === 'reveal-primer') socket.emit('host', { type: 'reveal', key: 'primer', value: true });
-  if (action === 'expose-chip') { forcedExposure = true; socket.emit('host', { type: 'reveal', key: 'chip', value: true }); renderPhotolithography(); }
+  if (action === 'pcr-30' && Math.max(localPcrCycle, crowdPcrCycle()) < 30) { localPcrCycle = 30; socket.emit('host', { type: 'reveal', key: 'pcrComplete', value: true }); renderPCR(); }
+  if (action === 'reveal-primer' && !state.reveals.primer) socket.emit('host', { type: 'reveal', key: 'primer', value: true });
+  if (action === 'expose-chip' && !forcedExposure && !state.reveals.chip) { forcedExposure = true; socket.emit('host', { type: 'reveal', key: 'chip', value: true }); renderPhotolithography(); }
   if (action === 'train-model') startTraining();
   if (action === 'reset-model') resetModel();
-  if (action === 'contaminate-model') { pendingTraining = true; socket.emit('host', { type: 'contaminate' }); }
-  if (action === 'reveal-trust') socket.emit('host', { type: 'reveal', key: 'trust', value: true });
+  if (action === 'contaminate-model' && !state.samples.some(sample => sample.source === 'radiation') && currentModel) {
+    preRetrainScore = forwardNetwork(currentModel, [.86, .78]).out;
+    retrainSummary = 'Adding four samples that a second lab test marked as changed…';
+    pendingTraining = true;
+    renderRetrainingState();
+    socket.emit('host', { type: 'contaminate' });
+  }
+  if (action === 'reveal-trust' && !state.reveals.trust) socket.emit('host', { type: 'reveal', key: 'trust', value: true });
   if (action === 'simulate-orbit') simulateOrbit();
 }
 
 function toggleNotes() {
   notesVisible = !notesVisible;
-  $('#presenter-notes').classList.toggle('shown', notesVisible);
+  const notes = $('#presenter-notes');
+  notes.classList.toggle('shown', notesVisible);
+  notes.inert = !notesVisible;
+  notes.setAttribute('aria-hidden', String(!notesVisible));
 }
 
 function flashScene() {
@@ -757,10 +942,32 @@ function resetLocalState() {
   currentModel = null;
   trainingActive = false;
   pendingTraining = false;
+  preRetrainScore = null;
+  retrainSummary = '';
   missionStartedAt = null;
   orbitAnimating = false;
+  activeOrbitSpeed = null;
+  lastOrbitOutcome = null;
+  lastOrbitSpeed = null;
+  orbitRunToken += 1;
+  if (pcrDemoTimer) window.clearInterval(pcrDemoTimer);
+  pcrDemoTimer = null;
   if (trainingTimer) window.clearInterval(trainingTimer);
   trainingTimer = null;
+  selectPcrPhase(-1, false);
+  const scaleSlider = $('#scale-slider');
+  scaleSlider.value = 0;
+  scaleSlider.dispatchEvent(new Event('input'));
+  $$('.speed-presets button').forEach(button => {
+    const selected = button.dataset.orbitSpeed === '100';
+    button.classList.toggle('selected', selected);
+    button.setAttribute('aria-pressed', String(selected));
+  });
+  $('#flight-result').textContent = 'WAITING FOR SPEED CHOICES';
+  $('#telemetry-alt').textContent = 'START: 400 km';
+  $('#telemetry-vel').textContent = '—';
+  $('#telemetry-status').textContent = 'READY';
+  renderControlStates();
 }
 
 function setupSignalAnimation() {

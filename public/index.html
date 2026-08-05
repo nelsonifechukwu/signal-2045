@@ -19,20 +19,20 @@
       <section class="scene active act-intro" data-scene="0">
         <div class="lobby-layout">
           <div>
-            <div class="kicker"><span>LIVE MISSION NETWORK</span><em>LOBBY</em></div>
+            <div class="kicker"><span>JOIN THE MISSION</span><em>START HERE</em></div>
             <h1>This room is about to<br><mark>save a lab in orbit.</mark></h1>
-            <p class="subhead">Join the science team. Your phone will become a lab instrument, a training-data terminal and a flight controller.</p>
+            <p class="subhead">Scan the code. You’ll label a sample, help train the AI and choose a speed for the spacecraft.</p>
             <div class="connection-strip">
-              <div><strong id="lobby-people">0</strong><span>scientists linked</span></div>
-              <div><strong id="lobby-samples">0</strong><span>samples labelled</span></div>
-              <div><strong>15:00</strong><span>to make the call</span></div>
+              <div><strong id="lobby-people">0</strong><span>phones connected</span></div>
+              <div><strong id="lobby-samples">0</strong><span>samples ready</span></div>
+              <div><strong>15:00</strong><span>mission time</span></div>
             </div>
           </div>
           <div class="join-card glass">
             <div class="scan-line"></div>
             <img id="qr" alt="QR code to join the mission">
             <p>SCAN TO JOIN</p><code id="join-url">Finding local address…</code>
-            <button class="soft-button" id="seed-demo">School Wi-Fi fallback</button>
+            <button class="soft-button" id="seed-demo" type="button">Load demo audience</button>
           </div>
         </div>
       </section>
@@ -42,28 +42,28 @@
           <div class="distance">400 KM ABOVE EARTH / 27,600 KM·H⁻¹</div>
           <div class="signal-orb"><div></div><i></i><i></i><i></i></div>
           <h1>Something<br><mark>stopped glowing.</mark></h1>
-          <div class="signal-readout"><span>HELIX–7 ORBITAL BIOFACTORY / RADIATION ALERT</span><canvas id="signal-canvas" width="820" height="110"></canvas></div>
+          <div class="signal-readout"><span>HELIX–7 ORBITING YEAST LAB / RADIATION ALERT</span><canvas id="signal-canvas" width="820" height="110"></canvas></div>
         </div>
       </section>
 
       <section class="scene act-intro" data-scene="2">
-        <div class="kicker"><span>THE MISSION</span><em>THREE MINDS / ONE SYSTEM</em></div>
-        <h2>No single science<br>can solve this.</h2>
+        <div class="kicker"><span>THE PLAN</span><em>THREE STUDENTS / ONE MISSION</em></div>
+        <h2>Each answer becomes<br>the next person’s clue.</h2>
         <div class="crew-grid">
-          <article class="crew-card genetics"><span>01</span><div class="crew-icon">DNA</div><h3 data-presenter-name="0">Student One</h3><p data-presenter-role="0">Molecular systems lead</p><small>Find and amplify the evidence</small></article>
-          <article class="crew-card compute"><span>02</span><div class="crew-icon">nm</div><h3 data-presenter-name="1">Student Two</h3><p data-presenter-role="1">Nano + intelligence lead</p><small>Build the instrument and train it</small></article>
-          <article class="crew-card astro"><span>03</span><div class="crew-icon">Δv</div><h3 data-presenter-name="2">Student Three</h3><p data-presenter-role="2">Flight dynamics lead</p><small>Keep the mission in orbit</small></article>
+          <article class="crew-card genetics"><span>01</span><div class="crew-icon">DNA</div><h3 data-presenter-name="0">Student One</h3><p data-presenter-role="0">Genetics lead</p><small>Check the DNA</small></article>
+          <article class="crew-card compute"><span>02</span><div class="crew-icon">nm</div><h3 data-presenter-name="1">Student Two</h3><p data-presenter-role="1">Chip + AI lead</p><small>Measure the light and find the pattern</small></article>
+          <article class="crew-card astro"><span>03</span><div class="crew-icon">orbit</div><h3 data-presenter-name="2">Student Three</h3><p data-presenter-role="2">Spaceflight lead</p><small>Choose a safe path</small></article>
         </div>
       </section>
 
       <section class="scene act-genetics" data-scene="3">
         <div class="two-col">
           <div>
-            <div class="kicker"><span>ACT I / MOLECULAR EVIDENCE</span><em>STUDENT 01</em></div>
-            <h2>We programmed a cell<br>to make medicine.</h2>
-            <p class="subhead">HELIX–7 carries sealed yeast engineered with a gene circuit: a model therapeutic-protein instruction plus a fluorescent reporter. After radiation crossed its orbit, the DNA test looked normal—but the reporter went dark.</p>
-            <div class="gene-circuit"><span>PROMOTER</span><i>→</i><span>MODEL PROTEIN</span><i>→</i><span>FLUORESCENT REPORTER</span><i>→</i><span>STOP</span></div>
-            <div class="evidence-tags"><span>EDITED GENE <b>DETECTED</b></span><span>REPORTER LIGHT <b>LOW</b></span><span>RADIATION <b>SPIKE</b></span></div>
+            <div class="kicker"><span>ACT I / GENETICS</span><em>STUDENT 01</em></div>
+            <h2>We gave yeast<br>new instructions.</h2>
+            <p class="subhead">One added gene tells the yeast to make a test protein. Another makes it glow when the instructions are working. After a burst of radiation, the DNA test looked normal—but the glow went dark.</p>
+            <div class="gene-circuit"><span>START</span><i>→</i><span>TEST PROTEIN</span><i>→</i><span>GLOW GENE</span><i>→</i><span>STOP</span></div>
+            <div class="evidence-tags"><span>ADDED DNA <b>FOUND</b></span><span>GLOW <b>LOW</b></span><span>RADIATION <b>HIGH</b></span></div>
           </div>
           <div class="sample-vial">
             <div class="vial"><div class="fluid"></div><i class="molecule m1"></i><i class="molecule m2"></i><i class="molecule m3"></i></div>
@@ -75,20 +75,20 @@
       <section class="scene act-genetics" data-scene="4">
         <div class="two-col microscope-layout">
           <div>
-            <div class="kicker"><span>THE VISIBILITY PROBLEM</span><em>LIVE POLL ON PHONES</em></div>
+            <div class="kicker"><span>CAN WE JUST LOOK?</span><em>VOTE ON YOUR PHONE</em></div>
             <h2>Can a microscope<br>read genetic code?</h2>
             <div class="poll-bars compact" data-poll="microscope">
               <div><label>YES — JUST ZOOM FAR ENOUGH <b id="micro-yes-n">0</b></label><span><i id="micro-yes"></i></span></div>
               <div><label>NO — WE NEED ANOTHER METHOD <b id="micro-no-n">0</b></label><span><i id="micro-no"></i></span></div>
             </div>
-            <div class="reveal-box" id="microscope-reveal"><b>You can see DNA clumps—not the letters.</b><p>Even an electron microscope cannot directly read a six-billion-letter human genome. The sequence is chemical information, far smaller than visible detail.</p></div>
-            <button class="action-button" data-action="reveal-microscope">Reveal the answer</button>
+            <div class="reveal-box" id="microscope-reveal" aria-hidden="true"><b>You can see clumps of DNA, but not its code.</b><p>A microscope can show the material. To read the A, T, C and G letters, scientists use chemical tests and sequencing.</p></div>
+            <button class="action-button" id="reveal-microscope-button" data-action="reveal-microscope" type="button">Show the answer</button>
           </div>
           <div class="micro-view glass">
             <div class="lens-ring"><div class="dna-tangle"><i></i><i></i><i></i><i></i></div></div>
             <div class="zoom-stack"><span>100×</span><i></i><span>10,000×</span><i></i><span>1,000,000×</span></div>
-            <p>VISIBLE: COILED DNA + PROTEINS + DEBRIS</p>
-            <code>A T ? ? G C ? ? ? — sequence unresolved</code>
+            <p>WHAT WE SEE: TANGLED DNA + PROTEINS</p>
+            <code>A T ? ? G C ? ? ? — letters still unreadable</code>
           </div>
         </div>
       </section>
@@ -96,17 +96,18 @@
       <section class="scene act-genetics" data-scene="5">
         <div class="pcr-layout">
           <div>
-            <div class="kicker"><span>PCR / MOLECULAR PHOTOCOPIER</span><em>AUDIENCE: TAP TO POWER</em></div>
-            <h2>Don’t magnify it.<br><mark>Multiply it.</mark></h2>
-            <p class="subhead">Every PCR cycle doubles one chosen DNA region. Thirty cycles can turn one target into more than one billion copies.</p>
-            <div class="phase-row"><button data-phase="0"><b>95°C</b><span>DENATURE</span></button><button data-phase="1"><b>55°C</b><span>ANNEAL</span></button><button data-phase="2"><b>72°C</b><span>EXTEND</span></button></div>
+            <div class="kicker"><span>PCR / DNA PHOTOCOPIER</span><em>PHONES ADD TAPS · PRESENTER RUNS STEPS</em></div>
+            <h2>One copy is hard to find.<br><mark>So we make more.</mark></h2>
+            <p class="subhead">In an ideal PCR cycle, the DNA section we chose can double. Repeat that 30 times and one copy can become more than one billion.</p>
+            <div class="phase-row"><button data-phase="0" type="button" aria-pressed="false"><b>95°C</b><span>1. UNZIP / DENATURE</span></button><button data-phase="1" type="button" aria-pressed="false"><b>55°C</b><span>2. PRIMERS STICK / ANNEAL</span></button><button data-phase="2" type="button" aria-pressed="false"><b>72°C</b><span>3. COPY / EXTEND</span></button></div>
+            <p class="interaction-feedback" id="pcr-phase-explanation" aria-live="polite">Choose a temperature step to see what it does.</p>
           </div>
           <div class="thermocycler glass">
             <div class="thermo-top"><span>THERMOCYCLER / LIVE</span><i id="pcr-live"></i></div>
             <div class="pcr-metrics"><div><small>CYCLE</small><strong id="pcr-cycle">00</strong><em>/ 30</em></div><div><small>TARGET COPIES</small><strong id="pcr-copies">1</strong></div></div>
             <div class="dna-lanes" id="dna-lanes"></div>
-            <div class="power-track"><i id="pcr-power"></i></div><small id="pcr-tap-label">0 crowd pulses received</small>
-            <div class="button-row"><button class="soft-button" data-action="pcr-cycle">Demonstrate 1 cycle</button><button class="action-button" data-action="pcr-30">Complete 30 cycles</button></div>
+            <div class="power-track"><i id="pcr-power"></i></div><small id="pcr-tap-label">0 audience taps</small>
+            <div class="button-row"><button class="soft-button" id="pcr-cycle-button" data-action="pcr-cycle" type="button">Show 1 full cycle</button><button class="action-button" id="pcr-30-button" data-action="pcr-30" type="button">Jump to cycle 30</button></div>
           </div>
         </div>
       </section>
@@ -114,30 +115,31 @@
       <section class="scene act-genetics" data-scene="6">
         <div class="two-col">
           <div>
-            <div class="kicker"><span>PRIMER DESIGN</span><em>LIVE MOLECULAR PUZZLE</em></div>
-            <h2>PCR copies only what<br>we <mark>point it toward.</mark></h2>
-            <p class="subhead">DNA bases pair by a rule: A with T, and C with G. Choose the complementary primer that will bind to the target.</p>
+            <div class="kicker"><span>MATCH THE DNA STRAND</span><em>PUZZLE ON YOUR PHONE</em></div>
+            <h2>Which short strand<br>will <mark>stick?</mark></h2>
+            <p class="subhead">PCR uses two longer primers, one on each side of the target. For this short matching puzzle, use the rule A with T and C with G.</p>
             <div class="sequence-card"><small>TARGET STRAND</small><code><b>5′</b> — C T G T G — <b>3′</b></code><div class="pair-marks">| &nbsp; | &nbsp; | &nbsp; | &nbsp; |</div><code class="primer-answer" id="primer-answer"><b>3′</b> — ? ? ? ? ? — <b>5′</b></code></div>
           </div>
           <div class="glass puzzle-panel">
+            <div class="result-label">LIVE PHONE RESULTS</div>
             <div class="poll-choice-grid" id="primer-options">
               <div data-choice="gacac"><b>G A C A C</b><span id="primer-gacac">0%</span></div>
               <div data-choice="ctgtg"><b>C T G T G</b><span id="primer-ctgtg">0%</span></div>
               <div data-choice="gtgtg"><b>G T G T G</b><span id="primer-gtgtg">0%</span></div>
               <div data-choice="random"><b>A A C C T</b><span id="primer-random">0%</span></div>
             </div>
-            <button class="action-button" data-action="reveal-primer">Lock molecular target</button>
-            <div class="reveal-box" id="primer-reveal"><b>GACAC is complementary.</b><p>A primer is a short synthetic DNA sequence. It gives polymerase a starting point and defines the region that gets copied.</p></div>
+            <button class="action-button" id="reveal-primer-button" data-action="reveal-primer" type="button">Show the match</button>
+            <div class="reveal-box" id="primer-reveal" aria-hidden="true"><b>GACAC is the match.</b><p>It sticks to CTGTG. Real PCR uses two much longer primers to mark both ends of the section being copied.</p></div>
           </div>
         </div>
       </section>
 
       <section class="scene act-genetics" data-scene="7">
         <div class="payoff-screen">
-          <div class="kicker"><span>MOLECULAR SYSTEMS / COMPLETE</span><em>HANDOFF 01 → 02</em></div>
+          <div class="kicker"><span>DNA CHECK COMPLETE</span><em>HANDOFF 01 → 02</em></div>
           <div class="equation"><span>1</span><i>× 2<sup>30</sup></i><strong>1,073,741,824</strong></div>
-          <h2>We turned a whisper<br>into <mark>evidence.</mark></h2>
-          <p>PCR shows that the selected DNA segment is present. It cannot tell us whether the cell is reading it correctly—so we must measure its light.</p>
+          <h2>The DNA is there.<br>But is it <mark>working?</mark></h2>
+          <p>PCR found the section we looked for. It cannot tell us why the glow went dark, so next we measure the light.</p>
         </div>
       </section>
 
@@ -145,8 +147,8 @@
         <div class="two-col nano-scale-layout">
           <div>
             <div class="kicker"><span>ACT II / NANOTECHNOLOGY</span><em>STUDENT 02</em></div>
-            <h2>Now shrink the lab<br>one billion times.</h2>
-            <p class="subhead">A nanometre is 0.000000001 metres. At this scale, we can pattern the switches that perform billions of calculations every second.</p>
+            <h2>Let’s zoom down<br>to a nanometre.</h2>
+            <p class="subhead">A nanometre is one billionth of a metre. Drag the scale from a metre down to a nanometre and watch familiar objects disappear.</p>
             <input id="scale-slider" class="scale-slider" type="range" min="0" max="9" value="0" aria-label="Scale from metres to nanometres">
             <div class="scale-readout"><strong id="scale-power">10⁰ m</strong><span id="scale-object">YOU ARE HERE: HUMAN SCALE</span></div>
           </div>
@@ -157,12 +159,12 @@
       <section class="scene act-nano" data-scene="9">
         <div class="litho-layout">
           <div>
-            <div class="kicker"><span>PHOTOLITHOGRAPHY</span><em>AUDIENCE: FIRE PHOTONS</em></div>
-            <h2>We build the machine<br><mark>with light.</mark></h2>
-            <p class="subhead">A patterned mask blocks some ultraviolet light and lets the rest hit a light-sensitive wafer. Repeating this process creates transistor pathways.</p>
+            <div class="kicker"><span>PHOTOLITHOGRAPHY / PRINTING WITH LIGHT</span><em>TAP ON YOUR PHONE</em></div>
+            <h2>A stencil and light<br>draw the <mark>chip pattern.</mark></h2>
+            <p class="subhead">The mask works like a stencil. Ultraviolet light passes through its gaps and changes a light-sensitive coating on the silicon.</p>
             <div class="litho-steps"><span class="on">1 / MASK</span><span>2 / EXPOSE</span><span>3 / ETCH</span><span>4 / REPEAT</span></div>
-            <div class="exposure-meter"><label>CROWD EXPOSURE <b id="photon-count">0 PHOTONS</b></label><span><i id="exposure-bar"></i></span></div>
-            <button class="action-button" data-action="expose-chip">Complete exposure</button>
+            <div class="exposure-meter"><label>LIGHT ADDED BY THE ROOM <b id="photon-count">0 TAPS</b></label><span role="progressbar" aria-label="Class UV exposure" aria-valuemin="0" aria-valuemax="48" aria-valuenow="0"><i id="exposure-bar"></i></span></div>
+            <button class="action-button" id="expose-chip-button" data-action="expose-chip" type="button">Show the later factory steps</button>
           </div>
           <div class="lithography glass" id="lithography">
             <div class="uv-source">UV</div><div class="beam-cone"></div>
@@ -175,25 +177,26 @@
       </section>
 
       <section class="scene act-nano" data-scene="10">
-        <div class="kicker"><span>FROM PHOTON TO PREDICTION</span><em>THE HIDDEN CHAIN</em></div>
-        <h2>Light becomes switches.<br>Switches become <mark>thought.</mark></h2>
+        <div class="kicker"><span>HOW THE CHIP HELPS</span><em>FOLLOW THE SIGNAL</em></div>
+        <h2>Light becomes a number<br>the AI can <mark>compare.</mark></h2>
+        <p class="subhead">UV light helped make the chip. Now the finished chip measures a different light: the green glow from the yeast.</p>
         <div class="pipeline">
-          <article><span>01</span><div class="pipe-symbol photon-symbol"></div><b>PHOTON</b><p>Patterns the wafer</p></article><i></i>
-          <article><span>02</span><div class="pipe-symbol gate-symbol"></div><b>TRANSISTOR</b><p>Switches 0 or 1</p></article><i></i>
-          <article><span>03</span><div class="pipe-symbol matrix-symbol">×</div><b>MATRIX MATH</b><p>Weights the evidence</p></article><i></i>
-          <article><span>04</span><div class="pipe-symbol output-symbol">?</div><b>PREDICTION</b><p>Life or geology</p></article>
+          <article><span>01</span><div class="pipe-symbol photon-symbol"></div><b>LIGHT</b><p>The sample glows</p></article><i></i>
+          <article><span>02</span><div class="pipe-symbol gate-symbol"></div><b>TINY SWITCHES</b><p>The chip counts it</p></article><i></i>
+          <article><span>03</span><div class="pipe-symbol matrix-symbol">×</div><b>CALCULATION</b><p>Two readings are combined</p></article><i></i>
+          <article><span>04</span><div class="pipe-symbol output-symbol">?</div><b>AI RESULT</b><p>Working or changed?</p></article>
         </div>
-        <div class="number-ribbon"><strong>≈15 BILLION</strong><span>transistors on a modern chip, each far smaller than a human cell</span></div>
+        <div class="number-ribbon"><strong>BILLIONS</strong><span>of tiny transistor switches can fit on one modern chip</span></div>
       </section>
 
       <section class="scene act-ai" data-scene="11">
         <div class="ai-lab-layout">
           <div>
-            <div class="kicker"><span>SUPERVISED LEARNING / STEP 1–3</span><em>AUDIENCE DATASET</em></div>
-            <h2>Before AI learns,<br>humans must <mark>teach.</mark></h2>
-            <p class="subhead">Every dot is a synthetic control labelled by someone in this room. The axes are two measurements; the colour is the human judgement.</p>
-            <div class="legend"><span><i class="life-dot"></i>CIRCUIT INTACT</span><span><i class="geo-dot"></i>ALTERED / NOISE</span><b id="dataset-count">0 TRAINING POINTS</b></div>
-            <div class="architecture-vote glass"><small>THE ROOM IS CHOOSING MODEL CAPACITY</small><div><span>2 neurons <b id="arch-two">0</b></span><span>4 neurons <b id="arch-four">0</b></span><span>8 neurons <b id="arch-eight">0</b></span></div><strong id="architecture-choice">WAITING FOR VOTES</strong></div>
+            <div class="kicker"><span>AI STEP 1 / EXAMPLES</span><em>YOUR LABELS ARE THE DATA</em></div>
+            <h2>The AI starts with<br>examples from <mark>this room.</mark></h2>
+            <p class="subhead">Each dot is one practice sample. Its position shows the two readings; its colour shows the checked answer.</p>
+            <div class="legend"><span><i class="working-dot"></i>CIRCUIT WORKING</span><span><i class="changed-dot"></i>CIRCUIT CHANGED</span><b id="dataset-count">0 TRAINING POINTS</b></div>
+            <div class="architecture-vote glass"><small>LIVE PHONE RESULTS · HOW MANY PATTERN-FINDING UNITS?</small><div><span>2 / simple <b id="arch-two">0</b></span><span>4 / medium <b id="arch-four">0</b></span><span>8 / flexible <b id="arch-eight">0</b></span></div><strong id="architecture-choice">WAITING FOR VOTES</strong></div>
           </div>
           <div class="plot-shell"><canvas class="ai-canvas" id="dataset-canvas" width="560" height="440"></canvas><span class="axis-label y">REPORTER LIGHT ↑</span><span class="axis-label x">PCR TARGET MATCH →</span></div>
         </div>
@@ -203,12 +206,13 @@
         <div class="training-layout">
           <div class="plot-shell training-plot"><canvas class="ai-canvas" id="training-canvas" width="560" height="440"></canvas><span class="axis-label y">REPORTER LIGHT ↑</span><span class="axis-label x">PCR TARGET MATCH →</span></div>
           <div>
-            <div class="kicker"><span>SUPERVISED LEARNING / STEP 4</span><em>LIVE NEURAL NETWORK</em></div>
-            <h2>Watch error become<br>a <mark>boundary.</mark></h2>
+            <div class="kicker"><span>AI STEP 2 / PRACTICE AND CORRECT</span><em>LIVE NEURAL NETWORK</em></div>
+            <h2>Watch the AI learn<br>where to <mark>divide the dots.</mark></h2>
+            <p class="subhead">Each round is simple: guess, check the label, adjust. The coloured map shows the answer the AI would give in each area.</p>
             <div class="network-viz glass"><svg id="network-svg" viewBox="0 0 420 160" aria-label="Neural network architecture"></svg></div>
-            <div class="training-metrics"><div><small>EPOCH</small><strong id="epoch-value">000</strong><span>/ 500</span></div><div><small>LOSS</small><strong id="loss-value">—</strong><span>lower is better</span></div><div><small>TRAIN ACC.</small><strong id="accuracy-value">—</strong><span>seen examples</span></div><div><small>TEST ACC.</small><strong id="test-accuracy-value">—</strong><span>withheld controls</span></div></div>
-            <div class="training-track"><i id="training-progress"></i></div>
-            <div class="button-row"><button class="action-button" data-action="train-model">Train live model</button><button class="soft-button" data-action="reset-model">Reset model</button></div>
+            <div class="training-metrics"><div><small>PRACTICE ROUND</small><strong id="epoch-value">000</strong><span>/ 500 epochs</span></div><div><small>HOW WRONG?</small><strong id="loss-value">—</strong><span>loss: lower is better</span></div><div><small>SEEN DOTS</small><strong id="accuracy-value">—</strong><span>training accuracy</span></div><div><small>NEW DOTS</small><strong id="test-accuracy-value">—</strong><span>test accuracy</span></div></div>
+            <div class="training-track" role="progressbar" aria-label="AI training rounds" aria-valuemin="0" aria-valuemax="500" aria-valuenow="0"><i id="training-progress"></i></div>
+            <div class="button-row"><button class="action-button" id="train-model-button" data-action="train-model" type="button">Start training</button><button class="soft-button" id="reset-model-button" data-action="reset-model" type="button">Start over</button></div>
           </div>
         </div>
       </section>
@@ -216,12 +220,14 @@
       <section class="scene act-ai" data-scene="13">
         <div class="ai-lab-layout">
           <div>
-            <div class="kicker"><span>SUPERVISED LEARNING / STEP 5</span><em>AUDIENCE: CHALLENGE THE AI</em></div>
-            <h2>Now try to<br><mark>fool it.</mark></h2>
-            <p class="subhead">Move a test sample on your phone. The neural network returns a prediction it has never been explicitly programmed to make.</p>
-            <div class="challenge-stats"><div><strong id="challenge-count">0</strong><span>live challenges</span></div><div><strong id="model-confidence">—</strong><span>Europa confidence</span></div></div>
-            <div class="europa-result glass"><small>UNKNOWN HELIX–7 SAMPLE / 86 PCR MATCH · 78 REPORTER LIGHT</small><div><b id="europa-prediction">MODEL NOT TRAINED</b><span id="europa-probability">—</span></div></div>
-            <button class="soft-button" data-action="contaminate-model">Inject radiation-damaged controls + retrain</button>
+            <div class="kicker"><span>AI STEP 3 / TRY A NEW SAMPLE</span><em>USE YOUR PHONE</em></div>
+            <h2>Change the readings.<br>What will the AI <mark>say?</mark></h2>
+            <p class="subhead">Move a new dot on your phone. The AI compares it with the pattern it learned and chooses a side.</p>
+            <div class="challenge-stats"><div><strong id="challenge-count">0</strong><span>people testing</span></div><div><strong id="model-confidence">—</strong><span>HELIX–7 model score</span></div></div>
+            <div class="helix-result glass"><small>UNKNOWN HELIX–7 SAMPLE / 86 PCR MATCH · 78 REPORTER LIGHT</small><div><b id="helix-prediction">MODEL NOT TRAINED</b><span id="helix-score">—</span></div></div>
+            <div class="legend challenge-legend"><span><i class="checked-dot"></i>YELLOW RING = CHECKED BY A SECOND TEST</span></div>
+            <button class="soft-button" id="contaminate-button" data-action="contaminate-model" type="button">Add 4 checked samples + retrain</button>
+            <p class="interaction-feedback" id="retraining-status" role="status" aria-live="polite">A second lab test found four changed samples that the first model had never seen.</p>
           </div>
           <div class="plot-shell"><canvas class="ai-canvas" id="challenge-canvas" width="560" height="440"></canvas><span class="axis-label y">REPORTER LIGHT ↑</span><span class="axis-label x">PCR TARGET MATCH →</span></div>
         </div>
@@ -230,16 +236,16 @@
       <section class="scene act-ai" data-scene="14">
         <div class="two-col">
           <div>
-            <div class="kicker"><span>THE LIMIT OF INTELLIGENCE</span><em>LIVE DECISION</em></div>
-            <h2>A prediction is not<br><mark>a discovery.</mark></h2>
-            <p class="subhead">Accuracy measures agreement with our labels. If our controls are biased, contaminated or incomplete, a confident model can be confidently wrong.</p>
-            <div class="confusion-card glass"><div><span></span><b>AI: LIFE</b><b>AI: GEOLOGY</b></div><div><b>REAL: LIFE</b><strong>TRUE +</strong><em>FALSE −</em></div><div><b>REAL: GEOLOGY</b><em>FALSE +</em><strong>TRUE −</strong></div></div>
+            <div class="kicker"><span>AI CAN STILL BE WRONG</span><em>FINAL CHECK</em></div>
+            <h2>A high score does not<br>make something <mark>true.</mark></h2>
+            <p class="subhead">The AI learned from the labels we gave it. Missing examples or wrong labels can teach it the wrong pattern.</p>
+            <div class="confusion-card glass"><div><span></span><b>AI: WORKING</b><b>AI: CHANGED</b></div><div><b>ACTUALLY WORKING</b><strong>RIGHT</strong><em>FALSE ALARM</em></div><div><b>ACTUALLY CHANGED</b><em>MISSED PROBLEM</em><strong>RIGHT</strong></div></div>
           </div>
           <div class="decision-panel glass">
-            <small>THE MODEL REPORTS “CIRCUIT INTACT”</small><h3>Would you authorise recovery now?</h3>
-            <div class="poll-bars" data-poll="trust"><div><label>AUTHORISE NOW <b id="trust-deploy-n">0</b></label><span><i id="trust-deploy"></i></span></div><div><label>VERIFY / TEST AGAIN <b id="trust-verify-n">0</b></label><span><i id="trust-verify"></i></span></div></div>
-            <div class="reveal-box" id="trust-reveal"><b>Strong science tries to disprove itself.</b><p>Repeat the test, use another instrument, check contamination and compare non-biological explanations.</p></div>
-            <button class="action-button" data-action="reveal-trust">Reveal scientific protocol</button>
+            <small id="trust-model-claim">THE MODEL GIVES A STRONG ANSWER</small><h3>Would you act on the AI alone?</h3>
+            <div class="poll-bars" data-poll="trust"><div><label>YES — RECOVER NOW <b id="trust-deploy-n">0</b></label><span><i id="trust-deploy"></i></span></div><div><label>NO — RUN MORE TESTS <b id="trust-verify-n">0</b></label><span><i id="trust-verify"></i></span></div></div>
+            <div class="reveal-box" id="trust-reveal" aria-hidden="true"><b>Check the answer another way.</b><p>Repeat the test, use a different instrument and make sure the sample was not contaminated.</p></div>
+            <button class="action-button" id="reveal-trust-button" data-action="reveal-trust" type="button">Show what scientists do next</button>
           </div>
         </div>
       </section>
@@ -247,11 +253,11 @@
       <section class="scene act-astro" data-scene="15">
         <div class="orbit-concept-layout">
           <div>
-            <div class="kicker"><span>ACT III / ASTROPHYSICS</span><em>STUDENT 03</em></div>
-            <h2>Spacecraft do not<br>“stay up.”</h2>
-            <p class="subhead">They fall. An orbit happens when sideways speed carries the spacecraft around the world as fast as gravity pulls it down.</p>
-            <div class="speed-presets"><button data-orbit-speed="65">TOO SLOW</button><button data-orbit-speed="100" class="selected">ORBIT</button><button data-orbit-speed="145">ESCAPE</button></div>
-            <div class="orbit-equation">gravity + sideways velocity = <mark>continuous freefall</mark></div>
+            <div class="kicker"><span>ACT III / ASTROPHYSICS</span><em>TRY ALL THREE SPEEDS</em></div>
+            <h2>Orbit means falling<br>and missing Earth.</h2>
+            <p class="subhead">Gravity keeps pulling the spacecraft down. Enough sideways speed carries it around Earth before it can hit the ground.</p>
+            <div class="speed-presets"><button data-orbit-speed="97" type="button" aria-pressed="false">TOO SLOW</button><button data-orbit-speed="100" type="button" class="selected" aria-pressed="true">ORBIT</button><button data-orbit-speed="142" type="button" aria-pressed="false">ESCAPE</button></div>
+            <div class="orbit-equation" id="orbit-concept-result" role="status" aria-live="polite">ORBIT: gravity keeps bending the sideways motion around Earth.</div>
           </div>
           <div class="orbit-demo"><canvas id="orbit-demo-canvas" width="650" height="500"></canvas></div>
         </div>
@@ -260,28 +266,29 @@
       <section class="scene act-astro" data-scene="16">
         <div class="flight-layout">
           <div>
-            <div class="kicker"><span>ORBIT INSERTION / LIVE MEDIAN</span><em>AUDIENCE: SET ΔV</em></div>
-            <h2>One burn.<br>Three possible futures.</h2>
-            <div class="velocity-readout"><div><small>ROOM MEDIAN</small><strong id="median-burn">1.00×</strong><span>circular velocity</span></div><div><small>COMMANDS LOCKED</small><strong id="burn-count">0</strong><span>flight controllers</span></div></div>
-            <div class="trajectory-key"><span class="crash">&lt;0.78× CRASH</span><span class="stable">≈1.00× ORBIT</span><span class="escape">≥1.42× ESCAPE</span></div>
-            <button class="action-button" data-action="simulate-orbit">Run class trajectory</button>
-            <div class="flight-result" id="flight-result">AWAITING FLIGHT COMMANDS</div>
+            <div class="kicker"><span>CHOOSE THE SIDEWAYS SPEED</span><em>USE YOUR PHONE</em></div>
+            <h2>A guidance error changed its path.<br>Choose a <mark>correction.</mark></h2>
+            <p class="subhead">Set the sideways speed after a short engine burn. The engine changes the path; gravity shapes the orbit that follows.</p>
+            <div class="velocity-readout"><div><small>ROOM’S MIDDLE CHOICE</small><strong id="median-burn">1.00×</strong><span>1.00× makes a circular orbit</span></div><div><small>PHONES READY</small><strong id="burn-count">0</strong><span>speed choices</span></div></div>
+            <div class="trajectory-key"><span class="crash">&lt;0.99× RE-ENTRY</span><span class="stable">≈1.00× ORBIT</span><span class="escape">≥1.42× ESCAPE</span></div>
+            <button class="action-button" id="simulate-orbit-button" data-action="simulate-orbit" type="button">Test our speed</button>
+            <div class="flight-result" id="flight-result">WAITING FOR SPEED CHOICES</div>
           </div>
-          <div class="mission-orbit glass"><canvas id="mission-orbit-canvas" width="720" height="520"></canvas><div class="telemetry"><span>ALT <b id="telemetry-alt">100 km</b></span><span>VEL <b id="telemetry-vel">—</b></span><span>STATUS <b id="telemetry-status">STANDBY</b></span></div></div>
+          <div class="mission-orbit glass"><canvas id="mission-orbit-canvas" width="720" height="520"></canvas><div class="telemetry"><span>PATH <b id="telemetry-alt">START: 400 km</b></span><span>SPEED <b id="telemetry-vel">—</b></span><span>RESULT <b id="telemetry-status">READY</b></span></div></div>
         </div>
       </section>
 
       <section class="scene act-astro" data-scene="17">
         <div class="responsibility-layout">
           <div>
-            <div class="kicker"><span>FINAL MISSION DECISION</span><em>SCIENCE + SOCIETY</em></div>
-            <h2>Would you bring an<br>unknown sample <mark>home?</mark></h2>
-            <p class="subhead">The experiment is sealed and engineered, but its behaviour changed after radiation exposure. Recovery offers better instruments; containment keeps uncertainty away from the biosphere.</p>
+            <div class="kicker"><span>FINAL CHOICE</span><em>LIVE PHONE VOTE · THERE IS NO PERFECT ANSWER</em></div>
+            <h2>Would you bring this<br>changed sample <mark>home?</mark></h2>
+            <p class="subhead">Bringing it back gives us better lab equipment. Keeping it away from Earth lowers the risk while we still do not understand the change.</p>
           </div>
           <div class="return-options">
-              <article><span>A</span><div><b>RETURN TO EARTH</b><p>Maximum laboratory access, strict containment responsibility</p><i><em id="return-earth"></em></i></div><strong id="return-earth-n">0%</strong></article>
-            <article><span>B</span><div><b>QUARANTINE IN ORBIT</b><p>Study nearby, isolated from the biosphere</p><i><em id="return-orbit"></em></i></div><strong id="return-orbit-n">0%</strong></article>
-            <article><span>C</span><div><b>ANALYSE REMOTELY</b><p>Lowest Earth risk, limited instruments</p><i><em id="return-remote"></em></i></div><strong id="return-remote-n">0%</strong></article>
+              <article><span>A</span><div><b>RETURN TO EARTH</b><p>Best lab equipment, but the sample must be contained safely</p><i><em id="return-earth"></em></i></div><strong id="return-earth-n">0%</strong></article>
+            <article><span>B</span><div><b>KEEP IT IN ORBIT</b><p>Safer for Earth, but harder to run detailed tests</p><i><em id="return-orbit"></em></i></div><strong id="return-orbit-n">0%</strong></article>
+            <article><span>C</span><div><b>TEST IT REMOTELY</b><p>Do not return it; use only the tools already on board</p><i><em id="return-remote"></em></i></div><strong id="return-remote-n">0%</strong></article>
           </div>
         </div>
       </section>
@@ -289,9 +296,9 @@
       <section class="scene act-final" data-scene="18">
         <div class="finale">
           <div class="kicker"><span>CAMBRIDGE: SHAPING THE SCIENTIFIC FUTURE</span><em>MISSION COMPLETE</em></div>
-          <h2>The future is not<br>one field of science.</h2>
-          <div class="final-chain"><span><b>GENETICS</b>built and checked the circuit</span><i>→</i><span><b>NANOTECH</b>turned light into data</span><i>→</i><span><b>AI</b>found the pattern</span><i>→</i><span><b>ASTROPHYSICS</b>carried the decision</span></div>
-          <h1>It is what happens<br><mark>between them.</mark></h1>
+          <h2>No one subject<br>solved the mission.</h2>
+          <div class="final-chain"><span><b>GENETICS</b>checked the DNA</span><i>→</i><span><b>NANOTECH</b>measured the glow</span><i>→</i><span><b>AI</b>compared the pattern</span><i>→</i><span><b>ASTROPHYSICS</b>predicted the path</span></div>
+          <h1>Each answer became<br><mark>the next clue.</mark></h1>
           <div class="final-credit"><span>03 STUDENTS</span><span id="final-participants">0 SCIENTISTS</span><span>01 SHARED FUTURE</span></div>
         </div>
       </section>
@@ -304,7 +311,7 @@
     </footer>
   </main>
 
-  <aside class="presenter-notes" id="presenter-notes"><div><small>PRIVATE REHEARSAL CUE · PRESS N TO HIDE</small><h3 id="note-title"></h3><p id="note-body"></p><div><span id="note-time"></span><b id="note-next"></b></div></div></aside>
+  <aside class="presenter-notes" id="presenter-notes" aria-hidden="true" inert><div><small>PRIVATE REHEARSAL CUE · PRESS N TO HIDE</small><h3 id="note-title"></h3><p id="note-body"></p><div><span id="note-time"></span><b id="note-next"></b></div></div></aside>
   <div class="scene-flash" id="scene-flash"></div>
   <script src="show-config.js"></script>
   <script src="/socket.io/socket.io.js"></script>
