@@ -22,9 +22,9 @@ function showHostAccessPanel() {
   panel.className = 'host-access-overlay';
   panel.innerHTML = `
     <form class="host-access-card glass">
-      <div class="kicker"><span>PRESENTER ACCESS</span><em>SECURE CONTROL</em></div>
+      <div class="kicker"><span>PRESENTER ACCESS</span><em>PRIVATE</em></div>
       <h2>Enter the presenter code</h2>
-      <p>This is the private <code>HOST_TOKEN</code> you chose in Render. Audience members do not need it.</p>
+      <p>Enter the <code>HOST_TOKEN</code> set in Render. Audience members do not need a code.</p>
       <input name="host-token" type="password" autocomplete="current-password" placeholder="Presenter access code" required>
       <p class="host-access-error" aria-live="polite"></p>
       <button class="action-button" type="submit">Unlock controls</button>
@@ -65,25 +65,25 @@ function showHostAccessPanel() {
 }
 
 const slides = [
-  { act: 'PRE-SHOW', rail: 'sample', presenter: ['00', 'MISSION CONTROL'], time: 'Before start', title: 'Get the room connected', note: 'Ask people to scan the code. The starter-batch answer key is on each phone. If the Wi-Fi fails, click “Load demo audience”.' },
-  { act: 'ANOMALY', rail: 'sample', presenter: ['01', 'STUDENT ONE'], time: '0:00–0:30', title: 'Start with the mystery', note: 'Pause, then say: “The DNA we added is still there, but its green status light has gone dark. We have fifteen minutes to work out what that means.”' },
-  { act: 'MISSION MAP', rail: 'sample', presenter: ['ALL', 'THREE-STUDENT TEAM'], time: '0:30–1:05', title: 'Introduce the three jobs', note: 'Point to each role. Say: “I check the DNA. Student Two measures the glow and trains the AI. Student Three corrects the orbit.”' },
-  { act: 'GENETIC ENGINEERING', rail: 'sample', presenter: ['01', 'GENETICS LEAD'], time: '1:05–1:50', title: 'Explain the gene circuit', note: 'Say: “We gave sealed yeast two added instructions: make a test protein, and glow green when the circuit is working.” This is a made-up classroom experiment, not medicine.' },
-  { act: 'GENETICS', rail: 'amplify', presenter: ['01', 'GENETICS LEAD'], time: '1:50–2:30', title: 'Ask before revealing', note: 'Wait for the phone vote. Then reveal: a classroom microscope can show DNA material, but reading A, T, C and G needs other tests.' },
-  { act: 'GENETICS', rail: 'amplify', presenter: ['01', 'GENETICS LEAD'], time: '2:30–3:30', title: 'Show one PCR cycle', note: 'Click unzip, primers stick, copy. Say: “An ideal cycle can roughly double our chosen DNA section. The phone taps only control this animation.” Then jump to cycle 30.' },
-  { act: 'GENETICS', rail: 'amplify', presenter: ['01', 'GENETICS LEAD'], time: '3:30–4:20', title: 'Match the DNA bases', note: 'Reveal GACAC after the vote. This is a short complementary-strand puzzle. Real PCR uses two much longer primers, one on each side of the target.' },
-  { act: 'HANDOFF', rail: 'amplify', presenter: ['01→02', 'GENETICS → CHIP'], time: '4:20–4:45', title: 'Pass on the clue', note: 'Say: “PCR found the DNA section. That still does not tell us why the green light stopped. Now we need to measure the glow.”' },
-  { act: 'NANOTECH', rail: 'sense', presenter: ['02', 'CHIP + AI LEAD'], time: '4:45–5:25', title: 'Make a nanometre feel real', note: 'Move the slider from metres to nanometres. Say: “A fingernail grows about one nanometre each second.”' },
-  { act: 'NANOTECH', rail: 'sense', presenter: ['02', 'CHIP + AI LEAD'], time: '5:25–6:20', title: 'Print a chip pattern with light', note: 'Ask the room to tap. Explain that their taps are symbolic. Real UV changes a light-sensitive coating; later developing and etching turn the pattern into chip structures.' },
-  { act: 'NANO → AI', rail: 'sense', presenter: ['02', 'CHIP + AI LEAD'], time: '6:20–6:55', title: 'Follow the measurement', note: 'Point across the row: “UV light helped build the chip. A different light—the yeast’s green glow—is measured by a sensor and turned into a number.”' },
-  { act: 'ARTIFICIAL INTELLIGENCE', rail: 'learn', presenter: ['02', 'CHIP + AI LEAD'], time: '6:55–7:40', title: 'Show what the dots mean', note: 'Say: “Each dot has two readings and a known answer. That is what supervised learning needs: examples with answers.” Explain that more hidden units can make a bendier dividing line.' },
-  { act: 'ARTIFICIAL INTELLIGENCE', rail: 'learn', presenter: ['02', 'CHIP + AI LEAD'], time: '7:40–8:45', title: 'Train the model', note: 'Click Start training. One epoch is one practice round through the examples. Loss means how wrong the guesses are. Seen dots are training; new dots are the separate test.' },
-  { act: 'AI CHECK', rail: 'learn', presenter: ['02', 'CHIP + AI LEAD'], time: '8:45–9:35', title: 'Test and retrain', note: 'Let phones make a new point. Then add the checked tricky samples. Say: “Another test says these are changed, even though their two readings look normal. New evidence moves the boundary.”' },
-  { act: 'AI CHECK', rail: 'learn', presenter: ['02', 'CHIP + AI LEAD'], time: '9:35–10:20', title: 'Do not confuse a score with proof', note: 'Take the vote, then reveal. A model score is one clue. Scientists repeat the test and check it with another method.' },
-  { act: 'ASTROPHYSICS', rail: 'fly', presenter: ['03', 'SPACEFLIGHT LEAD'], time: '10:20–11:10', title: 'Explain orbit in one sentence', note: 'Say: “Gravity pulls the spacecraft down, while sideways speed keeps making it miss Earth.” At 400 km, gravity is still about 90% as strong as at the surface.' },
-  { act: 'ASTROPHYSICS', rail: 'fly', presenter: ['03', 'SPACEFLIGHT LEAD'], time: '11:10–12:30', title: 'Correct the orbit', note: 'The guidance system needs a correction. Wait for speed choices, then test the room’s middle choice. Below about 0.99× hits Earth; 1.00× circles; 1.42× escapes. Retry if needed.' },
-  { act: 'RESPONSIBLE SCIENCE', rail: 'decide', presenter: ['03', 'SPACEFLIGHT LEAD'], time: '12:30–13:30', title: 'Let the room weigh the risk', note: 'Read the leading choice and one alternative. Say: “Science helps us predict each risk, but people still have to decide which risk is acceptable.”' },
-  { act: 'MISSION COMPLETE', rail: 'decide', presenter: ['ALL', 'THREE STUDENTS'], time: '13:30–15:00', title: 'Close in your own voices', note: 'Student One: genetics checked the DNA. Student Two: the sensor measured light and the AI compared patterns. Student Three: physics tested the path. Together: “These subjects work better together.”' }
+  { act: 'BEFORE START', rail: 'sample', presenter: ['00', 'PRESENTER'], time: 'Before start', title: 'Connect the audience', note: 'Ask everyone to scan the QR code. Their phones show the rule for labelling the first samples. If Wi-Fi fails, select “Load demo audience”.' },
+  { act: 'PROBLEM', rail: 'sample', presenter: ['01', 'STUDENT ONE'], time: '0:00–0:30', title: 'Explain the problem', note: 'Pause, then say: “The added DNA is still present, but the yeast no longer glows green. We have 15 minutes to find out why.”' },
+  { act: 'PLAN', rail: 'sample', presenter: ['ALL', 'THREE PRESENTERS'], time: '0:30–1:05', title: 'Explain the three tasks', note: 'Introduce each role: “I will check the DNA. Student Two will measure the green light and train the AI model. Student Three will correct the orbit.”' },
+  { act: 'GENETIC ENGINEERING', rail: 'sample', presenter: ['01', 'GENETICS LEAD'], time: '1:05–1:50', title: 'Explain the two added genes', note: 'Say: “We added two genes to sealed yeast. One makes a test protein. The reporter gene makes the yeast glow green when the circuit is active.” This is a fictional classroom example, not medical research.' },
+  { act: 'GENETICS', rail: 'amplify', presenter: ['01', 'GENETICS LEAD'], time: '1:50–2:30', title: 'Ask the microscope question', note: 'Wait for the phone votes, then show the answer. A classroom microscope can show DNA in a sample, but it cannot identify the A, T, C and G sequence. That requires other tests.' },
+  { act: 'PCR', rail: 'amplify', presenter: ['01', 'GENETICS LEAD'], time: '2:30–3:30', title: 'Demonstrate one PCR cycle', note: 'Show the three steps in order. Say: “Under ideal conditions, each cycle doubles the selected DNA section. The phone taps only control this animation.” Then jump to cycle 30.' },
+  { act: 'DNA MATCHING', rail: 'amplify', presenter: ['01', 'GENETICS LEAD'], time: '3:30–4:20', title: 'Choose the matching DNA strand', note: 'After the vote, show GACAC. This short exercise uses complementary DNA bases. Real PCR uses two longer primers, one at each end of the target.' },
+  { act: 'NEXT STEP', rail: 'amplify', presenter: ['01→02', 'GENETICS → CHIP'], time: '4:20–4:45', title: 'Explain what PCR tells us', note: 'Say: “PCR found the selected DNA section, but it does not explain why the yeast stopped glowing. Next, we will measure the green light.”' },
+  { act: 'NANOTECHNOLOGY', rail: 'sense', presenter: ['02', 'CHIP AND AI LEAD'], time: '4:45–5:25', title: 'Explain one nanometre', note: 'Move the slider from metres to nanometres. Say: “A fingernail grows about one nanometre each second.”' },
+  { act: 'CHIP MAKING', rail: 'sense', presenter: ['02', 'CHIP AND AI LEAD'], time: '5:25–6:20', title: 'Show how UV light makes a chip pattern', note: 'Ask the audience to tap. Explain that the taps only control the animation. In chip production, UV light changes a light-sensitive coating. Developing and etching then form the chip structures.' },
+  { act: 'SENSOR AND AI', rail: 'sense', presenter: ['02', 'CHIP AND AI LEAD'], time: '6:20–6:55', title: 'Explain how light becomes data', note: 'Point to each step: “A sensor measures the yeast’s green light and converts it to a number. The chip was made using a different type of light: UV.”' },
+  { act: 'AI TRAINING', rail: 'learn', presenter: ['02', 'CHIP AND AI LEAD'], time: '6:55–7:40', title: 'Explain the training data', note: 'Say: “Each dot contains two measurements and a known result. A supervised model learns from examples with known results.” More hidden units allow a more complex classification boundary.' },
+  { act: 'AI TRAINING', rail: 'learn', presenter: ['02', 'CHIP AND AI LEAD'], time: '7:40–8:45', title: 'Train the model', note: 'Select Start training. One epoch is one pass through the training examples. Loss measures the model’s error. Training accuracy uses examples the model saw; test accuracy uses separate examples.' },
+  { act: 'TEST THE AI', rail: 'learn', presenter: ['02', 'CHIP AND AI LEAD'], time: '8:45–9:35', title: 'Test, add evidence and retrain', note: 'Let the audience choose values for a new sample. Then add four samples verified by another test. Say: “The second test found changes in these samples even though their first two readings looked normal. Adding them changes how the model separates the groups.”' },
+  { act: 'CHECK THE RESULT', rail: 'learn', presenter: ['02', 'CHIP AND AI LEAD'], time: '9:35–10:20', title: 'Explain that a model score is not proof', note: 'Take the vote, then show the answer. A model score is one piece of evidence. Scientists repeat the test and use another method before deciding.' },
+  { act: 'ORBIT', rail: 'fly', presenter: ['03', 'SPACEFLIGHT LEAD'], time: '10:20–11:10', title: 'Explain orbit', note: 'Say: “A spacecraft stays in orbit because it moves sideways while gravity pulls it towards Earth.” At 400 km, gravity is still about 90% as strong as it is at Earth’s surface.' },
+  { act: 'ORBIT TEST', rail: 'fly', presenter: ['03', 'SPACEFLIGHT LEAD'], time: '11:10–12:30', title: 'Test the chosen orbital speed', note: 'Wait for the audience’s choices, then test the median. Below about 0.99× circular-orbit speed, the spacecraft enters the atmosphere; 1.00× produces a circular orbit; 1.42× or above escapes Earth. Test again if needed.' },
+  { act: 'DECISION', rail: 'decide', presenter: ['03', 'SPACEFLIGHT LEAD'], time: '12:30–13:30', title: 'Discuss the risks', note: 'Read the most popular choice and one alternative. Say: “Science can help us estimate the risks, but people must decide which risks are acceptable.”' },
+  { act: 'FINISHED', rail: 'decide', presenter: ['ALL', 'THREE PRESENTERS'], time: '13:30–15:00', title: 'Summarise the activity', note: 'Student One: “We used genetics to check the DNA.” Student Two: “We used a sensor to measure the light and an AI model to compare samples.” Student Three: “We used physics to test the spacecraft’s path.” Together: “These subjects work well together.”' }
 ];
 
 const defaultState = {
@@ -140,7 +140,7 @@ fetch('/api/config')
     $('#qr').src = config.qr;
     $('#join-url').textContent = config.audienceUrl.replace(/^https?:\/\//, '');
   })
-  .catch(() => { $('#join-url').textContent = 'QR unavailable — use demo mode'; });
+  .catch(() => { $('#join-url').textContent = 'Could not load the QR code. Use the demo audience.'; });
 
 socket.on('state', next => {
   if (localRunId && next.runId !== localRunId) resetLocalState();
@@ -164,8 +164,8 @@ socket.on('photon', photon => {
 function setupProgress() {
   const rail = $('#slide-progress');
   const nodes = [
-    ['sample', 'SAMPLE', 0, 3], ['amplify', 'AMPLIFY', 4, 7], ['sense', 'SENSE', 8, 10],
-    ['learn', 'LEARN', 11, 14], ['fly', 'FLY', 15, 16], ['decide', 'DECIDE', 17, 18]
+    ['sample', 'SAMPLES', 0, 3], ['amplify', 'PCR', 4, 7], ['sense', 'SENSOR', 8, 10],
+    ['learn', 'AI', 11, 14], ['fly', 'ORBIT', 15, 16], ['decide', 'DECISION', 17, 18]
   ];
   nodes.forEach(([key, label, start, end]) => {
     const node = document.createElement('span');
@@ -197,7 +197,7 @@ function setupInputs() {
     if (event.key.toLowerCase() === 'n') toggleNotes();
     if (event.key.toLowerCase() === 'f') document.documentElement.requestFullscreen?.();
     if (event.key.toLowerCase() === 'd') socket.emit('host', { type: 'demo' });
-    if (event.key.toLowerCase() === 'r' && event.shiftKey && confirm('Reset the complete mission and all audience responses?')) {
+    if (event.key.toLowerCase() === 'r' && event.shiftKey && confirm('Reset the presentation and delete all audience responses?')) {
       socket.emit('host', { type: 'reset' });
     }
   });
@@ -208,11 +208,11 @@ function setupInputs() {
   $$('.phase-row button').forEach(button => button.addEventListener('click', () => selectPcrPhase(Number(button.dataset.phase))));
 
   const scaleObjects = [
-    ['10⁰ m', 'HUMAN SCALE', '1 metre'], ['10⁻¹ m', 'A HAND', '10 centimetres'],
+    ['10⁰ m', 'ABOUT ONE METRE', '1 metre'], ['10⁻¹ m', 'A HAND', '10 centimetres'],
     ['10⁻² m', 'A FINGERNAIL', '1 centimetre'], ['10⁻³ m', 'A GRAIN OF SAND', '1 millimetre'],
     ['10⁻⁴ m', 'HUMAN HAIR WIDTH', '100 micrometres'], ['10⁻⁵ m', 'A HUMAN CELL', '10 micrometres'],
     ['10⁻⁶ m', 'A BACTERIUM', '1 micrometre'], ['10⁻⁷ m', 'A VIRUS', '100 nanometres'],
-    ['10⁻⁸ m', 'DNA HELIX WIDTH IS SMALLER', '10 nanometres'], ['10⁻⁹ m', 'THE NANOSCALE', '1 nanometre']
+    ['10⁻⁸ m', 'DNA IS ABOUT 2 NANOMETRES WIDE', '10 nanometres'], ['10⁻⁹ m', 'ONE NANOMETRE', '1 nanometre']
   ];
   $('#scale-slider').addEventListener('input', event => {
     const index = Number(event.target.value);
@@ -279,10 +279,10 @@ function updateChrome() {
 }
 
 function renderAll() {
-  $('#online-count').textContent = `${state.participants} LINKED`;
+  $('#online-count').textContent = `${state.participants} CONNECTED`;
   $('#lobby-people').textContent = state.participants;
   $('#lobby-samples').textContent = state.samples.length;
-  $('#final-participants').textContent = `${state.contributorCount || state.participants} CONTRIBUTORS`;
+  $('#final-participants').textContent = `${state.contributorCount || state.participants} PEOPLE RESPONDED`;
   renderPolls();
   renderPCR();
   renderPhotolithography();
@@ -303,20 +303,20 @@ function renderControlStates() {
   setControlState('#seed-demo', state.demoComplete, state.demoComplete ? 'Demo audience loaded' : 'Load demo audience');
   setControlState('#reveal-microscope-button', state.reveals.microscope, state.reveals.microscope ? 'Answer shown' : 'Show the answer');
   setControlState('#reveal-primer-button', state.reveals.primer, state.reveals.primer ? 'Match shown' : 'Show the match');
-  setControlState('#reveal-trust-button', state.reveals.trust, state.reveals.trust ? 'Checks shown' : 'Show what scientists do next');
-  setControlState('#expose-chip-button', forcedExposure || state.reveals.chip, forcedExposure || state.reveals.chip ? 'Later steps shown' : 'Show the later factory steps');
+  setControlState('#reveal-trust-button', state.reveals.trust, state.reveals.trust ? 'Checks shown' : 'Show the verification steps');
+  setControlState('#expose-chip-button', forcedExposure || state.reveals.chip, forcedExposure || state.reveals.chip ? 'Manufacturing steps shown' : 'Show the next manufacturing steps');
 
   const cycle = Math.max(localPcrCycle, crowdPcrCycle());
   const pcrComplete = cycle >= 30 || state.reveals.pcrComplete;
-  setControlState('#pcr-cycle-button', pcrComplete || Boolean(pcrDemoTimer), pcrComplete ? 'Cycle 30 reached' : pcrDemoTimer ? 'Running one cycle…' : 'Show 1 full cycle');
+  setControlState('#pcr-cycle-button', pcrComplete || Boolean(pcrDemoTimer), pcrComplete ? 'Cycle 30 reached' : pcrDemoTimer ? 'Running one cycle…' : 'Run 1 full cycle');
   setControlState('#pcr-30-button', pcrComplete, pcrComplete ? 'Cycle 30 reached' : 'Jump to cycle 30');
   $$('.phase-row button').forEach(button => { button.disabled = Boolean(pcrDemoTimer); });
 
   const hasModel = Boolean(currentModel || state.model);
-  setControlState('#train-model-button', trainingActive || pendingTraining, pendingTraining ? 'Loading practice samples…' : trainingActive ? 'Training…' : hasModel ? 'Train again' : 'Start training');
-  setControlState('#reset-model-button', !trainingActive && !pendingTraining && !hasModel && !state.training.epoch, pendingTraining ? 'Cancel' : hasModel || trainingActive ? 'Start over' : 'Already reset');
+  setControlState('#train-model-button', trainingActive || pendingTraining, pendingTraining ? 'Loading training samples…' : trainingActive ? 'Training…' : hasModel ? 'Train again' : 'Start training');
+  setControlState('#reset-model-button', !trainingActive && !pendingTraining && !hasModel && !state.training.epoch, pendingTraining ? 'Cancel' : hasModel || trainingActive ? 'Reset model' : 'Model already reset');
   renderRetrainingState();
-  setControlState('#simulate-orbit-button', orbitAnimating, orbitAnimating ? 'Testing path…' : lastOrbitOutcome ? 'Test again' : 'Test our speed');
+  setControlState('#simulate-orbit-button', orbitAnimating, orbitAnimating ? 'Simulating orbit…' : lastOrbitOutcome ? 'Simulate again' : 'Simulate this speed');
 }
 
 function renderPolls() {
@@ -381,7 +381,7 @@ function renderPCR() {
   const copies = 2 ** cycle;
   $('#pcr-cycle').textContent = String(cycle).padStart(2, '0');
   $('#pcr-copies').textContent = formatCopies(copies);
-  $('#pcr-tap-label').textContent = `${state.pcrTaps} audience taps`;
+  $('#pcr-tap-label').textContent = `${state.pcrTaps} audience ${state.pcrTaps === 1 ? 'tap' : 'taps'}`;
   $('#pcr-power').style.width = `${Math.min(100, cycle / 30 * 100)}%`;
   const lanes = $('#dna-lanes');
   lanes.innerHTML = '';
@@ -404,9 +404,9 @@ function formatCopies(value) {
 
 function selectPcrPhase(index, finished = false) {
   const explanations = [
-    '95°C: heat unzips the two DNA strands.',
-    '55°C: cooling lets short primers stick to their matching letters.',
-    '72°C: an enzyme starts at each primer and builds a matching strand.'
+    '95°C: heat separates the two DNA strands.',
+    '55°C: primers bind to matching DNA bases.',
+    '72°C: an enzyme extends each primer to copy the DNA.'
   ];
   $$('.phase-row button').forEach((button, i) => {
     const active = i === index;
@@ -441,7 +441,7 @@ function demonstratePcrCycle() {
 function renderPhotolithography() {
   const target = 48;
   const percent = forcedExposure ? 100 : Math.min(100, state.photonCount / target * 100);
-  $('#photon-count').textContent = `${state.photonCount} TAPS`;
+  $('#photon-count').textContent = `${state.photonCount} ${state.photonCount === 1 ? 'TAP' : 'TAPS'}`;
   $('#exposure-bar').style.width = `${percent}%`;
   $('#exposure-bar').parentElement.setAttribute('aria-valuenow', String(forcedExposure ? target : Math.min(state.photonCount, target)));
   $('#wafer').style.setProperty('--exposure', String(percent / 100));
@@ -544,7 +544,7 @@ function startTraining() {
   if (trainingTimer) window.clearInterval(trainingTimer);
   currentModel = createNetwork(chosenArchitecture());
   trainingActive = true;
-  if (preRetrainScore !== null) retrainSummary = 'Retraining now: the AI is learning from the four newly checked samples.';
+  if (preRetrainScore !== null) retrainSummary = 'Retraining the model with the four newly verified samples.';
   let epoch = 0;
   let loss = null;
   renderTrainingMetrics(epoch, loss, 0, 0, true);
@@ -565,7 +565,7 @@ function startTraining() {
       currentModel.trainedAt = Date.now();
       if (preRetrainScore !== null) {
         const nextScore = forwardNetwork(currentModel, [.86, .78]).out;
-        retrainSummary = `The same sample moved from ${Math.round(preRetrainScore * 100)}/100 to ${Math.round(nextScore * 100)}/100 after the new evidence.`;
+        retrainSummary = `The model’s score for the same sample changed from ${Math.round(preRetrainScore * 100)}/100 to ${Math.round(nextScore * 100)}/100 after retraining.`;
         preRetrainScore = null;
       }
       socket.emit('host', { type: 'model', model: currentModel });
@@ -603,7 +603,7 @@ function renderTrainingMetrics(epoch, loss, accuracy, testAccuracy, active) {
 }
 
 function renderAIState() {
-  $('#dataset-count').textContent = `${state.samples.length} TRAINING POINTS`;
+  $('#dataset-count').textContent = `${state.samples.length} TRAINING SAMPLES`;
   $('#challenge-count').textContent = state.challenges.length;
   if (!trainingActive) {
     renderTrainingMetrics(state.training.epoch, state.training.loss, state.training.accuracy, state.training.testAccuracy, state.training.active);
@@ -615,15 +615,15 @@ function renderAIState() {
   const scoreNode = $('#helix-score');
   if (currentModel) {
     const score = forwardNetwork(currentModel, [.86, .78]).out;
-    label.textContent = score >= .5 ? 'LOOKS WORKING' : 'LOOKS CHANGED';
+    label.textContent = score >= .5 ? 'PREDICTED: WORKING' : 'PREDICTED: CHANGED';
     scoreNode.textContent = `${Math.round(score * 100)}`;
     $('#model-confidence').textContent = `${Math.round(score * 100)}/100`;
-    $('#trust-model-claim').textContent = `CURRENT AI ANSWER: ${score >= .5 ? 'LOOKS WORKING' : 'LOOKS CHANGED'} · ${Math.round(score * 100)}/100`;
+    $('#trust-model-claim').textContent = `CURRENT MODEL PREDICTION: ${score >= .5 ? 'WORKING' : 'CHANGED'} · ${Math.round(score * 100)}/100`;
   } else {
     label.textContent = 'MODEL NOT TRAINED';
     scoreNode.textContent = '—';
     $('#model-confidence').textContent = '—';
-    $('#trust-model-claim').textContent = 'THE MODEL GIVES AN ANSWER — WOULD THAT BE ENOUGH?';
+    $('#trust-model-claim').textContent = 'IF THE MODEL GIVES A HIGH SCORE, IS THAT ENOUGH EVIDENCE?';
   }
   renderRetrainingState();
 }
@@ -638,19 +638,19 @@ function renderRetrainingState() {
 
   if (retraining) {
     button.disabled = true;
-    button.textContent = 'Retraining with 4 checked samples…';
-    status.textContent = retrainSummary || 'The four checked samples are being added. Watch the boundary move.';
+    button.textContent = 'Retraining with 4 verified samples…';
+    status.textContent = retrainSummary || 'The four verified samples are being added. Watch how the line between the two groups changes.';
     return;
   }
   if (hasCheckedSamples) {
     button.disabled = true;
-    button.textContent = '4 checked samples added';
-    status.textContent = retrainSummary || 'The retrained model now includes the four samples checked by a second test.';
+    button.textContent = '4 verified samples added';
+    status.textContent = retrainSummary || 'The retrained model includes the four samples verified by a second test.';
     return;
   }
   button.disabled = !hasModel || pendingTraining || trainingActive;
-  button.textContent = hasModel ? 'Add 4 checked samples + retrain' : 'Train the first model first';
-  status.textContent = 'A second lab test found four changed samples that the first model had never seen.';
+  button.textContent = hasModel ? 'Add 4 verified samples and retrain' : 'Train the first model first';
+  status.textContent = 'A second test marked four samples as changed. The first model was not trained on them.';
 }
 
 function drawAI(canvas, options = {}) {
@@ -745,7 +745,7 @@ function drawNetwork(hidden) {
   input.forEach(a => middle.forEach(b => { html += `<line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" />`; }));
   middle.forEach(a => output.forEach(b => { html += `<line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" />`; }));
   [...input, ...middle, ...output].forEach(node => { html += `<circle cx="${node.x}" cy="${node.y}" r="7" />`; });
-  html += '<text x="45" y="150" text-anchor="middle">2 READINGS</text><text x="210" y="150" text-anchor="middle">PATTERN UNITS</text><text x="375" y="150" text-anchor="middle">1 SCORE</text>';
+  html += '<text x="45" y="150" text-anchor="middle">TWO READINGS</text><text x="210" y="150" text-anchor="middle">HIDDEN NEURONS</text><text x="375" y="150" text-anchor="middle">MODEL SCORE</text>';
   svg.innerHTML = html;
 }
 
@@ -816,9 +816,9 @@ function drawOrbit(canvas, speed = 1, progress = 1) {
 function updateOrbitConcept(speed) {
   const trajectory = drawOrbit($('#orbit-demo-canvas'), speed, 1);
   const messages = {
-    CRASH: 'TOO SLOW: gravity pulls the path into the atmosphere.',
-    ORBIT: 'ORBIT: gravity keeps bending the sideways motion around Earth.',
-    'HIGH ORBIT': 'FASTER: the spacecraft stays in orbit, but follows a much larger ellipse.',
+    CRASH: 'TOO SLOW: the spacecraft enters the atmosphere.',
+    ORBIT: 'ORBIT: the spacecraft continues around Earth without entering the atmosphere.',
+    'HIGH ORBIT': 'FASTER: the spacecraft remains in orbit on a larger ellipse.',
     ESCAPE: 'ESCAPE SPEED: the spacecraft is moving fast enough to leave Earth.'
   };
   $('#orbit-concept-result').textContent = messages[trajectory?.outcome] || 'Change the speed to see how the path changes.';
@@ -844,7 +844,7 @@ function renderOrbitState() {
     if (lastOrbitOutcome && !sameAsLastRun) {
       lastOrbitOutcome = null;
       lastOrbitSpeed = null;
-      $('#flight-result').textContent = 'SPEED CHANGED — TEST THE NEW PATH';
+      $('#flight-result').textContent = 'THE SPEED CHANGED — SIMULATE IT AGAIN';
       $('#telemetry-alt').textContent = 'START: 400 km';
       $('#telemetry-status').textContent = 'READY';
     }
@@ -865,14 +865,14 @@ function simulateOrbit() {
   const trajectory = makeTrajectory(speed);
   const start = performance.now();
   const duration = 4200;
-  $('#flight-result').textContent = `TESTING THE ROOM’S ${speed.toFixed(2)}× SPEED…`;
-  $('#telemetry-status').textContent = 'BURN';
+  $('#flight-result').textContent = `SIMULATING THE MEDIAN AUDIENCE SPEED: ${speed.toFixed(2)}×…`;
+  $('#telemetry-status').textContent = 'ENGINE ON';
   renderControlStates();
   function frame(now) {
     if (runToken !== orbitRunToken) return;
     const progress = Math.min(1, (now - start) / duration);
     drawOrbit($('#mission-orbit-canvas'), speed, progress);
-    $('#telemetry-status').textContent = progress < .15 ? 'BURN' : 'COAST';
+    $('#telemetry-status').textContent = progress < .15 ? 'ENGINE ON' : 'ENGINE OFF';
     if (progress < 1) requestAnimationFrame(frame);
     else {
       orbitAnimating = false;
@@ -880,13 +880,13 @@ function simulateOrbit() {
       lastOrbitOutcome = trajectory.outcome;
       lastOrbitSpeed = speed;
       const messages = {
-        CRASH: `AT ${speed.toFixed(2)}×: TOO SLOW — THE PATH HITS THE ATMOSPHERE`,
-        ESCAPE: `AT ${speed.toFixed(2)}×: TOO FAST — THE SPACECRAFT ESCAPES`,
-        'HIGH ORBIT': `AT ${speed.toFixed(2)}×: STILL ORBITING — BUT ON A LARGE ELLIPSE`,
-        ORBIT: `AT ${speed.toFixed(2)}×: ORBIT — IT KEEPS MISSING EARTH`
+        CRASH: `AT ${speed.toFixed(2)}×: TOO SLOW — THE SPACECRAFT ENTERS THE ATMOSPHERE`,
+        ESCAPE: `AT ${speed.toFixed(2)}×: THE SPACECRAFT ESCAPES EARTH`,
+        'HIGH ORBIT': `AT ${speed.toFixed(2)}×: THE SPACECRAFT ENTERS A LARGE ELLIPTICAL ORBIT`,
+        ORBIT: `AT ${speed.toFixed(2)}×: THE SPACECRAFT ENTERS A NEAR-CIRCULAR ORBIT`
       };
       $('#flight-result').textContent = messages[trajectory.outcome];
-      $('#telemetry-status').textContent = trajectory.outcome;
+      $('#telemetry-status').textContent = trajectory.outcome === 'CRASH' ? 'ENTERED ATMOSPHERE' : trajectory.outcome;
       $('#telemetry-alt').textContent = trajectory.outcome === 'ORBIT' ? 'SAFE ORBIT' : trajectory.outcome === 'CRASH' ? '<100 km' : trajectory.outcome === 'HIGH ORBIT' ? 'LARGE ELLIPSE' : 'ESCAPE';
       renderOrbitState();
     }
@@ -912,7 +912,7 @@ function runAction(action) {
   if (action === 'reset-model') resetModel();
   if (action === 'contaminate-model' && !state.samples.some(sample => sample.source === 'radiation') && currentModel) {
     preRetrainScore = forwardNetwork(currentModel, [.86, .78]).out;
-    retrainSummary = 'Adding four samples that a second lab test marked as changed…';
+    retrainSummary = 'Adding four samples that a second test verified as changed…';
     pendingTraining = true;
     renderRetrainingState();
     socket.emit('host', { type: 'contaminate' });
@@ -963,7 +963,7 @@ function resetLocalState() {
     button.classList.toggle('selected', selected);
     button.setAttribute('aria-pressed', String(selected));
   });
-  $('#flight-result').textContent = 'WAITING FOR SPEED CHOICES';
+  $('#flight-result').textContent = 'WAITING FOR SPEEDS';
   $('#telemetry-alt').textContent = 'START: 400 km';
   $('#telemetry-vel').textContent = '—';
   $('#telemetry-status').textContent = 'READY';

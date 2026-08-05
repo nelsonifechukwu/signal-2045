@@ -2,7 +2,7 @@
   "name": "signal-2045",
   "version": "1.0.0",
   "private": true,
-  "description": "Interactive Cambridge science showcase",
+  "description": "Interactive 15-minute Cambridge science presentation",
   "scripts": {
     "dev": "node server.js",
     "start": "node server.js",

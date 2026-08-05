@@ -318,13 +318,13 @@ async function takeOffline(page) {
   await page.call('Network.enable');
   await page.call('Network.emulateNetworkConditions', { offline: true, latency: 0, downloadThroughput: 0, uploadThroughput: 0 });
   await page.evaluate('(() => { socket.io.engine.close(); return true; })()');
-  await waitFor(() => page.evaluate("document.querySelector('#connection-label').textContent === 'RECONNECTING'"), `${page.name} did not show its offline state`);
+  await waitFor(() => page.evaluate("document.querySelector('#connection-label').textContent === 'RECONNECTING…'"), `${page.name} did not show its offline state`);
 }
 
 async function restoreOnline(page) {
   await page.call('Network.emulateNetworkConditions', { offline: false, latency: 0, downloadThroughput: -1, uploadThroughput: -1 });
   await page.evaluate('(() => { socket.connect(); return true; })()');
-  await waitFor(() => page.evaluate("socket.connected && document.querySelector('#connection-label').textContent === 'LIVE'"), `${page.name} did not reconnect`, 12000);
+  await waitFor(() => page.evaluate("socket.connected && document.querySelector('#connection-label').textContent === 'CONNECTED'"), `${page.name} did not reconnect`, 12000);
 }
 
 async function run() {
@@ -427,7 +427,7 @@ async function run() {
 
     // Trusted presenter navigation shortcuts and fullscreen user gesture.
     await navigate(stage, phones, 'ArrowRight', 1);
-    assert.match(await text(main, '#phone-content'), /green glow has gone dark/i);
+    assert.match(await text(main, '#phone-content'), /no longer glowing green/i);
     await navigate(stage, phones, 'PageDown', 2);
     await navigate(stage, phones, 'PageUp', 1);
     await navigate(stage, phones, 'ArrowRight', 2);
@@ -437,7 +437,7 @@ async function run() {
     await stage.evaluate('document.exitFullscreen()');
     await waitFor(() => stage.evaluate('!document.fullscreenElement'), 'Fullscreen cleanup did not finish');
     await navigate(stage, phones, 'ArrowRight', 3);
-    assert.match(await text(main, '#phone-content'), /green status light/i);
+    assert.match(await text(main, '#phone-content'), /green reporter light/i);
     await takeShot(stage, 'scene-03-genetics');
 
     // Microscope: an offline vote is rejected, reconnect restores the control, and both choices work.
@@ -465,7 +465,7 @@ async function run() {
 
     // PCR phases, active-animation locks, Enter primary action, and room cap at 120.
     await navigate(stage, phones, 'ArrowRight', 5);
-    const phaseCopy = [/heat unzips/i, /short primers stick to their matching letters/i, /an enzyme starts at each primer/i];
+    const phaseCopy = [/heat separates/i, /primers bind to matching DNA bases/i, /an enzyme extends each primer/i];
     for (let phase = 0; phase < 3; phase += 1) {
       await realClick(stage, `[data-phase="${phase}"]`);
       assert.equal(await stage.evaluate(`document.querySelector('[data-phase="${phase}"]').getAttribute('aria-pressed')`), 'true');
@@ -513,7 +513,7 @@ async function run() {
     await takeShot(stage, 'scene-06-dna-match');
 
     await navigate(stage, phones, 'ArrowRight', 7);
-    assert.match(await text(main, '#phone-content'), /did not prove/i);
+    assert.match(await text(main, '#phone-content'), /not that the whole circuit works/i);
 
     // Real keyboard-driven stage range plus both wrong nano branches and solved lock.
     await navigate(stage, phones, 'ArrowRight', 8);
@@ -532,7 +532,7 @@ async function run() {
     await realClick(main, '[data-nano="wrong-fast"]');
     assert.match(await text(main, '#nano-answer'), /Try again/);
     await realClick(main, '[data-nano="right"]');
-    assert.match(await text(main, '#nano-answer'), /Exactly/);
+    assert.match(await text(main, '#nano-answer'), /Correct/);
     assert.equal(await main.evaluate("[...document.querySelectorAll('[data-nano]')].every(button => button.disabled)"), true);
     assert.deepEqual(await main.evaluate("[...document.querySelectorAll('[data-nano]')].filter(button => button.classList.contains('selected')).map(button => button.dataset.nano)"), ['right']);
     const nanoAnswer = await text(main, '#nano-answer');
@@ -565,7 +565,7 @@ async function run() {
     assert.equal(await stage.evaluate('state.photonCount'), photonTotal);
 
     await navigate(stage, phones, 'ArrowRight', 10);
-    assert.match(await text(main, '#phone-content'), /Glow → sensor → electrical number/);
+    assert.match(await text(main, '#phone-content'), /sensor converts green light into an electrical signal/i);
 
     // All model-size options and passive stage pills.
     await navigate(stage, phones, 'ArrowRight', 11);
@@ -578,7 +578,7 @@ async function run() {
     await navigate(stage, phones, 'ArrowRight', 12);
     assert.equal(await main.evaluate("document.querySelectorAll('#phone-content button').length"), 0, 'Training readouts still look interactive');
     assert.equal(await stage.evaluate("document.querySelector('#contaminate-button').disabled"), true);
-    assert.equal(await text(stage, '#reset-model-button'), 'Already reset');
+    assert.equal(await text(stage, '#reset-model-button'), 'Model already reset');
     assert.equal(await stage.evaluate("document.querySelector('#reset-model-button').disabled"), true);
     await realClick(stage, '#train-model-button');
     await waitFor(() => stage.evaluate("trainingActive && document.querySelector('#train-model-button').disabled && document.querySelector('#train-model-button').textContent.includes('Training')"), 'Training did not visibly enter its busy state');
@@ -590,7 +590,7 @@ async function run() {
     assert.equal(await text(stage, '#train-model-button'), 'Train again');
     await realClick(stage, '#reset-model-button');
     await waitFor(() => stage.evaluate('!state.model && state.training.epoch === 0'), 'Model reset did not clear training');
-    assert.equal(await text(stage, '#reset-model-button'), 'Already reset');
+    assert.equal(await text(stage, '#reset-model-button'), 'Model already reset');
     assert.equal(await stage.evaluate("document.querySelector('#reset-model-button').disabled"), true);
     await realClick(stage, '#reset-model-button', { allowDisabled: true });
     await blurControls(stage);
@@ -604,26 +604,26 @@ async function run() {
     await setRangeWithKeys(main, '#challenge-carbon', 100);
     await realClick(main, '#predict-button');
     await waitFor(() => stage.evaluate('state.challenges.length === 1'), 'First AI challenge did not reach the stage');
-    assert.match(await text(main, '#phone-prediction'), /LOOKS (WORKING|CHANGED)/);
+    assert.match(await text(main, '#phone-prediction'), /PREDICTED: (WORKING|CHANGED)/);
     assert.equal(await main.evaluate("document.querySelector('#predict-button').disabled"), true);
-    assert.equal(await text(main, '#predict-button'), 'Result shown — move a slider');
+    assert.equal(await text(main, '#predict-button'), 'Move a slider to test again');
     await realClick(main, '#predict-button', { allowDisabled: true });
     assert.equal(await stage.evaluate('state.challenges.length'), 1);
     await setRangeWithKeys(main, '#challenge-water', 86);
     await setRangeWithKeys(main, '#challenge-carbon', 78);
     assert.equal(await main.evaluate("document.querySelector('#predict-button').disabled"), false);
-    assert.equal(await text(main, '#predict-button'), 'Ask about the changed point');
+    assert.equal(await text(main, '#predict-button'), 'Test the updated sample');
     await realClick(main, '#predict-button');
     await waitFor(() => stage.evaluate('state.challenges.length === 1 && state.challenges[0].water === 86 && state.challenges[0].carbon === 78'), 'Second challenge did not update the existing phone point');
     await takeShot(main, 'phone-ai-challenge');
     const firstModelTime = await stage.evaluate('state.model.trainedAt');
     await realClick(stage, '#contaminate-button');
-    await waitFor(() => text(stage, '#contaminate-button').then(value => value.includes('Retraining with 4 checked samples')), 'Retraining button did not explain the active work');
+    await waitFor(() => text(stage, '#contaminate-button').then(value => value.includes('Retraining with 4 verified samples')), 'Retraining button did not explain the active work');
     assert.equal(await stage.evaluate("document.querySelector('#contaminate-button').disabled"), true);
     assert.equal(await stage.evaluate("state.samples.filter(sample => sample.source === 'radiation').length"), 4);
     await waitFor(() => stage.evaluate(`state.model?.trainedAt > ${firstModelTime}`), 'Retraining with checked samples did not finish', 12000);
-    assert.equal(await text(stage, '#contaminate-button'), '4 checked samples added');
-    assert.match(await text(stage, '#retraining-status'), /same sample moved from \d+\/100 to \d+\/100/i);
+    assert.equal(await text(stage, '#contaminate-button'), '4 verified samples added');
+    assert.match(await text(stage, '#retraining-status'), /score for the same sample changed from \d+\/100 to \d+\/100/i);
     await realClick(stage, '#contaminate-button', { allowDisabled: true });
     assert.equal(await stage.evaluate("state.samples.filter(sample => sample.source === 'radiation').length"), 4);
 
@@ -637,7 +637,7 @@ async function run() {
     assert.equal(await text(stage, '#reveal-trust-button'), 'Checks shown');
     assert.equal(await stage.evaluate("document.querySelector('#reveal-trust-button').disabled"), true);
     await realClick(stage, '#reveal-trust-button', { allowDisabled: true });
-    await waitFor(() => text(main, '#phone-content').then(value => value.includes('AI is one clue')), 'Trust answer did not reach phones');
+    await waitFor(() => text(main, '#phone-content').then(value => value.includes('A model score is one piece of evidence')), 'Trust answer did not reach phones');
 
     // Gravity locks after the right answer; every orbit preset has visible copy and survives revisit.
     await navigate(stage, phones, 'ArrowRight', 15);
@@ -648,8 +648,8 @@ async function run() {
     assert.equal(await main.evaluate("[...document.querySelectorAll('[data-gravity]')].every(button => button.disabled)"), true);
     assert.deepEqual(await main.evaluate("[...document.querySelectorAll('[data-gravity]')].filter(button => button.classList.contains('selected')).map(button => button.dataset.gravity)"), ['right']);
     const orbitExpectations = {
-      97: 'TOO SLOW: gravity pulls the path into the atmosphere.',
-      100: 'ORBIT: gravity keeps bending the sideways motion around Earth.',
+      97: 'TOO SLOW: the spacecraft enters the atmosphere.',
+      100: 'ORBIT: the spacecraft continues around Earth without entering the atmosphere.',
       142: 'ESCAPE SPEED: the spacecraft is moving fast enough to leave Earth.'
     };
     for (const [speed, copy] of Object.entries(orbitExpectations)) {
@@ -694,7 +694,7 @@ async function run() {
     await waitFor(() => text(stage, '#flight-result').then(value => value.includes('SPEED CHANGED')), 'Changed speed did not reset the flight result');
     assert.equal(await text(stage, '#telemetry-alt'), 'START: 400 km');
     await realClick(stage, '#simulate-orbit-button');
-    await waitFor(() => text(stage, '#flight-result').then(value => value.includes('KEEPS MISSING EARTH')), 'Orbit branch did not finish', 7000);
+    await waitFor(() => text(stage, '#flight-result').then(value => value.includes('NEAR-CIRCULAR ORBIT')), 'Orbit branch did not finish', 7000);
     await takeShot(stage, 'scene-16-orbit-result');
 
     // All responsibility choices, passive result cards, and passive finale readouts.
@@ -704,9 +704,9 @@ async function run() {
     assert.deepEqual(await stage.evaluate("['earth','orbit','remote'].map(key => document.querySelector('#return-'+key+'-n').textContent)"), ['33%', '33%', '33%']);
     await assertPassive(stage, ['.return-options article:nth-child(1)', '.return-options article:nth-child(2)', '.return-options article:nth-child(3)'], 'Return results');
     await navigate(stage, phones, 'ArrowRight', 18);
-    assert.match(await text(main, '#phone-content'), /You helped complete/);
+    assert.match(await text(main, '#phone-content'), /Thanks for taking part/);
     assert.equal(await main.evaluate("document.querySelectorAll('#phone-content button').length"), 0, 'Final recap still contains misleading buttons');
-    assert.match(await text(stage, '#final-participants'), /CONTRIBUTORS/);
+    assert.match(await text(stage, '#final-participants'), /PEOPLE RESPONDED/);
     await takeShot(stage, 'scene-18-finale');
 
     // Presenter notes and keyboard focus guards.
@@ -723,7 +723,7 @@ async function run() {
     await stage.evaluate("window.confirm = () => true; document.querySelector('#shortcut-test').remove(); document.activeElement?.blur()");
     await pressKey(stage, 'R', 8);
     await waitFor(() => stage.evaluate('state.scene === 0 && state.samples.length === 0 && state.burns.length === 0'), 'Shift+R did not reset the mission');
-    assert.equal(await text(stage, '#flight-result'), 'WAITING FOR SPEED CHOICES');
+    assert.equal(await text(stage, '#flight-result'), 'WAITING FOR SPEEDS');
     assert.equal(await text(stage, '#telemetry-alt'), 'START: 400 km');
     assert.equal(await text(stage, '#scale-label'), '1 metre');
     await realClick(stage, '#seed-demo');
