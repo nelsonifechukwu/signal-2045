@@ -29,9 +29,11 @@ PUBLIC_URL=http://YOUR-LAPTOP-IP:4173/audience.html npm start
 
 The app needs a Node.js host because Socket.IO synchronises the presenter and audience in real time. GitHub Pages alone cannot run it or accept audience writes.
 
-1. Push this repository to GitHub.
-2. In Render, choose **New → Blueprint** and connect the repository.
-3. When prompted for `HOST_TOKEN`, enter a private presenter access code.
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/nelsonifechukwu/signal-2045)
+
+1. Click **Deploy to Render** above and sign in to Render.
+2. When prompted for `HOST_TOKEN`, enter a private presenter access code.
+3. Create the Blueprint and wait for its first deployment to finish.
 4. Open the resulting `https://signal-2045.onrender.com` address. The QR code automatically points phones to the public HTTPS audience page.
 
 The presenter page asks for the access code once per browser tab. Audience members never need it. You can also open `https://YOUR-DOMAIN/?host=YOUR-CODE`; the code is removed from the address bar and retained only for that tab.
