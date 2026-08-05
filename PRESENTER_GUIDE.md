@@ -27,13 +27,13 @@ Open [http://localhost:4173](http://localhost:4173) on the presentation laptop. 
 2. Open the stage and press `F` for full screen.
 3. Leave Scene 0 and its QR code on screen.
 4. Ask everyone to scan the QR code. The top of each phone should say **CONNECTED**.
-5. Each phone receives one practice sample with a DNA-match score and a green-glow score.
+5. Each phone receives one practice sample with a DNA-match score and a green-light score.
 6. On the phone, choose **CIRCUIT WORKING** only when both scores are 60 or higher. If either score is below 60, choose **CIRCUIT CHANGED**.
 7. Tap **Send this label**. The phone should say **Label sent**, and the stage’s sample count should rise.
 
 Say while people join:
 
-> “These are fictional practice samples. Choose CIRCUIT WORKING only if both readings are 60 or higher. If either reading is below 60, choose CIRCUIT CHANGED.”
+> “Your phone has a fictional practice sample for the AI. Choose CIRCUIT WORKING only if both scores are 60 or higher. Otherwise choose CIRCUIT CHANGED.”
 
 This rule is only for the first activity. Scene 13 explains why real labels need independent tests.
 
@@ -59,11 +59,9 @@ At the end of every numbered scene below, the laptop operator presses `→` once
 
 ## Student 1 — Genetics
 
-Opening lines while the audience connects:
+While the audience connects, keep the explanation focused on the phone task:
 
-> “Today we are investigating a fictional space laboratory containing engineered yeast. The yeast has two added genes: one produces a test protein, and the other produces green light when the engineered DNA is active.”
-
-> “Your phone shows a practice sample. DNA match measures whether the target DNA is present. Green glow measures whether the reporter gene is active.”
+> “The DNA-match and green-light scores on your phone are simulated. Use the rule on the screen to label the sample WORKING or CHANGED.”
 
 ### Scene 1 — The problem, 0:00–0:30
 
@@ -79,7 +77,7 @@ Opening lines while the audience connects:
 
 Each presenter steps forward when introduced.
 
-> “I will test the DNA. Student Two will measure the light and train the AI model. Student Three will analyse and correct the orbit. You will take part using your phones.”
+> “First, we will check whether the target DNA is present. Then we will measure the green light and train a model to combine both results. Finally, we will test the possible orbits. Our final decision needs both the biological evidence and the orbital options.”
 
 ### Scene 3 — The engineered yeast, 1:05–1:50
 
@@ -116,7 +114,7 @@ Say before the phone taps:
 
 > “Phone taps only control the animation. In real PCR, heat separates the DNA strands, primers bind to the target sequence, and an enzyme copies it.”
 
-> “With ideal doubling, 30 cycles produce 2³⁰ copies, or 1,073,741,824. Real PCR becomes less efficient and eventually reaches a plateau.”
+> “With perfect doubling, 30 cycles would produce just over 1.07 billion copies. Real PCR is less efficient and eventually reaches a plateau.”
 
 ### Scene 6 — DNA base pairing, 3:30–4:20
 
@@ -132,11 +130,15 @@ Say before the phone taps:
 
 **Operator:** No click on this scene.
 
-> “PCR detected the selected DNA section. It does not explain the missing reporter signal or show whether the complete circuit works.”
+Student 1:
+
+> “PCR confirms that the selected DNA section is present, but it cannot show whether the reporter gene is active.”
 
 Pass the optional sample tube to Student 2.
 
-> “Next, we will measure the green light.”
+Student 2:
+
+> “I will use a chip-based sensor to measure the green light, then compare that score with the PCR result using an AI model.”
 
 ## Student 2 — Nanotechnology and AI
 
@@ -146,7 +148,7 @@ Pass the optional sample tube to Student 2.
 
 **Operator:** Drag the stage slider slowly from `10⁰ m` to `10⁻⁹ m`. Pause briefly on the named objects and finish at **ONE NANOMETRE / 1 nanometre**.
 
-> “A nanometre is one billionth of a metre. A fingernail grows by about one nanometre each second.”
+> “The sensor contains structures measured in nanometres. One nanometre is one billionth of a metre—about how far a fingernail grows each second.”
 
 ### Scene 9 — Make a chip pattern with light, 5:25–6:20
 
@@ -162,19 +164,21 @@ Pass the optional sample tube to Student 2.
 
 **Operator:** No click. Student 2 points through the four boxes from left to right.
 
-> “UV light was used to make the chip. The completed sensor now measures the yeast’s green reporter light.”
+> “UV light was used to make the chip. Now the finished sensor measures the yeast’s green reporter light.”
 
-> “The sensor converts the light measurement into a number. The AI model analyses it together with the DNA score.”
+> “The sensor—not the AI—measures the light and records a green-light score. For each sample, the AI receives that score and the DNA-match score from PCR.”
 
 ### Scene 11 — Choose the model size, 6:55–7:40
 
 **Audience:** Vote for **2**, **4** or **8** hidden units on the phone.
 
-**Operator:** Wait until the stage shows a chosen number of hidden neurons. Do not start training until Scene 12.
+**Operator:** The stage starts with the audience’s leading choice. Keep **FOLLOW VOTE**, or select **USE 2**, **USE 4** or **USE 8** before training. The setting locks once training starts. Do not start training until Scene 12.
 
-> “Each dot is a practice sample with two measurements and a known label. These samples are the training data.”
+> “Each dot is one training sample. The horizontal axis is the DNA-match score from PCR: farther right means a stronger match. The vertical axis is the green-light score from the sensor: higher means more light. The graph only plots measurements already taken; it does not measure the light.”
 
-> “More hidden units let the network learn a more complicated pattern, but they may also learn accidental details from a small dataset. A larger model is not always better.”
+> “The dot’s colour is its known label: WORKING or CHANGED. We train the model to predict that label from the two scores.”
+
+> “Hidden units control how complex a pattern the model can learn. More units can learn a more complicated boundary, but may also learn accidental details from a small dataset.”
 
 If there are fewer than six training samples, press `D`. The next scene will also load training samples automatically if needed.
 
@@ -184,11 +188,13 @@ If there are fewer than six training samples, press `D`. The next scene will als
 
 Do not select **Reset model** during the presentation. That button clears only the AI model so it can be trained again during rehearsal; it does not reset the whole presentation.
 
-> “An epoch is one complete pass through the training examples. Loss measures prediction error, so lower is better.”
+> “For each sample, the model predicts WORKING or CHANGED, compares that prediction with the known label and adjusts its weights to reduce the error.”
 
-> “Training accuracy uses examples the model has seen. Test accuracy uses separate examples that were not used for training.”
+> “One epoch is one pass through all the training samples. Loss summarises the prediction error, so lower is better.”
 
-> “The colours show the predicted label in each part of the chart. Their border is the classification boundary.”
+> “Training accuracy uses samples that trained the model. Test accuracy uses separate samples that did not affect training, so it is a better check on new data.”
+
+> “The background colours show what the model would predict for each pair of scores. The border between the colours is the classification boundary.”
 
 ### Scene 13 — Test and retrain the AI, 8:45–9:35
 
@@ -202,9 +208,9 @@ Do not select **Reset model** during the presentation. That button clears only t
 4. Wait while the button says **Retraining with 4 verified samples…**.
 5. Continue only when it says **4 verified samples added** and the status sentence reports how the same sample’s score changed.
 
-> “The yellow rings mark four samples checked with an independent test. Their DNA and glow readings appear normal, but the independent test shows that their circuits have changed.”
+> “The yellow rings mark four samples checked by an independent test. Their DNA-match and green-light scores look normal, but the independent test shows that their circuits changed.”
 
-> “We kept the existing labels and added independently verified samples. After retraining, the model classified the data differently.”
+> “After we add those samples and retrain, the classification boundary moves and the same HELIX–7 sample receives a different score.”
 
 > “A model score is not proof, and 80 out of 100 does not automatically mean 80 percent certainty.”
 
@@ -220,7 +226,13 @@ Do not select **Reset model** during the presentation. That button clears only t
 
 Handoff to Student 3:
 
-> “The result needs more tests. While those continue, we must choose a safe orbit for the laboratory.”
+Student 2:
+
+> “The AI result adds evidence, but it does not settle the decision. We still need independent biological tests.”
+
+Student 3:
+
+> “The decision also depends on where the laboratory can travel. I will use orbital physics to test the possible paths.”
 
 ## Student 3 — Astrophysics and Spaceflight
 
@@ -229,6 +241,8 @@ Handoff to Student 3:
 **Audience:** Answer the gravity question on the phone.
 
 **Operator:** Select **TOO SLOW**, then **CIRCULAR ORBIT**, then **ESCAPE**. After each selection, pause for the path and result sentence to change. Select **CIRCULAR ORBIT** again so the scene finishes on that path.
+
+> “The biological tests tell us about the sample. Orbital physics tells us which paths the laboratory can take. We need both for the final decision.”
 
 > “At 400 kilometres, gravity is still about 90 percent as strong as it is at Earth’s surface.”
 
@@ -247,7 +261,7 @@ Handoff to Student 3:
 3. Wait through **Simulating orbit…** until the full path and result sentence appear.
 4. If the audience changes its speeds, wait for **THE SPEED CHANGED — SIMULATE IT AGAIN**, then select **Simulate again**.
 
-> “HELIX–7 begins 400 kilometres above Earth. A short engine firing changes its sideways speed, which changes its orbit.”
+> “HELIX–7 begins 400 kilometres above Earth. A short engine firing changes its sideways speed and therefore its orbit.”
 
 > “We use the median—the middle value after sorting the speeds—so one extreme response cannot control the result.”
 
@@ -295,6 +309,10 @@ All three:
 ## Questions the audience may ask
 
 **Is the AI real?** Yes. A small neural network trains in the stage browser using the simulated samples. It uses backpropagation to adjust numerical weights inside the network. The scenario and all measurements are fictional.
+
+**What exactly is the model trained to do?** It takes two inputs—the DNA-match score from PCR and the green-light score from the sensor—and predicts one label: WORKING or CHANGED.
+
+**Do the graph axes measure the green light?** No. The horizontal axis plots the DNA-match score, and the vertical axis plots the green-light score. The sensor measured the light before the value was plotted. Dot colours show known training labels; the background colours show the model’s predictions.
 
 **How did you know the first labels?** The opening samples use the stated 60/100 teaching rule. Real labels should come from trusted independent measurements, not from an AI labelling its own training data.
 

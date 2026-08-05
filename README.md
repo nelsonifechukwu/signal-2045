@@ -79,8 +79,8 @@ The exact 15-minute speaking, clicking and feedback sequence is in [PRESENTER_GU
 | 6 | Matches the strand paired with `CTGTG` | Complementary DNA bases pair A–T and C–G. |
 | 8 | Answers a nanometre scale question | A nanometre is one billionth of a metre. |
 | 9 | Adds simulated UV exposure | Photolithography uses patterned light before chemical and material processes form chip structures. |
-| 11 | Chooses 2, 4 or 8 hidden units | More hidden units allow a more complex model, but they may learn accidental details in a small dataset. |
-| 12 | Watches the model train | Epoch, loss and accuracy measure different parts of training and testing. |
+| 11 | Votes for 2, 4 or 8 hidden units | The stage follows the leading vote by default; the presenter can override it before training. The model uses DNA-match and green-light scores to predict WORKING or CHANGED. |
+| 12 | Watches the model train | The model compares its predictions with known labels and adjusts its weights. Epoch, loss and accuracy describe training and testing. |
 | 13 | Tests the model with new samples | A trained model classifies data it has not seen before. |
 | 13 | Adds four independently verified samples and retrains | New evidence can change how the model classifies data. |
 | 14 | Decides whether an AI score is enough | A high model score is not proof. |
