@@ -2,7 +2,7 @@
 
 An interactive 15-minute Cambridge science presentation for three Grade 9–10 students.
 
-The audience helps investigate **HELIX–7**, a fictional orbiting laboratory containing engineered yeast. After a simulated radiation event, a DNA test detects the added gene, but the green reporter no longer glows.
+The audience helps investigate **HELIX–7**, a fictional orbiting laboratory containing engineered yeast. After a simulated radiation event, PCR still detects one section of an added control gene, but the green light from GFP is low.
 
 The presentation covers genetic engineering, PCR, nanotechnology, AI, orbital physics and scientific decision-making. Audience members use their phones to submit training samples, control demonstrations, test the AI model and choose an orbital speed.
 
@@ -75,11 +75,11 @@ The exact 15-minute speaking, clicking and feedback sequence is in [PRESENTER_GU
 |---|---|---|
 | Lobby | Labels one practice sample | Supervised AI needs examples with known labels. |
 | 4 | Votes on whether a microscope can read a DNA sequence | Seeing DNA material is different from identifying its sequence. |
-| 5 | Adds taps to the PCR demonstration | Repeated PCR cycles can rapidly copy one selected DNA section. |
+| 5 | Adds taps to the PCR demonstration | Repeated PCR cycles can rapidly copy one short section of the control gene. |
 | 6 | Matches the strand paired with `CTGTG` | Complementary DNA bases pair A–T and C–G. |
 | 8 | Answers a nanometre scale question | A nanometre is one billionth of a metre. |
 | 9 | Adds simulated UV exposure | Photolithography uses patterned light before chemical and material processes form chip structures. |
-| 11 | Votes for 2, 4 or 8 hidden units | The stage follows the leading vote by default; the presenter can override it before training. The model uses DNA-match and green-light scores to predict WORKING or CHANGED. |
+| 11 | Votes for 2, 4 or 8 hidden neurons | The counter starts from the leading vote; the presenter can choose 1–8. The model uses control-gene PCR and GFP-light scores to predict WORKING or CHANGED. |
 | 12 | Watches the model train | The model compares its predictions with known labels and adjusts its weights. Epoch, loss and accuracy describe training and testing. |
 | 13 | Tests the model with new samples | A trained model classifies data it has not seen before. |
 | 13 | Adds four independently verified samples and retrains | New evidence can change how the model classifies data. |
@@ -128,9 +128,9 @@ The server stores the current session in memory, so the session resets whenever 
 ## Scientific limits stated in the show
 
 - HELIX–7 and all measurements are fictional. The app collects no organism, DNA, medical or personal data.
-- The engineered yeast makes a fictional test protein, not a treatment for people.
+- The fictional control gene makes a regulatory protein that switches on a GFP reporter gene. GFP is a real reporter protein, not a treatment.
 - The first phone task uses a simple teaching rule. Real labels would need independent tests.
-- PCR copies one selected region; it does not check the whole genome or prove that a protein works.
+- PCR copies one short section of the control gene. It does not show whether the complete control gene works or whether the GFP reporter gene makes GFP.
 - The five-letter pairing puzzle is not a real primer design. Real PCR uses two longer primers.
 - `2³⁰ = 1,073,741,824` assumes ideal doubling. Real PCR is less efficient and eventually plateaus.
 - Photolithography exposes a light-sensitive coating in a pattern. Developing, etching, deposition and many aligned layers are also needed to make a finished chip.

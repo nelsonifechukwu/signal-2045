@@ -27,7 +27,7 @@ Open [http://localhost:4173](http://localhost:4173) on the presentation laptop. 
 2. Open the stage and press `F` for full screen.
 3. Leave Scene 0 and its QR code on screen.
 4. Ask everyone to scan the QR code. The top of each phone should say **CONNECTED**.
-5. Each phone receives one practice sample with a DNA-match score and a green-light score.
+5. Each phone receives one practice sample with a control-gene PCR score and a GFP-light score.
 6. On the phone, choose **CIRCUIT WORKING** only when both scores are 60 or higher. If either score is below 60, choose **CIRCUIT CHANGED**.
 7. Tap **Send this label**. The phone should say **Label sent**, and the stage’s sample count should rise.
 
@@ -61,7 +61,7 @@ At the end of every numbered scene below, the laptop operator presses `→` once
 
 While the audience connects, keep the explanation focused on the phone task:
 
-> “The DNA-match and green-light scores on your phone are simulated. Use the rule on the screen to label the sample WORKING or CHANGED.”
+> “The control-gene PCR and GFP-light scores on your phone are simulated. Use the rule on the screen to label the sample WORKING or CHANGED.”
 
 ### Scene 1 — The problem, 0:00–0:30
 
@@ -69,7 +69,7 @@ While the audience connects, keep the explanation focused on the phone task:
 
 > “HELIX–7 is a small laboratory containing engineered yeast. It is orbiting 400 kilometres above Earth.”
 
-> “Its DNA test detects the added gene, but the green reporter is no longer glowing. We have fifteen minutes to investigate and decide what to do with the laboratory.”
+> “PCR still detects one section of the added control gene, but the green light from GFP is now low. We have fifteen minutes to investigate and decide what to do with the laboratory.”
 
 ### Scene 2 — The plan, 0:30–1:05
 
@@ -77,17 +77,19 @@ While the audience connects, keep the explanation focused on the phone task:
 
 Each presenter steps forward when introduced.
 
-> “First, we will check whether the target DNA is present. Then we will measure the green light and train a model to combine both results. Finally, we will test the possible orbits. Our final decision needs both the biological evidence and the orbital options.”
+> “First, we will use PCR to check one section of the control gene. Then we will measure GFP’s green light and train a model to compare the two scores. Finally, we will test the possible orbits. Our final decision needs both the biological evidence and the orbital options.”
 
 ### Scene 3 — The engineered yeast, 1:05–1:50
 
-**Operator:** No click on this scene. Student 1 points from **START** to **STOP**.
+**Operator:** No click on this scene. Student 1 points from **CONTROL GENE** to **GREEN LIGHT**.
 
-> “We added two genes to the yeast. One produces a fictional test protein. The reporter gene produces green light when the engineered DNA is active.”
+> “A, T, G and C are the four DNA bases. A gene is a long sequence made from those bases. We inserted two new gene sequences into the yeast’s DNA.”
 
-> “After simulated radiation exposure, the DNA test detected the target, but the green light disappeared. The cause could be a DNA change, a problem in the cell or a faulty detector.”
+> “The control gene makes a regulatory protein, which switches on the GFP reporter gene. The reporter gene makes green fluorescent protein, or GFP. GFP gives off the green light measured by our sensor.”
 
-The protein is fictional. Do not call it a medicine.
+> “After the radiation event, PCR still detected its target in the control gene, but the GFP light was low. The problem could be elsewhere in either gene, in the cell or in the sensor.”
+
+The circuit and regulatory protein are fictional. GFP is a real reporter protein. Do not describe either as a medicine.
 
 ### Scene 4 — Microscope vote, 1:50–2:30
 
@@ -97,7 +99,7 @@ The protein is fictional. Do not call it a medicine.
 
 > “A microscope can show DNA material or structures, but it normally cannot identify the order of A, T, C and G.”
 
-> “Sequencing identifies that order. PCR tests whether a selected section of DNA is present.”
+> “Sequencing identifies that order. In this demonstration, PCR tests one short section of the control gene.”
 
 ### Scene 5 — PCR, 2:30–3:30
 
@@ -112,7 +114,7 @@ The protein is fictional. Do not call it a medicine.
 
 Say before the phone taps:
 
-> “Phone taps only control the animation. In real PCR, heat separates the DNA strands, primers bind to the target sequence, and an enzyme copies it.”
+> “Phone taps only control the animation. In real PCR, heat separates the DNA strands, primers bind around the selected control-gene section, and an enzyme copies that section.”
 
 > “With perfect doubling, 30 cycles would produce just over 1.07 billion copies. Real PCR is less efficient and eventually reaches a plateau.”
 
@@ -132,13 +134,13 @@ Say before the phone taps:
 
 Student 1:
 
-> “PCR confirms that the selected DNA section is present, but it cannot show whether the reporter gene is active.”
+> “PCR detected one short section of the control gene. It does not prove that the whole control gene works or that the GFP reporter gene makes GFP.”
 
 Pass the optional sample tube to Student 2.
 
 Student 2:
 
-> “I will use a chip-based sensor to measure the green light, then compare that score with the PCR result using an AI model.”
+> “I will measure the green light from GFP, then compare the GFP-light score with the control-gene PCR score using an AI model.”
 
 ## Student 2 — Nanotechnology and AI
 
@@ -164,21 +166,21 @@ Student 2:
 
 **Operator:** No click. Student 2 points through the four boxes from left to right.
 
-> “UV light was used to make the chip. Now the finished sensor measures the yeast’s green reporter light.”
+> “UV light was used to make the chip. Now the finished sensor measures green light from GFP.”
 
-> “The sensor—not the AI—measures the light and records a green-light score. For each sample, the AI receives that score and the DNA-match score from PCR.”
+> “The sensor—not the AI—measures the light and records a GFP-light score. For each sample, the AI receives that score and the control-gene PCR score.”
 
 ### Scene 11 — Choose the model size, 6:55–7:40
 
-**Audience:** Vote for **2**, **4** or **8** hidden units on the phone.
+**Audience:** Vote for **2**, **4** or **8** hidden neurons on the phone.
 
-**Operator:** The stage starts with the audience’s leading choice. Keep **FOLLOW VOTE**, or select **USE 2**, **USE 4** or **USE 8** before training. The setting locks once training starts. Do not start training until Scene 12.
+**Operator:** The counter starts with the audience’s leading choice. Use **−** or **+** to choose from 1 to 8 hidden neurons. Select **FOLLOW VOTE** to return to the live audience result. The counter locks once training starts. Do not start training until Scene 12.
 
-> “Each dot is one training sample. The horizontal axis is the DNA-match score from PCR: farther right means a stronger match. The vertical axis is the green-light score from the sensor: higher means more light. The graph only plots measurements already taken; it does not measure the light.”
+> “Each dot is one training sample. The horizontal axis is the control-gene PCR score. The vertical axis is the GFP-light score from the sensor. The graph only plots measurements already taken; it does not measure the light.”
 
 > “The dot’s colour is its known label: WORKING or CHANGED. We train the model to predict that label from the two scores.”
 
-> “Hidden units control how complex a pattern the model can learn. More units can learn a more complicated boundary, but may also learn accidental details from a small dataset.”
+> “Hidden neurons control how complex a pattern the model can learn. More neurons can learn a more complicated boundary, but may also learn accidental details from a small dataset.”
 
 If there are fewer than six training samples, press `D`. The next scene will also load training samples automatically if needed.
 
@@ -208,7 +210,7 @@ Do not select **Reset model** during the presentation. That button clears only t
 4. Wait while the button says **Retraining with 4 verified samples…**.
 5. Continue only when it says **4 verified samples added** and the status sentence reports how the same sample’s score changed.
 
-> “The yellow rings mark four samples checked by an independent test. Their DNA-match and green-light scores look normal, but the independent test shows that their circuits changed.”
+> “The yellow rings mark four samples checked by an independent test. Their control-gene PCR and GFP-light scores look normal, but the independent test shows that their circuits changed.”
 
 > “After we add those samples and retrain, the classification boundary moves and the same HELIX–7 sample receives a different score.”
 
@@ -288,11 +290,11 @@ Student 3:
 
 Student 1:
 
-> “We used genetics to create the system and check one section of its DNA.”
+> “We used genetics to build the two-gene circuit and PCR to check one section of the control gene.”
 
 Student 2:
 
-> “Nanotechnology allowed the sensor to measure light. The AI compared the light and DNA data using labelled training examples.”
+> “The sensor measured GFP’s green light. The AI compared the GFP-light and control-gene PCR scores using labelled examples.”
 
 Student 3:
 
@@ -310,9 +312,13 @@ All three:
 
 **Is the AI real?** Yes. A small neural network trains in the stage browser using the simulated samples. It uses backpropagation to adjust numerical weights inside the network. The scenario and all measurements are fictional.
 
-**What exactly is the model trained to do?** It takes two inputs—the DNA-match score from PCR and the green-light score from the sensor—and predicts one label: WORKING or CHANGED.
+**What exactly is the model trained to do?** It takes two inputs—the control-gene PCR score and the GFP-light score—and predicts one label: WORKING or CHANGED.
 
-**Do the graph axes measure the green light?** No. The horizontal axis plots the DNA-match score, and the vertical axis plots the green-light score. The sensor measured the light before the value was plotted. Dot colours show known training labels; the background colours show the model’s predictions.
+**Do the graph axes measure the green light?** No. The horizontal axis plots the control-gene PCR score, and the vertical axis plots the GFP-light score. The sensor measured the light before the value was plotted. Dot colours show known training labels; the background colours show the model’s predictions.
+
+**What is a reporter gene?** It is a gene whose output is easy to detect. Here, the reporter gene makes GFP. GFP gives off green light, so the light reports whether the regulatory protein switched that gene on.
+
+**Does adding two genes mean changing two of A, T, G and C?** No. A, T, G and C are the four DNA bases. Each gene is a long sequence made from those bases. Adding two genes means inserting two new DNA sequences.
 
 **How did you know the first labels?** The opening samples use the stated 60/100 teaching rule. Real labels should come from trusted independent measurements, not from an AI labelling its own training data.
 
@@ -324,16 +330,16 @@ All three:
 
 **Can a microscope read DNA?** It can show DNA material or structures, but routine microscopy does not give a readable A, T, C and G sequence. Scientists use sequencing to read the letters.
 
-**Does PCR read the whole gene?** No. PCR copies a chosen section between two primers. Sequencing and other tests are needed to check the complete sequence and its function.
+**Does PCR read either whole gene?** No. Here, PCR copies one short section of the control gene. It does not check the rest of that gene or the GFP reporter gene.
 
 **Why is the primer puzzle so short?** It only demonstrates complementary base pairing. Real PCR uses two longer primers and requires extra checks.
 
 **Did the phone taps run PCR or supply the UV light?** No. They only control the animations. Real PCR uses a thermocycler, and real photolithography uses a controlled UV exposure.
 
-**Was the reporter glow the same light used to make the chip?** No. UV light patterns the chip during fabrication. The green reporter light later comes from the engineered yeast and is measured by a sensor.
+**Was the GFP light used to make the chip?** No. UV light patterns the chip during manufacturing. GFP later gives off green light, which the completed sensor measures.
 
 **Is there gravity in space?** Yes. At 400 kilometres, gravity is about 90 percent as strong as at Earth’s surface. Astronauts float because they and their spacecraft fall together.
 
 **Why can a small slowdown cause re-entry?** Slowing below the model’s `0.99×` limit makes the opposite side of the orbit dip into the atmosphere, where drag removes more energy.
 
-**Does PCR prove the engineered yeast is safe?** No. It checks only one chosen DNA target. Scientists would still need sequencing, protein measurements, tests of cell behaviour and a full safety review.
+**Does PCR prove the engineered yeast is safe?** No. It checks one short control-gene target. Scientists would still need full sequencing, protein measurements, cell tests and a safety review.
