@@ -161,5 +161,5 @@ npm run test:show
 - Socket.IO keeps stage and audience state in sync.
 - A small multilayer perceptron trains live in the stage browser.
 - Canvas draws the AI decision surface and the simplified Newtonian orbit.
-- Anonymous local callsigns prevent duplicate submissions after reconnection.
+- Persistent anonymous browser IDs prevent duplicate submissions after reconnection; friendly `HELIX-######` callsigns are display-only.
 - No CDN, account, cloud database or internet API is required for local use.

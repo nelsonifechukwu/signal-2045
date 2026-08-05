@@ -1,5 +1,6 @@
 const callsign = getCallsign();
-const socket = io({ auth: { role: 'audience', clientId: callsign }, reconnection: true });
+const clientId = getClientId();
+const socket = io({ auth: { role: 'audience', clientId }, reconnection: true });
 const root = document.querySelector('#phone-content');
 const stationNumber = Number(callsign.split('-')[1]);
 const assignedSample = makeAssignedSample(stationNumber);
@@ -60,6 +61,17 @@ function getCallsign() {
   if (!value) {
     value = `HELIX-${String(Math.floor(Math.random() * 900000) + 100000)}`;
     localStorage.setItem('signal2045-callsign', value);
+  }
+  return value;
+}
+
+function getClientId() {
+  let value = localStorage.getItem('signal2045-client-id');
+  if (!value) {
+    value = typeof crypto.randomUUID === 'function'
+      ? crypto.randomUUID()
+      : `client-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    localStorage.setItem('signal2045-client-id', value);
   }
   return value;
 }
