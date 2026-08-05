@@ -12,12 +12,52 @@ const socket = io({
 
 socket.on('connect_error', error => {
   if (error?.data?.code !== 'HOST_AUTH_REQUIRED') return;
-  const token = window.prompt('Enter the presenter access code');
-  if (!token) return;
-  window.sessionStorage.setItem('signal2045-host-token', token);
-  socket.auth.token = token;
-  socket.connect();
+  showHostAccessPanel();
 });
+
+function showHostAccessPanel() {
+  if (document.querySelector('#host-access-panel')) return;
+  const panel = document.createElement('div');
+  panel.id = 'host-access-panel';
+  panel.className = 'host-access-overlay';
+  panel.innerHTML = `
+    <form class="host-access-card glass">
+      <div class="kicker"><span>PRESENTER ACCESS</span><em>SECURE CONTROL</em></div>
+      <h2>Enter the presenter code</h2>
+      <p>This is the private <code>HOST_TOKEN</code> you chose in Render. Audience members do not need it.</p>
+      <input name="host-token" type="password" autocomplete="current-password" placeholder="Presenter access code" required>
+      <p class="host-access-error" aria-live="polite"></p>
+      <button class="action-button" type="submit">Unlock controls</button>
+    </form>`;
+  document.body.appendChild(panel);
+
+  const form = panel.querySelector('form');
+  const input = panel.querySelector('input');
+  const errorLabel = panel.querySelector('.host-access-error');
+  input.focus();
+  form.addEventListener('submit', event => {
+    event.preventDefault();
+    const token = input.value.trim();
+    if (!token) return;
+    errorLabel.textContent = 'Checking code…';
+    socket.auth.token = token;
+    socket.connect();
+    const handleConnect = () => {
+      socket.off('connect_error', handleError);
+      window.sessionStorage.setItem('signal2045-host-token', token);
+      panel.remove();
+    };
+    const handleError = nextError => {
+      socket.off('connect', handleConnect);
+      if (nextError?.data?.code === 'HOST_AUTH_REQUIRED') {
+        errorLabel.textContent = 'That code was not accepted. Check the HOST_TOKEN in Render.';
+        input.select();
+      }
+    };
+    socket.once('connect', handleConnect);
+    socket.once('connect_error', handleError);
+  });
+}
 
 const slides = [
   { act: 'PRE-SHOW', rail: 'sample', presenter: ['00', 'MISSION CONTROL'], time: 'Before start', title: 'Recruit the room', note: 'Leave this screen up as people arrive. Ask everyone to scan and label one synthetic control. If phones cannot connect, press D or use the fallback button.' },
