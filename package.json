@@ -1,0 +1,20 @@
+{
+  "name": "signal-2045",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Interactive Cambridge science showcase",
+  "scripts": {
+    "dev": "node server.js",
+    "start": "node server.js",
+    "check": "node --check server.js && node --check public/stage.js && node --check public/audience.js",
+    "test": "node --test tests/integration.test.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "qrcode": "^1.5.4",
+    "socket.io": "^4.8.1"
+  },
+  "devDependencies": {
+    "socket.io-client": "^4.8.1"
+  }
+}

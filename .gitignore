@@ -1,0 +1,8 @@
+node_modules/
+.env
+.env.*
+.DS_Store
+npm-debug.log*
+
+# Separate experimental project; not used by SIGNAL / 2045.
+ai-classifier-lab/
