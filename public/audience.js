@@ -122,8 +122,11 @@ function updatePhoneChrome(scene) {
 function renderPhone() {
   if (!state) return;
   const scene = state.scene;
-  if ((!submittedSample && [0, 2, 3, 8, 10, 11].includes(scene)) || (scene === 0 && !submittedSample)) return renderSampleCard();
-  if (scene === 0) return waiting('You’re ready', 'Keep this page open. Each new activity will appear here.');
+  // Scene 0 is the lobby, where people are still scanning the code and nothing has been
+  // explained yet, so the phone only welcomes them. The labelling task opens on scene 1,
+  // once the stage has set out the problem: the yeast stopped glowing green.
+  if (scene === 0) return renderWelcome();
+  if (!submittedSample && [1, 2, 3, 8, 10, 11].includes(scene)) return renderSampleCard();
   if (scene === 1) return waiting('The yeast stopped glowing green', 'PCR found one section of the added control gene, but the GFP light was low. Look at the main screen.');
   if (scene === 2) return waiting('What we will do', 'We will check one control-gene section, measure GFP light, train the AI model and then test the spacecraft’s possible orbits.');
   if (scene === 3) return infoCard('TWO ADDED GENES', 'The first gene switches on the second', 'The control gene makes a regulatory protein. That protein switches on the GFP reporter gene, which makes GFP. GFP gives off green light.');
@@ -163,6 +166,16 @@ function renderPhone() {
   return renderFinale();
 }
 
+function renderWelcome() {
+  currentMode = 'welcome';
+  root.innerHTML = `
+    <div class="phone-kicker">CONNECTED / ${callsign}</div>
+    <h1>We are shaping<br><mark>scientific futures.</mark></h1>
+    <p class="subhead">Your phone is now part of the presentation. Keep this page open: each activity appears here when the presenter reaches it.</p>
+    <div class="waiting-orb"></div>
+    <p class="subhead" style="text-align:center">Your first task arrives shortly. Please look at the main screen.</p>`;
+}
+
 function renderSampleCard() {
   currentMode = 'sample';
   root.innerHTML = `
@@ -200,7 +213,7 @@ function renderSampleCard() {
     localStorage.setItem(`signal2045-sample-${localRunId}`, 'sent');
     vibrate([20, 30, 20]);
     waiting('Label sent', 'Your labelled sample is now on the graph and will be used to train the AI model.');
-    if (state.scene !== 0) window.setTimeout(renderPhone, 900);
+    window.setTimeout(renderPhone, 900);
   });
 }
 

@@ -26,16 +26,19 @@ Open [http://localhost:4173](http://localhost:4173) on the presentation laptop. 
 1. Put the laptop and phones on the same Wi-Fi network or phone hotspot.
 2. Open the stage and press `F` for full screen.
 3. Leave Scene 0 and its QR code on screen.
-4. Ask everyone to scan the QR code. The top of each phone should say **CONNECTED**.
-5. Each phone receives one practice sample with a control-gene PCR score and a GFP-light score.
-6. On the phone, choose **CIRCUIT WORKING** only when both scores are 60 or higher. If either score is below 60, choose **CIRCUIT CHANGED**.
-7. Tap **Send this label**. The phone should say **Label sent**, and the stage’s sample count should rise.
+4. Ask everyone to scan the QR code. The top of each phone should say **CONNECTED**, above a short welcome message.
+5. Check that the stage’s phone count rises. No task appears yet: the phones wait through the whole lobby.
+6. The practice sample appears on every phone when you move to Scene 1, and stays available through Scene 3.
 
 Say while people join:
 
+> “Keep this page open. Your phone will become part of the presentation in a moment.”
+
+Then, once Scene 1 is on the screen and each phone shows its practice sample:
+
 > “Your phone has a fictional practice sample for the AI. Choose CIRCUIT WORKING only if both scores are 60 or higher. Otherwise choose CIRCUIT CHANGED.”
 
-This rule is only for the first activity. Scene 13 explains why real labels need independent tests.
+Each phone receives one control-gene PCR score and one GFP-light score. Tapping **Send this label** should show **Label sent** and raise the stage’s sample count. This rule is only for the first activity. Scene 13 explains why real labels need independent tests.
 
 ## Fallback and reset
 
@@ -61,13 +64,15 @@ At the end of every numbered scene below, the laptop operator presses `→` once
 
 ## Student 1 — Genetics
 
-While the audience connects, keep the explanation focused on the phone task:
+### Scene 1 — The problem, 0:00–0:30
+
+**Operator:** Press `→` from the QR screen. The 15-minute clock starts now. This is also the click that opens the labelling task on every phone.
+
+Once the problem is stated, point the audience at their phones:
 
 > “The control-gene PCR and GFP-light scores on your phone are simulated. Use the rule on the screen to label the sample WORKING or CHANGED.”
 
-### Scene 1 — The problem, 0:00–0:30
-
-**Operator:** Press `→` from the QR screen. The 15-minute clock starts now.
+People can keep labelling through Scenes 2 and 3, so nobody who is still arriving is left out.
 
 > “HELIX–7 is a small laboratory containing engineered yeast. It is orbiting 400 kilometres above Earth.”
 

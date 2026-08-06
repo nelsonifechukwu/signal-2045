@@ -402,8 +402,16 @@ async function run() {
     await waitFor(() => stage.evaluate('state.participants === 6'), 'Six audience identities did not connect');
     await Promise.all(phones.map(assertNoHorizontalOverflow));
 
-    // Lobby: disabled submit, wrong/correct branches, then six real sample submissions.
+    // Lobby: the phone only welcomes people. The labelling task must not appear yet.
     const main = phones[0];
+    assert.match(await text(main, '#phone-content'), /shaping.*scientific futures/i);
+    assert.equal(await exists(main, '[data-sample]'), false, 'The sample task appeared before the problem was explained');
+
+    // Scene 1 states the problem, and the labelling task opens on every phone with it.
+    await navigate(stage, phones, 'ArrowRight', 1);
+    await Promise.all(phones.map(phone => waitFor(() => exists(phone, '[data-sample]'), `${phone.name} did not receive the sample task on scene 1`)));
+
+    // Disabled submit, wrong/correct branches, then six real sample submissions.
     assert.equal(await main.evaluate("document.querySelector('#submit-sample').disabled"), true);
     await realClick(main, '#submit-sample', { allowDisabled: true });
     assert.equal(await stage.evaluate('state.samples.length'), 0);
@@ -426,8 +434,8 @@ async function run() {
     }
 
     // Trusted presenter navigation shortcuts and fullscreen user gesture.
-    await navigate(stage, phones, 'ArrowRight', 1);
-    assert.match(await text(main, '#phone-content'), /stopped glowing green.*control gene.*GFP light was low/i);
+    await waitFor(() => text(main, '#phone-content').then(value => /stopped glowing green.*control gene.*GFP light was low/i.test(value)),
+      'A submitted phone did not fall back to the scene 1 explanation');
     await navigate(stage, phones, 'PageDown', 2);
     await navigate(stage, phones, 'PageUp', 1);
     await navigate(stage, phones, 'ArrowRight', 2);
