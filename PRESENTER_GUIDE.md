@@ -53,6 +53,8 @@ To clear a rehearsal, press `Shift + R`, read the warning and confirm. This retu
 - `Shift + R`: reset everything after confirmation
 - `Enter`: run the scene’s main action
 
+On a tablet, tap the slide to go forward, tap the left edge to go back, or swipe left and right. Tapping a presenter button runs that button instead of moving the scene.
+
 During rehearsal, use the named on-screen button if you want to see which action will run.
 
 At the end of every numbered scene below, the laptop operator presses `→` once.

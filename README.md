@@ -67,6 +67,14 @@ Rehearse once with two real phones and once using only the demo fallback.
 
 Every important action also has a labelled on-screen button. During rehearsal, use the button if you want to see which action will run.
 
+On a tablet or any touchscreen, the same navigation is available by hand:
+
+- Tap the slide anywhere: next scene
+- Tap the left edge (the first fifth of the slide): previous scene
+- Swipe left or right: next or previous scene
+
+Taps on a presenter button run that button rather than changing scene, and a mouse click never changes scene, so clicking the window to focus it is safe.
+
 The exact 15-minute speaking, clicking and feedback sequence is in [PRESENTER_GUIDE.md](PRESENTER_GUIDE.md).
 
 ## Scene overview

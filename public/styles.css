@@ -20,7 +20,7 @@ html, body { margin: 0; min-width: 320px; min-height: 100%; background: var(--bg
 button, input { font: inherit; }
 button { color: inherit; }
 button:focus-visible, input:focus-visible { outline: 3px solid color-mix(in srgb, var(--accent, var(--green)), white 18%); outline-offset: 3px; }
-.stage-body { overflow: hidden; }
+.stage-body { overflow: hidden; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
 .aurora, .grid-bg, .noise { position: fixed; inset: 0; pointer-events: none; }
 .aurora { background: radial-gradient(ellipse at 82% 23%, rgba(60, 169, 143, .14), transparent 32%), radial-gradient(ellipse at 16% 80%, rgba(91, 110, 188, .10), transparent 38%); }
 .grid-bg { opacity: .46; background-image: linear-gradient(rgba(134, 213, 193, .035) 1px, transparent 1px), linear-gradient(90deg, rgba(134, 213, 193, .035) 1px, transparent 1px); background-size: 48px 48px; mask-image: linear-gradient(#000, transparent 96%); }
@@ -35,7 +35,9 @@ button:focus-visible, input:focus-visible { outline: 3px solid color-mix(in srgb
 .mission-state { display: flex; align-items: center; gap: 13px; color: var(--muted); font: 10px var(--mono); letter-spacing: .12em; }
 .mission-state i { width: 3px; height: 3px; border-radius: 50%; background: var(--dim); }
 #mission-clock { color: var(--ink); font-weight: 700; min-width: 40px; text-align: right; }
-.deck { min-height: 0; display: grid; }
+/* pan-y keeps tall scenes scrollable on small screens while leaving sideways
+   drags to the swipe handler instead of letting the browser eat them. */
+.deck { min-height: 0; display: grid; touch-action: pan-y; -webkit-user-select: none; user-select: none; }
 .scene { --accent: var(--mint); grid-area: 1 / 1; min-height: 0; opacity: 0; transform: translateY(18px) scale(.995); pointer-events: none; transition: opacity .42s ease, transform .55s cubic-bezier(.2,.8,.2,1); display: grid; align-content: center; overflow: hidden; padding: 2.4vh 0; }
 .scene.active { opacity: 1; transform: none; pointer-events: auto; }
 .act-intro { --accent: var(--green); }.act-genetics { --accent: var(--pink); }.act-nano { --accent: var(--cyan); }.act-ai { --accent: var(--green); }.act-astro { --accent: var(--violet); }.act-final { --accent: var(--gold); }

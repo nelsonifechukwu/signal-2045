@@ -189,10 +189,12 @@ function applyShowConfig() {
   });
 }
 
+const INTERACTIVE = 'button, a, input, textarea, select, [role="button"], [contenteditable="true"]';
+const isInteractive = target => Boolean(target?.closest?.(INTERACTIVE));
+
 function setupInputs() {
   document.addEventListener('keydown', event => {
-    const target = event.target;
-    if (target?.closest?.('button, a, input, textarea, select, [role="button"], [contenteditable="true"]')) return;
+    if (isInteractive(event.target)) return;
     if (['ArrowRight', 'PageDown'].includes(event.key)) setScene(state.scene + 1);
     if (['ArrowLeft', 'PageUp'].includes(event.key)) setScene(state.scene - 1);
     if (event.key === 'Enter') runPrimaryAction();
@@ -248,6 +250,48 @@ function setupInputs() {
     });
     updateOrbitConcept(Number(button.dataset.orbitSpeed) / 100);
   }));
+
+  setupTouchNav();
+}
+
+// Tap and swipe on a touchscreen do exactly what the arrow keys do on a laptop.
+// Tap the left fifth of the deck to go back, tap anywhere else to go forward;
+// swiping left or right works too, which is what most people try first.
+function setupTouchNav() {
+  const BACK_ZONE = .2;   // fraction of the width that counts as "go back"
+  const SWIPE_MIN = 45;   // px of sideways travel that counts as a swipe
+  const TAP_MAX_MOVE = 12;// px of travel still forgiving enough to be a tap
+  const TAP_MAX_MS = 700; // anything slower is a long press, not a tap
+  const deck = $('#deck');
+  let start = null;
+
+  deck.addEventListener('pointerdown', event => {
+    // Mouse clicks stay inert: a presenter clicking to focus the window
+    // should never lose their place in the deck.
+    const touching = event.pointerType === 'touch' || event.pointerType === 'pen';
+    start = touching && event.isPrimary && !isInteractive(event.target)
+      ? { x: event.clientX, y: event.clientY, at: Date.now() }
+      : null;
+  }, { passive: true });
+
+  deck.addEventListener('pointercancel', () => { start = null; });
+
+  deck.addEventListener('pointerup', event => {
+    if (!start) return;
+    const dx = event.clientX - start.x;
+    const dy = event.clientY - start.y;
+    const elapsed = Date.now() - start.at;
+    const startX = start.x;
+    start = null;
+
+    if (Math.abs(dx) >= SWIPE_MIN && Math.abs(dx) > Math.abs(dy)) {
+      setScene(state.scene + (dx < 0 ? 1 : -1));   // drag the slide leftwards to advance
+      return;
+    }
+    // A vertical drag is someone scrolling a tall scene on a small screen.
+    if (Math.hypot(dx, dy) > TAP_MAX_MOVE || elapsed > TAP_MAX_MS) return;
+    setScene(state.scene + (startX < deck.clientWidth * BACK_ZONE ? -1 : 1));
+  }, { passive: true });
 }
 
 function setScene(index, broadcast = true) {
