@@ -126,7 +126,10 @@ function renderPhone() {
   // explained yet, so the phone only welcomes them. The labelling task opens on scene 1,
   // once the stage has set out the problem: the yeast stopped glowing green.
   if (scene === 0) return renderWelcome();
-  if (!submittedSample && [1, 2, 3, 8, 10, 11].includes(scene)) return renderSampleCard();
+  // Catching up on the label may only take over a scene where the phone has nothing else to
+  // do. Scenes 1–3 are the main window; scene 10 is the last chance before the model trains.
+  // A scene with its own activity always shows that activity, whether or not the label is in.
+  if (!submittedSample && [1, 2, 3, 10].includes(scene)) return renderSampleCard();
   if (scene === 1) return waiting('The yeast stopped glowing green', 'PCR found one section of the added control gene, but the GFP light was low. Look at the main screen.');
   if (scene === 2) return waiting('What we will do', 'We will check one control-gene section, measure GFP light, train the AI model and then test the spacecraft’s possible orbits.');
   if (scene === 3) return infoCard('TWO ADDED GENES', 'The first gene switches on the second', 'The control gene makes a regulatory protein. That protein switches on the GFP reporter gene, which makes GFP. GFP gives off green light.');
@@ -147,12 +150,9 @@ function renderPhone() {
     return renderPhotonControl();
   }
   if (scene === 10) return infoCard('HOW THE SENSOR MEASURES LIGHT', 'The sensor records a GFP-light score', 'The sensor measures green light from GFP. The AI uses that score with the control-gene PCR score.');
-  if (scene === 11) {
-    if (!submittedSample) return renderSampleCard();
-    return renderVote('architecture', 'How many hidden neurons should the model use?', 'The model uses the control-gene PCR and GFP-light scores to predict WORKING or CHANGED. The presenter’s counter starts with the leading vote.', [
-      ['two', '2', 'least complex'], ['four', '4', 'medium complexity'], ['eight', '8', 'most flexible']
-    ], 'three');
-  }
+  if (scene === 11) return renderVote('architecture', 'How many hidden neurons should the model use?', 'The model uses the control-gene PCR and GFP-light scores to predict WORKING or CHANGED. The presenter’s counter starts with the leading vote.', [
+    ['two', '2', 'least complex'], ['four', '4', 'medium complexity'], ['eight', '8', 'most flexible']
+  ], 'three');
   if (scene === 12) return renderTrainingMonitor();
   if (scene === 13) return renderChallenge();
   if (scene === 14) return renderVote('trust', 'The AI model gives a high score. Is that enough evidence?', 'A high model score is still not proof.', [

@@ -535,6 +535,13 @@ async function run() {
       assert.equal(await text(stage, '#scale-label'), scaleLabels[value]);
       assert.equal(await stage.evaluate('state.scene'), 8, 'Range ArrowRight changed the scene');
     }
+    // A phone that never labelled a sample still gets this scene's own activity: the
+    // catch-up card must never replace an activity, only fill a scene that has none.
+    const unlabelled = phones[5];
+    await unlabelled.evaluate('submittedSample = false; renderPhone()');
+    assert.equal(await exists(unlabelled, '[data-nano]'), true, 'An unlabelled phone lost the nanometre quiz');
+    await unlabelled.evaluate('submittedSample = true; renderPhone()');
+
     await realClick(main, '[data-nano="wrong-metre"]');
     assert.match(await text(main, '#nano-answer'), /Try again/);
     await realClick(main, '[data-nano="wrong-fast"]');
@@ -577,6 +584,9 @@ async function run() {
 
     // All model-size votes, passive result pills, and a presenter override.
     await navigate(stage, phones, 'ArrowRight', 11);
+    await unlabelled.evaluate('submittedSample = false; renderPhone()');
+    assert.equal(await exists(unlabelled, '[data-vote]'), true, 'An unlabelled phone lost the hidden-neuron vote');
+    await unlabelled.evaluate('submittedSample = true; renderPhone()');
     for (const [index, choice] of ['two', 'four', 'eight'].entries()) await realClick(phones[index], `[data-vote="${choice}"]`);
     await waitFor(() => stage.evaluate('state.polls.architecture.two === 1 && state.polls.architecture.four === 1 && state.polls.architecture.eight === 1'), 'All architecture choices did not register');
     assert.match(await text(stage, '#architecture-choice'), /STARTING FROM AUDIENCE RESULT/);

@@ -28,7 +28,7 @@ Open [http://localhost:4173](http://localhost:4173) on the presentation laptop. 
 3. Leave Scene 0 and its QR code on screen.
 4. Ask everyone to scan the QR code. The top of each phone should say **CONNECTED**, above a short welcome message.
 5. Check that the stage’s phone count rises. No task appears yet: the phones wait through the whole lobby.
-6. The practice sample appears on every phone when you move to Scene 1, and stays available through Scene 3.
+6. The practice sample appears on every phone when you move to Scene 1, and stays available through Scene 3. Anyone who joins later gets one more chance at Scene 10, just before the AI section.
 
 Say while people join:
 

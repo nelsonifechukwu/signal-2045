@@ -83,7 +83,7 @@ The exact 15-minute speaking, clicking and feedback sequence is in [PRESENTER_GU
 | Scene | Audience activity | Main point |
 |---|---|---|
 | Lobby | Welcome message only | Phones connect while people are still arriving. |
-| 1–3 | Labels one practice sample | Supervised AI needs examples with known labels. |
+| 1–3, and 10 for latecomers | Labels one practice sample | Supervised AI needs examples with known labels. |
 | 4 | Votes on whether a microscope can read a DNA sequence | Seeing DNA material is different from identifying its sequence. |
 | 5 | Adds taps to the PCR demonstration | Repeated PCR cycles can rapidly copy one short section of the control gene. |
 | 6 | Matches the strand paired with `CTGTG` | Complementary DNA bases pair A–T and C–G. |
