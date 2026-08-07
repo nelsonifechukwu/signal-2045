@@ -512,6 +512,24 @@ async function run() {
     await waitFor(() => stage.evaluate('state.participants === 6'), 'Reconnect changed the unique participant total');
     await realClick(main, '[data-vote="no"]');
     await realClick(phones[1], '[data-vote="yes"]');
+    // The lens shows a live specimen, not a diagram: the helix canvas must have drawn something,
+    // and its pixels must change between frames.
+    const helixSignature = () => stage.evaluate(`(() => {
+      const canvas = document.querySelector('#helix-canvas');
+      const pixels = canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height).data;
+      let lit = 0;
+      let signature = 0;
+      for (let index = 0; index < pixels.length; index += 4) {
+        if (pixels[index] > 110 || pixels[index + 1] > 110) { lit += 1; signature += index; }
+      }
+      return { lit, signature };
+    })()`);
+    // rAF is throttled in a background tab, so the deck has to be the front page to be seen moving.
+    await stage.call('Page.bringToFront');
+    const firstHelix = await helixSignature();
+    assert.ok(firstHelix.lit > 400, `The microscope helix did not draw (lit pixels: ${firstHelix.lit})`);
+    await waitFor(async () => (await helixSignature()).signature !== firstHelix.signature, 'The microscope helix is not turning');
+
     await waitFor(() => stage.evaluate('state.polls.microscope.no === 1 && state.polls.microscope.yes === 1'), 'Both microscope choices did not register');
 
     // The live tally: counts, shares, running total, and a tie that leads on both rows.
@@ -604,12 +622,27 @@ async function run() {
     await pressKey(stage, 'Home');
     assert.equal(await stage.evaluate('state.scene'), 8, 'Focused range triggered a global stage shortcut');
     const scaleLabels = ['1 metre', '10 centimetres', '1 centimetre', '1 millimetre', '100 micrometres', '10 micrometres', '1 micrometre', '100 nanometres', '10 nanometres', '1 nanometre'];
+    const scaleCounts = ['1', '10', '100', '1,000', '10,000', '100,000', '1,000,000', '10,000,000', '100,000,000', '1,000,000,000'];
     assert.equal(await text(stage, '#scale-label'), scaleLabels[0]);
+    assert.equal(await stage.evaluate("document.querySelectorAll('#scale-ladder li').length"), 10, 'The scale ladder is missing rungs');
+    assert.equal(await text(stage, '#scale-note'), 'The starting size');
     for (let value = 1; value <= 9; value += 1) {
       await pressKey(stage, 'ArrowRight');
       assert.equal(await text(stage, '#scale-label'), scaleLabels[value]);
       assert.equal(await stage.evaluate('state.scene'), 8, 'Range ArrowRight changed the scene');
+      // One rung lit, every earlier rung marked as passed, and the focus panel showing that rung's symbol.
+      assert.deepEqual(await stage.evaluate(`(() => {
+        const rungs = [...document.querySelectorAll('#scale-ladder li')];
+        return {
+          active: rungs.findIndex(rung => rung.classList.contains('active')),
+          passed: rungs.filter(rung => rung.classList.contains('passed')).length,
+          symbolMatches: document.querySelector('#scale-symbol svg')?.innerHTML === rungs[${value}].querySelector('svg').innerHTML
+        };
+      })()`), { active: value, passed: value, symbolMatches: true }, `The scale ladder did not follow step ${value}`);
+      assert.equal(await text(stage, '#scale-count'), scaleCounts[value], 'The count across one metre did not follow the slider');
     }
+    assert.equal(await text(stage, '#scale-note'), 'Ten times smaller than the width of DNA', 'The step comparison did not name the step above');
+    await takeShot(stage, 'scene-08-nanometre-scale');
     // A phone that never labelled a sample still gets this scene's own activity: the
     // catch-up card must never replace an activity, only fill a scene that has none.
     const unlabelled = phones[5];

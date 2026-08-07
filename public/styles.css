@@ -128,8 +128,10 @@ mark { color: var(--accent); background: none; font-weight: 430; font-style: ita
 .tally-row.leading .tally-track i{opacity:1;box-shadow:0 0 22px color-mix(in srgb,var(--accent),transparent 72%)}
 .tally-total{margin:0;color:var(--dim);font:700 var(--label-xs) var(--mono);letter-spacing:.14em}
 .tally-total b{color:var(--muted)}
-.micro-view{border-radius:28px;padding:30px;text-align:center}.lens-ring{width:min(26vw,300px);aspect-ratio:1;margin:auto;border-radius:50%;padding:17px;border:1px solid var(--pink);box-shadow:inset 0 0 70px rgba(255,140,186,.12),0 0 50px rgba(255,140,186,.08)}.dna-tangle{position:relative;width:100%;height:100%;border-radius:50%;overflow:hidden;background:radial-gradient(#28352f,#07100e)}.dna-tangle i{position:absolute;width:130%;height:35%;left:-15%;top:30%;border:3px solid var(--pink);border-left:0;border-right:0;border-radius:50%;transform:rotate(32deg);filter:blur(.5px)}.dna-tangle i:nth-child(2){transform:rotate(78deg);border-color:var(--mint)}.dna-tangle i:nth-child(3){transform:rotate(132deg);top:42%}.dna-tangle i:nth-child(4){transform:rotate(170deg);border-color:var(--violet)}
-.zoom-stack{display:flex;align-items:center;justify-content:center;gap:8px;margin:20px 0;color:var(--muted);font:var(--label-xs) var(--mono)}.zoom-stack i{width:25px;height:1px;background:var(--line)}.micro-view p{font:var(--label-sm) var(--mono);color:var(--pink)}.micro-view code{font-size:var(--label-sm);color:var(--muted)}
+.micro-view{border-radius:28px;padding:30px;text-align:center}.lens-ring{width:min(26vw,300px);aspect-ratio:1;margin:auto;border-radius:50%;padding:17px;border:1px solid var(--pink);box-shadow:inset 0 0 70px rgba(255,140,186,.12),0 0 50px rgba(255,140,186,.08)}.lens-ring canvas{display:block;width:100%;height:100%;border-radius:50%}
+.zoom-stack{display:flex;align-items:center;justify-content:center;gap:10px;margin:20px 0;color:var(--muted);font:var(--label-xs) var(--mono)}
+.zoom-stack i{flex:none;width:clamp(18px,1.6vw,30px);height:1px;background:var(--line)}
+.micro-view p{font:var(--label-sm) var(--mono);color:var(--pink)}.micro-view code{font-size:var(--label-sm);color:var(--muted)}
 
 /* PCR */
 .pcr-layout{display:grid;grid-template-columns:.9fr 1.1fr;gap:5vw;align-items:center}.phase-row{display:flex;gap:8px}.phase-row button{background:rgba(255,255,255,.025);border:1px solid var(--line);border-radius:8px;padding:13px 16px;text-align:left;cursor:pointer}.phase-row button.active{border-color:var(--pink);background:rgba(255,140,186,.08)}.phase-row b{display:block;color:var(--pink);font:700 var(--label-lg) var(--mono)}.phase-row span{font:var(--label-sm) var(--mono);color:var(--muted)}
@@ -149,7 +151,34 @@ mark { color: var(--accent); background: none; font-weight: 430; font-style: ita
 .payoff-screen{text-align:center;display:grid;justify-items:center}.equation{display:flex;align-items:center;gap:22px;font-family:var(--mono);margin:3vh 0}.equation span{font-size:55px;color:var(--muted)}.equation i{font-size:30px;color:var(--pink);font-style:normal}.equation strong{font-size:clamp(58px,7.8vw,120px);letter-spacing:-.08em;color:var(--pink);text-shadow:0 0 40px rgba(255,140,186,.16)}.payoff-screen p{color:var(--muted);font-size:15px}.payoff-screen .kicker{justify-self:start}
 
 /* Scale */
-.nano-scale-layout{grid-template-columns:1fr .8fr}.scale-slider{width:min(580px,100%);accent-color:var(--cyan);margin:2vh 0}.scale-readout{display:flex;align-items:baseline;gap:18px}.scale-readout strong{font:700 42px var(--mono);color:var(--cyan)}.scale-readout span{font:var(--label-sm) var(--mono);color:var(--muted)}.scale-tunnel{width:min(37vw,440px);aspect-ratio:1;position:relative;display:grid;place-items:center;justify-self:center}.scale-tunnel i{position:absolute;inset:var(--inset);border:1px solid rgba(103,232,249,.22);transform:rotate(45deg);transition:.45s}.scale-tunnel i:nth-child(1){--inset:0}.scale-tunnel i:nth-child(2){--inset:10%}.scale-tunnel i:nth-child(3){--inset:20%}.scale-tunnel i:nth-child(4){--inset:30%}.scale-tunnel i:nth-child(5){--inset:40%}.scale-tunnel.zoomed i{transform:rotate(225deg) scale(3);opacity:.15}.nano-dot{width:10px;height:10px;background:var(--cyan);border-radius:50%;box-shadow:0 0 30px 10px var(--cyan);transition:.45s}.scale-tunnel span{position:absolute;bottom:8%;font:var(--label-sm) var(--mono);color:var(--muted)}
+/* Scene 8 walks down the scale one power of ten at a time. The symbols do the comparing: the
+   slider lights one rung of the ladder and the same symbol is enlarged in the focus panel, with a
+   running count of how many of that object span a single metre. */
+.nano-scale-layout{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);align-items:center;gap:4vw}
+.scale-slider{width:min(580px,100%);accent-color:var(--cyan);margin:2vh 0 1.6vh}
+.scale-readout{display:flex;align-items:baseline;gap:18px}
+.scale-readout strong{font:700 clamp(34px,3.2vw,52px) var(--mono);color:var(--cyan)}
+.scale-readout span{font:var(--label-sm) var(--mono);color:var(--muted)}
+.scale-fit{margin-top:2vh;padding-left:15px;border-left:2px solid rgba(103,232,249,.4)}
+.scale-fit strong{display:block;color:var(--ink);font:700 clamp(26px,2.6vw,44px) var(--mono);letter-spacing:-.04em;line-height:1}
+.scale-fit span{display:block;margin-top:6px;color:var(--muted);font:var(--label-sm) var(--mono)}
+.scale-focus{margin:0;justify-self:center;display:grid;justify-items:center;gap:14px}
+.scale-symbol{width:min(24vw,276px);aspect-ratio:1;display:grid;place-items:center;border:1px solid rgba(103,232,249,.3);border-radius:24px;background:radial-gradient(circle at 50% 38%,rgba(103,232,249,.10),transparent 62%);box-shadow:inset 0 0 60px rgba(103,232,249,.06)}
+.scale-symbol svg{width:64%;height:64%;color:var(--cyan);filter:drop-shadow(0 0 14px rgba(103,232,249,.35))}
+.scale-focus figcaption{text-align:center}
+.scale-focus b{display:block;color:var(--ink);font:700 clamp(20px,1.7vw,30px) var(--mono);letter-spacing:-.02em}
+.scale-focus small{display:block;margin-top:7px;color:var(--muted);font:var(--label-sm) var(--mono)}
+.scale-ladder{list-style:none;display:grid;grid-template-columns:repeat(10,1fr);gap:6px;margin:3.4vh 0 0;padding:0}
+.scale-ladder li{display:grid;justify-items:center;gap:5px;padding:11px 4px 9px;border-top:2px solid rgba(184,240,225,.14);color:var(--dim);transition:color .25s,border-color .25s}
+.scale-ladder svg{width:clamp(22px,1.9vw,34px);height:clamp(22px,1.9vw,34px);opacity:.5;transition:opacity .25s,transform .25s}
+.scale-ladder b{font:700 var(--label-sm) var(--mono)}
+.scale-ladder span{color:var(--dim);font:var(--label-xs) var(--mono);text-align:center;line-height:1.3}
+.scale-ladder li.active{color:var(--cyan);border-top-color:var(--cyan)}
+.scale-ladder li.active svg{opacity:1;transform:scale(1.16)}
+.scale-ladder li.active span{color:var(--muted)}
+.scale-ladder li.passed{border-top-color:rgba(103,232,249,.42)}
+/* One stroke spec for every symbol, so they read as one family. */
+.scale-ladder svg,.scale-symbol svg{fill:none;stroke:currentColor;stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round}
 
 /* Lithography */
 .litho-layout{display:grid;grid-template-columns:.88fr 1.12fr;gap:4vw;align-items:center}.litho-steps{display:flex;gap:6px;flex-wrap:wrap}.litho-steps span{padding:8px 10px;border:1px solid var(--line);font:var(--label-sm) var(--mono);color:var(--muted)}.litho-steps .on{border-color:var(--cyan);color:var(--cyan)}.exposure-meter{max-width:530px;margin:3vh 0}.exposure-meter label{display:flex;justify-content:space-between;color:var(--muted);font:var(--label-sm) var(--mono);margin-bottom:8px}.exposure-meter b{color:var(--cyan)}.exposure-meter i{background:var(--cyan)}
@@ -238,9 +267,9 @@ mark { color: var(--accent); background: none; font-weight: 430; font-style: ita
 .slide-progress span.done i,.slide-progress span.active i{background:currentColor;box-shadow:0 0 8px currentColor}
 .slide-progress span.active:after{right:0;top:-3px}
 .slide-progress span[data-key="sample"]{color:var(--green)}.slide-progress span[data-key="amplify"]{color:var(--pink)}.slide-progress span[data-key="sense"]{color:var(--cyan)}.slide-progress span[data-key="learn"]{color:var(--green)}.slide-progress span[data-key="fly"]{color:var(--violet)}.slide-progress span[data-key="decide"]{color:var(--gold)}
-@media (max-width: 1400px){.nano-scale-layout{grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr);gap:1vw;min-width:0}.nano-scale-layout>div{min-width:0}.scale-readout{flex-wrap:wrap}.scale-tunnel{width:min(27vw,330px)}}
+@media (max-width: 1400px){.nano-scale-layout{grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr);gap:1vw;min-width:0}.nano-scale-layout>div{min-width:0}.scale-readout{flex-wrap:wrap}.scale-symbol{width:min(19vw,200px)}}
 @media (max-height:800px) and (min-width:901px){.training-layout{gap:2.5vw}.scene[data-scene="11"] .kicker,.training-layout .kicker,.scene[data-scene="13"] .kicker,.scene[data-scene="16"] .kicker{margin-bottom:1vh}.scene[data-scene="11"] h2,.training-layout h2,.scene[data-scene="13"] h2,.scene[data-scene="16"] h2{font-size:clamp(38px,4.4vw,60px);margin-bottom:1.2vh}.scene[data-scene="11"] .subhead,.training-layout .subhead,.scene[data-scene="13"] .subhead,.scene[data-scene="16"] .subhead{font-size:14px;line-height:1.35;margin-bottom:1.2vh}.scene[data-scene="11"] .ai-canvas,.training-layout .ai-canvas,.scene[data-scene="13"] .ai-canvas{width:min(40vw,480px)}.scene[data-scene="11"] .architecture-vote{margin-top:1vh;padding:11px}.training-layout .network-viz{height:105px}.training-layout .training-metrics{margin:1vh 0 8px}.training-layout .training-metrics strong{font-size:17px;margin:3px 0}.training-layout .button-row{margin-top:1vh}.scene[data-scene="13"] .challenge-stats{margin:1.2vh 0}.scene[data-scene="13"] .helix-result{padding:13px}.scene[data-scene="13"] .helix-result>div{margin-top:7px}.scene[data-scene="16"] .velocity-readout{margin:1.4vh 0}.scene[data-scene="16"] .velocity-readout strong{font-size:32px}.scene[data-scene="16"] .trajectory-key{margin-bottom:1.2vh}.scene[data-scene="16"] .mission-orbit canvas{width:min(45vw,600px)}}
-@media (max-width: 900px){.stage-shell{padding:0 20px}.two-col,.lobby-layout,.pcr-layout,.litho-layout,.ai-lab-layout,.training-layout,.orbit-concept-layout,.flight-layout,.responsibility-layout{grid-template-columns:1fr;gap:20px}.scene{overflow:auto}.crew-grid{grid-template-columns:1fr 1fr 1fr}.stage-footer{grid-template-columns:160px 1fr 170px}.plot-shell{justify-self:center}.ai-canvas{width:min(70vw,520px)}.sample-vial,.scale-tunnel,.lithography,.orbit-demo{display:none}.pipeline{grid-template-columns:repeat(4,1fr)}.pipeline>i{display:none}.return-options{gap:5px}}
+@media (max-width: 900px){.stage-shell{padding:0 20px}.two-col,.lobby-layout,.pcr-layout,.litho-layout,.ai-lab-layout,.training-layout,.orbit-concept-layout,.flight-layout,.responsibility-layout{grid-template-columns:1fr;gap:20px}.scene{overflow:auto}.crew-grid{grid-template-columns:1fr 1fr 1fr}.stage-footer{grid-template-columns:160px 1fr 170px}.plot-shell{justify-self:center}.ai-canvas{width:min(70vw,520px)}.sample-vial,.scale-focus,.lithography,.orbit-demo{display:none}.scale-ladder{grid-template-columns:repeat(5,1fr)}.pipeline{grid-template-columns:repeat(4,1fr)}.pipeline>i{display:none}.return-options{gap:5px}}
 @media (prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
 /* Public presenter authentication */
 .host-access-overlay {

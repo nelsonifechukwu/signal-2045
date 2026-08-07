@@ -149,6 +149,8 @@ setupProgress();
 applyShowConfig();
 setupInputs();
 setupSignalAnimation();
+setupHelixAnimation();
+$('#scale-slider').dispatchEvent(new Event('input'));
 
 fetch('/api/config')
   .then(response => response.json())
@@ -240,21 +242,39 @@ function setupInputs() {
     renderControlStates();
   }));
 
+  // Power of ten, what lives at that size, the size in words, how many of them span a metre, and a
+  // short name for the step above. The count is the point of the scene: it makes a nanometre
+  // concrete in a way a zooming diagram cannot.
   const scaleObjects = [
-    ['10⁰ m', 'ABOUT ONE METRE', '1 metre'], ['10⁻¹ m', 'A HAND', '10 centimetres'],
-    ['10⁻² m', 'A FINGERNAIL', '1 centimetre'], ['10⁻³ m', 'A GRAIN OF SAND', '1 millimetre'],
-    ['10⁻⁴ m', 'HUMAN HAIR WIDTH', '100 micrometres'], ['10⁻⁵ m', 'A HUMAN CELL', '10 micrometres'],
-    ['10⁻⁶ m', 'A BACTERIUM', '1 micrometre'], ['10⁻⁷ m', 'A VIRUS', '100 nanometres'],
-    ['10⁻⁸ m', 'DNA IS ABOUT 2 NANOMETRES WIDE', '10 nanometres'], ['10⁻⁹ m', 'ONE NANOMETRE', '1 nanometre']
+    ['10⁰ m', 'ABOUT ONE METRE', '1 metre', '1', 'one metre'],
+    ['10⁻¹ m', 'A HAND', '10 centimetres', '10', 'a hand'],
+    ['10⁻² m', 'A FINGERNAIL', '1 centimetre', '100', 'a fingernail'],
+    ['10⁻³ m', 'A GRAIN OF SAND', '1 millimetre', '1,000', 'a grain of sand'],
+    ['10⁻⁴ m', 'HUMAN HAIR WIDTH', '100 micrometres', '10,000', 'a hair’s width'],
+    ['10⁻⁵ m', 'A HUMAN CELL', '10 micrometres', '100,000', 'a human cell'],
+    ['10⁻⁶ m', 'A BACTERIUM', '1 micrometre', '1,000,000', 'a bacterium'],
+    ['10⁻⁷ m', 'A VIRUS', '100 nanometres', '10,000,000', 'a virus'],
+    ['10⁻⁸ m', 'DNA IS ABOUT 2 NANOMETRES WIDE', '10 nanometres', '100,000,000', 'the width of DNA'],
+    ['10⁻⁹ m', 'ONE NANOMETRE', '1 nanometre', '1,000,000,000', 'one nanometre']
   ];
+  const scaleRungs = $$('#scale-ladder li');
   $('#scale-slider').addEventListener('input', event => {
     const index = Number(event.target.value);
-    $('#scale-power').textContent = scaleObjects[index][0];
-    $('#scale-object').textContent = scaleObjects[index][1];
-    $('#scale-label').textContent = scaleObjects[index][2];
-    event.target.setAttribute('aria-valuetext', `${scaleObjects[index][2]} — ${scaleObjects[index][1].toLowerCase()}`);
-    $('#scale-tunnel').classList.toggle('zoomed', index > 5);
-    $('#scale-tunnel').style.transform = `scale(${1 + index * .018}) rotate(${index * .6}deg)`;
+    const [power, object, size, count] = scaleObjects[index];
+    $('#scale-power').textContent = power;
+    $('#scale-object').textContent = object;
+    $('#scale-label').textContent = size;
+    $('#scale-count').textContent = count;
+    $('#scale-note').textContent = index ? `Ten times smaller than ${scaleObjects[index - 1][4]}` : 'The starting size';
+    $('#scale-fit-label').textContent = index ? 'of these fit across one metre' : 'metre — the starting size';
+    event.target.setAttribute('aria-valuetext', `${size} — ${object.toLowerCase()}`);
+    scaleRungs.forEach((rung, step) => {
+      rung.classList.toggle('active', step === index);
+      rung.classList.toggle('passed', step < index);
+    });
+    // The focus panel shows the rung's own symbol, so the two never drift apart.
+    const symbol = scaleRungs[index]?.querySelector('svg');
+    if (symbol) $('#scale-symbol').innerHTML = symbol.outerHTML;
   });
 
   $$('.speed-presets button').forEach(button => button.addEventListener('click', () => {
@@ -1215,6 +1235,83 @@ function setupSignalAnimation() {
     }
     context.strokeStyle = '#baff66'; context.lineWidth = 1.5; context.shadowColor = '#baff66'; context.shadowBlur = 8; context.stroke(); context.shadowBlur = 0;
     requestAnimationFrame(draw);
+  }
+  requestAnimationFrame(draw);
+}
+
+// Scene 4 asks whether a microscope can read a sequence, so what it shows has to look like a real
+// specimen rather than a diagram: a double helix turning under the lens. Depth comes from shading
+// each base pair by how far round the turn it sits, so one strand passes in front of the other.
+function setupHelixAnimation() {
+  const canvas = $('#helix-canvas');
+  if (!canvas) return;
+  const context = canvas.getContext('2d');
+  const scene = document.querySelector('.scene[data-scene="4"]');
+  const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const width = canvas.width;
+  const height = canvas.height;
+  const centre = width / 2;
+  const amplitude = width * .27;
+  const turns = Math.PI * 4.4;
+  const strandPath = (phase, flip) => {
+    context.beginPath();
+    for (let step = 0; step <= 120; step += 1) {
+      const t = step / 120;
+      const y = height * (-.08 + 1.16 * t);
+      const x = centre + Math.sin(t * turns + phase) * amplitude * flip;
+      if (!step) context.moveTo(x, y); else context.lineTo(x, y);
+    }
+    context.stroke();
+  };
+
+  function draw(time) {
+    requestAnimationFrame(draw);
+    // Nothing to show while another scene is up, and no reason to spend frames on it.
+    if (!scene.classList.contains('active')) return;
+    const phase = still ? .6 : time * .0013;
+    context.clearRect(0, 0, width, height);
+    context.save();
+    context.beginPath();
+    context.arc(centre, height / 2, width / 2 - 2, 0, Math.PI * 2);
+    context.clip();
+    const glow = context.createRadialGradient(centre, height * .38, 10, centre, height / 2, width * .55);
+    glow.addColorStop(0, '#1b2b26');
+    glow.addColorStop(1, '#07100e');
+    context.fillStyle = glow;
+    context.fillRect(0, 0, width, height);
+
+    // Base pairs first: they sit between the two strands.
+    const rungs = 30;
+    for (let index = 0; index <= rungs; index += 1) {
+      const t = index / rungs;
+      const y = height * (-.08 + 1.16 * t);
+      const angle = t * turns + phase;
+      const offset = Math.sin(angle) * amplitude;
+      const depth = (Math.cos(angle) + 1) / 2;
+      context.strokeStyle = `rgba(241,250,247,${.07 + .17 * Math.abs(Math.sin(angle))})`;
+      context.lineWidth = 1.6;
+      context.beginPath();
+      context.moveTo(centre + offset, y);
+      context.lineTo(centre - offset, y);
+      context.stroke();
+      [[centre + offset, '#ff8cba', depth], [centre - offset, '#70f2c5', 1 - depth]].forEach(([x, colour, near]) => {
+        context.beginPath();
+        context.arc(x, y, 2.1 + near * 2.2, 0, Math.PI * 2);
+        context.fillStyle = colour;
+        context.globalAlpha = .45 + near * .55;
+        context.fill();
+        context.globalAlpha = 1;
+      });
+    }
+
+    context.lineWidth = 3.2;
+    context.shadowBlur = 12;
+    context.strokeStyle = '#ff8cba'; context.shadowColor = '#ff8cba';
+    strandPath(phase, 1);
+    context.strokeStyle = '#70f2c5'; context.shadowColor = '#70f2c5';
+    strandPath(phase, -1);
+    context.shadowBlur = 0;
+    context.restore();
   }
   requestAnimationFrame(draw);
 }

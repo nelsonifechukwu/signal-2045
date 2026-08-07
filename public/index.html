@@ -87,7 +87,7 @@
             <button class="action-button" id="reveal-microscope-button" data-action="reveal-microscope" type="button">Show the answer</button>
           </div>
           <div class="micro-view glass">
-            <div class="lens-ring"><div class="dna-tangle"><i></i><i></i><i></i><i></i></div></div>
+            <div class="lens-ring"><canvas id="helix-canvas" width="440" height="440" aria-label="A DNA double helix turning under the microscope"></canvas></div>
             <div class="zoom-stack"><span>100×</span><i></i><span>10,000×</span><i></i><span>1,000,000×</span></div>
             <p>VISIBLE: DNA MATERIAL + PROTEINS</p>
             <code>DNA LETTERS NOT READABLE</code>
@@ -147,16 +147,34 @@
       </section>
 
       <section class="scene act-nano" data-scene="8">
-        <div class="two-col nano-scale-layout">
+        <div class="nano-scale-layout">
           <div>
             <div class="kicker"><span>ACT II / NANOTECHNOLOGY</span><em>STUDENT 02</em></div>
             <h2>Compare a metre<br>with a nanometre.</h2>
-            <p class="subhead">A nanometre is one billionth of a metre. Use the slider to compare objects at different scales.</p>
+            <p class="subhead">Every step down the scale is ten times smaller than the one before it. Move the slider from a metre to a nanometre.</p>
             <input id="scale-slider" class="scale-slider" type="range" min="0" max="9" value="0" aria-label="Scale from metres to nanometres">
             <div class="scale-readout"><strong id="scale-power">10⁰ m</strong><span id="scale-object">ABOUT ONE METRE</span></div>
+            <div class="scale-fit"><strong id="scale-count">1</strong><span id="scale-fit-label">metre — the starting size</span></div>
           </div>
-          <div class="scale-tunnel" id="scale-tunnel"><i></i><i></i><i></i><i></i><i></i><div class="nano-dot"></div><span id="scale-label">1 metre</span></div>
+          <figure class="scale-focus">
+            <div class="scale-symbol" id="scale-symbol"></div>
+            <figcaption><b id="scale-label">1 metre</b><small id="scale-note">The reference size</small></figcaption>
+          </figure>
         </div>
+        <!-- One rung per power of ten. The symbols carry the comparison; the slider lights one rung
+             at a time and the same symbol is enlarged in the focus panel above. -->
+        <ol class="scale-ladder" id="scale-ladder">
+          <li data-step="0"><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="5" y="19" width="38" height="12" rx="2"/><path d="M12 19v7M18 19v4M24 19v7M30 19v4M36 19v7"/></svg><b>10⁰</b><span>metre stick</span></li>
+          <li data-step="1"><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="14" y="25" width="21" height="15" rx="6"/><rect x="16" y="11" width="4" height="15" rx="2"/><rect x="22" y="8" width="4" height="18" rx="2"/><rect x="28" y="10" width="4" height="16" rx="2"/><rect x="34" y="15" width="4" height="11" rx="2"/></svg><b>10⁻¹</b><span>a hand</span></li>
+          <li data-step="2"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M14 31c0-9 4-15 10-15s10 6 10 15c0 4-4 6-10 6s-10-2-10-6z"/><path d="M15 27h18"/></svg><b>10⁻²</b><span>a fingernail</span></li>
+          <li data-step="3"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M17 31l4-9 9-3 5 7-4 9-10 1z"/><circle cx="12" cy="18" r="1.6"/><circle cx="37" cy="34" r="1.6"/></svg><b>10⁻³</b><span>a grain of sand</span></li>
+          <li data-step="4"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M17 6c7 6-7 10 0 18s-7 12 0 18"/><path d="M29 6c7 6-7 10 0 18s-7 12 0 18"/></svg><b>10⁻⁴</b><span>a hair’s width</span></li>
+          <li data-step="5"><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="15"/><circle cx="24" cy="24" r="5"/><circle cx="33" cy="16" r="1.8"/><circle cx="16" cy="31" r="1.8"/></svg><b>10⁻⁵</b><span>a human cell</span></li>
+          <li data-step="6"><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="7" y="18" width="23" height="13" rx="6.5"/><path d="M30 24c4 0 4-5 8-5s4 5 8 5"/><circle cx="15" cy="24" r="1.6"/></svg><b>10⁻⁶</b><span>a bacterium</span></li>
+          <li data-step="7"><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="10"/><path d="M24 14V7M24 34v7M14 24H7M34 24h7M17 17l-5-5M31 31l5 5M31 17l5-5M17 31l-5 5"/><circle cx="24" cy="6" r="1.7"/><circle cx="24" cy="42" r="1.7"/><circle cx="6" cy="24" r="1.7"/><circle cx="42" cy="24" r="1.7"/></svg><b>10⁻⁷</b><span>a virus</span></li>
+          <li data-step="8"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M16 5c12 6-12 13 0 19s-12 13 0 19"/><path d="M32 5c-12 6 12 13 0 19s12 13 0 19"/><path d="M18 12h12M18 24h12M18 36h12"/></svg><b>10⁻⁸</b><span>DNA is 2 nm wide</span></li>
+          <li data-step="9"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M13 14h22M13 11v6M35 11v6"/><circle cx="24" cy="30" r="4.5"/></svg><b>10⁻⁹</b><span>one nanometre</span></li>
+        </ol>
       </section>
 
       <section class="scene act-nano" data-scene="9">

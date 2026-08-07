@@ -112,6 +112,8 @@ The circuit and regulatory protein are fictional. GFP is a real reporter protein
 
 Every vote on the stage reads the same way: a large count per option, its share of the votes, a bar that grows as the phones answer, and a running total underneath. The option currently in the lead is the one with the bright bar and the coloured edge; a tie marks both. The satellite on the orbit screens is HELIX–7 itself, drawn with its dish facing Earth.
 
+The lens on this scene shows a DNA double helix turning continuously. Use it: point at it while saying that the shape is visible but the letters are not.
+
 > “A microscope can show DNA material or structures, but it normally cannot identify the order of A, T, C and G.”
 
 > “Sequencing identifies that order. In this demonstration, PCR tests one short section of the control gene.”
@@ -163,7 +165,9 @@ Student 2:
 
 **Audience:** Answer the fingernail-growth question on the phone.
 
-**Operator:** Drag the stage slider slowly from `10⁰ m` to `10⁻⁹ m`. Pause briefly on the named objects and finish at **ONE NANOMETRE / 1 nanometre**.
+**Operator:** Drag the stage slider slowly from `10⁰ m` to `10⁻⁹ m`, one step at a time. Each step lights one rung of the ladder along the bottom and enlarges that rung's symbol in the panel on the right, so the audience can see what lives at that size: a metre stick, a hand, a fingernail, a grain of sand, a hair, a cell, a bacterium, a virus, DNA, one nanometre. Pause on the count on the left—it says how many of that object fit across a single metre—and finish at **ONE NANOMETRE / 1,000,000,000 of these fit across one metre**.
+
+> “Every step is ten times smaller than the one before. A hand is a tenth of a metre. A cell is a hundred-thousandth. And a billion nanometres fit across a single metre.”
 
 > “The sensor contains structures measured in nanometres. One nanometre is one billionth of a metre—about how far a fingernail grows each second.”
 
