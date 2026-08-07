@@ -95,7 +95,7 @@ The exact 15-minute speaking, clicking and feedback sequence is in [PRESENTER_GU
 | 9 | Adds simulated UV exposure | Photolithography uses patterned light before chemical and material processes form chip structures. |
 | 11 | Votes for 2, 4 or 8 hidden neurons | The counter starts from the leading vote; the presenter can choose 1–8. The model uses control-gene PCR and GFP-light scores to predict WORKING or CHANGED. |
 | 12 | Watches the model train | The model compares its predictions with known labels and adjusts its weights. Epoch, loss and accuracy describe training and testing. |
-| 13 | Tests the model with new samples | A trained model classifies data it has not seen before. |
+| 13 | Chooses a new sample on the graph and tests the model | A trained model classifies data it has not seen before. |
 | 13 | Adds four independently verified samples and retrains | New evidence can change how the model classifies data. |
 | 14 | Decides whether an AI score is enough | A high model score is not proof. |
 | 15 | Answers a gravity question | Astronauts appear weightless because the crew and spacecraft are falling together. |

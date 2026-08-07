@@ -110,6 +110,8 @@ The circuit and regulatory protein are fictional. GFP is a real reporter protein
 
 **Operator:** Wait until the two stage bars move, then click **Show the answer**. Check that the button changes to **Answer shown** and the answer appears on both screens.
 
+Every vote on the stage reads the same way: a large count per option, its share of the votes, a bar that grows as the phones answer, and a running total underneath. The option currently in the lead is the one with the bright bar and the coloured edge; a tie marks both. The satellite on the orbit screens is HELIX–7 itself, drawn with its dish facing Earth.
+
 > “A microscope can show DNA material or structures, but it normally cannot identify the order of A, T, C and G.”
 
 > “Sequencing identifies that order. In this demonstration, PCR tests one short section of the control gene.”
@@ -213,7 +215,7 @@ Do not select **Reset model** during the presentation. That button clears only t
 
 ### Scene 13 — Test and retrain the AI, 8:45–9:35
 
-**Audience:** Move both sliders and tap **Get a prediction**. To test another sample, move a slider and tap **Test the updated sample**.
+**Audience:** Tap a point on the phone's graph to choose the two scores, then tap **Get a prediction**. To test another sample, move the dot and tap **Test the updated sample**. This graph has no 60/100 guides: the first activity's rule does not decide this answer—the trained model does.
 
 **Operator, in order:**
 
@@ -271,7 +273,7 @@ Student 3:
 
 **Operator, in order:**
 
-1. Wait for at least one speed choice and point out the median audience choice.
+1. Wait for at least one speed choice, then point out the histogram under the median: one column per 0.05× band, the tallest column is the most popular choice, and the bright column holds the median. The coloured rule under the axis marks the re-entry and escape thresholds.
 2. Select **Simulate this speed**.
 3. Wait through **Simulating orbit…** until the full path and result sentence appear.
 4. If the audience changes its speeds, wait for **THE SPEED CHANGED — SIMULATE IT AGAIN**, then select **Simulate again**.

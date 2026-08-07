@@ -13,7 +13,7 @@ let samplePoint = null;
 let pcrTaps = 0;
 let photons = 0;
 let sentBurn = null;
-let challenge = { water: 72, carbon: 66 };
+let challenge = null;
 let lastChallengeKey = '';
 let lastModelVersion = null;
 let lastRevealSignature = '';
@@ -84,7 +84,7 @@ function resetLocal() {
   pcrTaps = 0;
   photons = 0;
   sentBurn = null;
-  challenge = { water: 72, carbon: 66 };
+  challenge = null;
   lastChallengeKey = '';
   currentMode = '';
 }
@@ -186,35 +186,13 @@ function renderSampleCard() {
     <h2>Choose a sample,<br>then <mark>label it.</mark></h2>
     <p class="subhead">Tap anywhere on the graph to choose one sample. Its two readings appear underneath. Then use this rule for the first batch: choose WORKING only if both readings are 60 or higher. Otherwise choose CHANGED.</p>
     <div class="phone-card">
-      <div class="sample-picker-wrap">
-        <span class="picker-axis-y">GFP-LIGHT SCORE →</span>
-        <div class="sample-picker" id="sample-picker" role="application" tabindex="0"
-          aria-label="Sample chooser. Tap the graph to place your sample, or use the arrow keys: left and right change the control-gene PCR score, up and down change the GFP-light score."
-          aria-describedby="sample-readout">
-          <i class="guide-x"></i><i class="guide-y"></i>
-          <s class="tick-x">60</s><s class="tick-y">60</s>
-          <b id="sample-dot"></b>
-          <span class="picker-hint">TAP THE GRAPH<br>TO CHOOSE A SAMPLE</span>
-        </div>
-        <span class="picker-axis-x">CONTROL-GENE PCR SCORE →</span>
-      </div>
-      <dl class="phone-readouts two" id="sample-readout" role="status" aria-live="polite">
-        <div><dt>CONTROL-GENE PCR SCORE</dt><dd id="read-water">—</dd></div>
-        <div><dt>GFP-LIGHT SCORE<small>sensor</small></dt><dd id="read-carbon">—</dd></div>
-      </dl>
+      ${pickerMarkup('sample-picker', { guides: true })}
       <div class="phone-choice two" role="radiogroup" aria-label="Choose a label for this sample"><button type="button" role="radio" aria-checked="false" data-sample="changed" disabled>CIRCUIT CHANGED</button><button type="button" role="radio" aria-checked="false" data-sample="working" disabled>CIRCUIT WORKING</button></div>
       <p class="subhead" id="sample-help" role="status" aria-live="polite" style="margin:12px 0 0"></p>
       <button class="phone-action" type="button" id="submit-sample" disabled>Send this label</button>
     </div>`;
-  const picker = document.querySelector('#sample-picker');
   const paint = () => {
-    picker.classList.toggle('placed', Boolean(samplePoint));
-    document.querySelector('#read-water').textContent = samplePoint ? `${samplePoint.water}/100` : '—';
-    document.querySelector('#read-carbon').textContent = samplePoint ? `${samplePoint.carbon}/100` : '—';
-    if (samplePoint) {
-      document.querySelector('#sample-dot').style.setProperty('--x', `${samplePoint.water}%`);
-      document.querySelector('#sample-dot').style.setProperty('--y', `${samplePoint.carbon}%`);
-    }
+    paintPicker('sample-picker', samplePoint);
     root.querySelectorAll('[data-sample]').forEach(item => {
       item.disabled = !samplePoint;
       item.classList.toggle('selected', item.dataset.sample === sampleChoice);
@@ -222,35 +200,14 @@ function renderSampleCard() {
     });
     document.querySelector('#submit-sample').disabled = !samplePoint || !sampleChoice;
   };
-  const setPoint = (water, carbon) => {
-    const next = { water: clampScore(water), carbon: clampScore(carbon) };
+  bindPicker('sample-picker', () => samplePoint, next => {
     // A different point can need a different label, so moving the dot clears the chosen label.
-    if (!samplePoint || next.water !== samplePoint.water || next.carbon !== samplePoint.carbon) {
+    if (!samePoint(samplePoint, next)) {
       sampleChoice = null;
       document.querySelector('#sample-help').textContent = '';
     }
     samplePoint = next;
     paint();
-  };
-  const setPointFromPointer = event => {
-    const box = picker.getBoundingClientRect();
-    setPoint((event.clientX - box.left) / box.width * 100, (1 - (event.clientY - box.top) / box.height) * 100);
-  };
-  picker.addEventListener('pointerdown', event => {
-    picker.setPointerCapture(event.pointerId);
-    setPointFromPointer(event);
-    vibrate(8);
-  });
-  picker.addEventListener('pointermove', event => {
-    if (picker.hasPointerCapture(event.pointerId)) setPointFromPointer(event);
-  });
-  picker.addEventListener('keydown', event => {
-    const steps = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowDown: [0, -1], ArrowUp: [0, 1] };
-    if (!steps[event.key]) return;
-    event.preventDefault();
-    if (!samplePoint) return setPoint(50, 50);
-    const size = event.shiftKey ? 10 : 1;
-    setPoint(samplePoint.water + steps[event.key][0] * size, samplePoint.carbon + steps[event.key][1] * size);
   });
   root.querySelectorAll('[data-sample]').forEach(button => button.addEventListener('click', () => {
     sampleChoice = button.dataset.sample;
@@ -273,6 +230,72 @@ function renderSampleCard() {
     window.setTimeout(renderPhone, 900);
   });
   paint();
+}
+
+// One two-axis picker serves both places a phone chooses a sample: the training label in scene 1
+// and the new sample the trained model classifies in scene 13. Tapping, dragging and the arrow
+// keys all set the same point; the 60/100 guides only belong to the scene 1 labelling rule.
+function pickerMarkup(id, { guides = false } = {}) {
+  return `
+    <div class="sample-picker-wrap">
+      <span class="picker-axis-y">GFP-LIGHT SCORE →</span>
+      <div class="sample-picker" id="${id}" role="application" tabindex="0"
+        aria-label="Sample chooser. Tap the graph to place your sample, or use the arrow keys: left and right change the control-gene PCR score, up and down change the GFP-light score."
+        aria-describedby="${id}-readout">
+        ${guides ? '<i class="guide-x"></i><i class="guide-y"></i><s class="tick-x">60</s><s class="tick-y">60</s>' : ''}
+        <b></b>
+        <span class="picker-hint">TAP THE GRAPH<br>TO CHOOSE A SAMPLE</span>
+      </div>
+      <span class="picker-axis-x">CONTROL-GENE PCR SCORE →</span>
+    </div>
+    <dl class="phone-readouts two" id="${id}-readout" role="status" aria-live="polite">
+      <div><dt>CONTROL-GENE PCR SCORE</dt><dd data-read="water">—</dd></div>
+      <div><dt>GFP-LIGHT SCORE<small>sensor</small></dt><dd data-read="carbon">—</dd></div>
+    </dl>`;
+}
+
+function paintPicker(id, point) {
+  const picker = document.querySelector(`#${id}`);
+  const readout = document.querySelector(`#${id}-readout`);
+  picker.classList.toggle('placed', Boolean(point));
+  readout.querySelector('[data-read="water"]').textContent = point ? `${point.water}/100` : '—';
+  readout.querySelector('[data-read="carbon"]').textContent = point ? `${point.carbon}/100` : '—';
+  if (!point) return;
+  picker.querySelector('b').style.setProperty('--x', `${point.water}%`);
+  picker.querySelector('b').style.setProperty('--y', `${point.carbon}%`);
+}
+
+function bindPicker(id, getPoint, onPick) {
+  const picker = document.querySelector(`#${id}`);
+  const pickFromPointer = event => {
+    const box = picker.getBoundingClientRect();
+    onPick(makePoint((event.clientX - box.left) / box.width * 100, (1 - (event.clientY - box.top) / box.height) * 100));
+  };
+  picker.addEventListener('pointerdown', event => {
+    picker.setPointerCapture(event.pointerId);
+    pickFromPointer(event);
+    vibrate(8);
+  });
+  picker.addEventListener('pointermove', event => {
+    if (picker.hasPointerCapture(event.pointerId)) pickFromPointer(event);
+  });
+  picker.addEventListener('keydown', event => {
+    const steps = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowDown: [0, -1], ArrowUp: [0, 1] };
+    if (!steps[event.key]) return;
+    event.preventDefault();
+    const point = getPoint();
+    if (!point) return onPick(makePoint(50, 50));
+    const size = event.shiftKey ? 10 : 1;
+    onPick(makePoint(point.water + steps[event.key][0] * size, point.carbon + steps[event.key][1] * size));
+  });
+}
+
+function makePoint(water, carbon) {
+  return { water: clampScore(water), carbon: clampScore(carbon) };
+}
+
+function samePoint(a, b) {
+  return Boolean(a && b) && a.water === b.water && a.carbon === b.carbon;
 }
 
 function clampScore(value) {
@@ -404,35 +427,32 @@ function renderChallenge() {
   currentMode = 'challenge';
   if (!state.model) return waiting('The model is still training', 'This activity will appear as soon as training finishes.');
   root.innerHTML = `
-    <div class="phone-kicker">TEST THE AI / NEW SAMPLE</div><h2>Choose values for<br><mark>a new sample.</mark></h2>
-    <p class="subhead">Set the two input scores. The model will predict whether the circuit is WORKING or CHANGED.</p>
+    <div class="phone-kicker">TEST THE AI / NEW SAMPLE</div><h2>Choose a new<br><mark>sample to test.</mark></h2>
+    <p class="subhead">Tap anywhere on the graph to choose the two input scores. The model will predict whether that circuit is WORKING or CHANGED.</p>
     <div class="phone-card">
-      ${sliderMarkup('challenge-water','Control-gene PCR score',challenge.water)}
-      ${sliderMarkup('challenge-carbon','GFP-light score · sensor',challenge.carbon)}
-      <div class="sample-mini-plot"><i id="challenge-dot" style="--x:${challenge.water}%;--y:${challenge.carbon}%"></i></div>
-      <button class="phone-action" type="button" id="predict-button">Get a prediction</button>
+      ${pickerMarkup('challenge-picker')}
+      <button class="phone-action" type="button" id="predict-button" disabled>Get a prediction</button>
       <div id="phone-prediction" role="status" aria-live="polite"></div>
     </div>`;
-  ['water','carbon'].forEach(key => {
-    document.querySelector(`#challenge-${key}`).addEventListener('input', event => {
-      challenge[key] = Number(event.target.value);
-      event.target.previousElementSibling.querySelector('b').textContent = challenge[key];
-      const dot = document.querySelector('#challenge-dot');
-      dot.style.setProperty('--x', `${challenge.water}%`);
-      dot.style.setProperty('--y', `${challenge.carbon}%`);
-      const button = document.querySelector('#predict-button');
-      button.disabled = false;
-      button.textContent = lastChallengeKey ? 'Test the updated sample' : 'Get a prediction';
-    });
+  paintPicker('challenge-picker', challenge);
+  bindPicker('challenge-picker', () => challenge, next => {
+    const moved = !samePoint(challenge, next);
+    challenge = next;
+    paintPicker('challenge-picker', challenge);
+    if (!moved) return;
+    const button = document.querySelector('#predict-button');
+    button.disabled = false;
+    button.textContent = lastChallengeKey ? 'Test the updated sample' : 'Get a prediction';
   });
   document.querySelector('#predict-button').addEventListener('click', () => {
+    if (!challenge) return;
     if (!socket.connected) return waiting('Reconnecting…', 'Your sample has not been sent. Try again when CONNECTED appears at the top.');
     const output = forwardModel(state.model, [challenge.water / 100, challenge.carbon / 100]);
     socket.emit('challenge', { ...challenge, prediction: output });
     document.querySelector('#phone-prediction').innerHTML = `<div class="prediction-phone"><strong>${output >= .5 ? 'PREDICTED: WORKING' : 'PREDICTED: CHANGED'}</strong><span>${Math.round(output * 100)}</span><p class="subhead">Model score out of 100. This estimate is not proof.</p></div>`;
     lastChallengeKey = `${state.model.trainedAt}:${challenge.water}:${challenge.carbon}`;
     document.querySelector('#predict-button').disabled = true;
-    document.querySelector('#predict-button').textContent = 'Move a slider to test again';
+    document.querySelector('#predict-button').textContent = 'Move the dot to test again';
     vibrate([20,25,20]);
   });
 }
@@ -521,10 +541,6 @@ function infoCard(kicker, title, copy) {
 function metricScreen(value, label, copy) {
   currentMode = 'metric';
   root.innerHTML = `<div class="phone-kicker">AMPLIFICATION COMPLETE</div><div class="phone-metric" style="margin-top:14vh"><strong>${value}</strong><span>${label}</span></div><p class="subhead" style="text-align:center;margin-top:30px">${copy}</p>`;
-}
-
-function sliderMarkup(id, label, value) {
-  return `<div class="phone-slider"><label for="${id}">${label.toUpperCase()} <b>${value}</b></label><input id="${id}" type="range" min="0" max="100" value="${value}"></div>`;
 }
 
 function lockQuiz(selector, correctButton) {

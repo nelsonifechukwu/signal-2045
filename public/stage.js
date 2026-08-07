@@ -404,17 +404,28 @@ function renderControlStates() {
 }
 
 function renderPolls() {
-  setPairBars('micro', state.polls.microscope.yes, state.polls.microscope.no, 'yes', 'no');
+  setTally('micro', Object.entries(state.polls.microscope));
   const primer = state.polls.primer;
-  const primerTotal = Object.values(primer).reduce((sum, value) => sum + value, 0) || 1;
+  const primerTotal = Object.values(primer).reduce((sum, value) => sum + value, 0);
+  const primerBest = Math.max(...Object.values(primer));
   Object.entries(primer).forEach(([key, value]) => {
-    $(`#primer-${key}`).textContent = `${Math.round(value / primerTotal * 100)}%`;
+    const share = primerTotal ? value / primerTotal * 100 : 0;
+    $(`#primer-${key}`).textContent = `${Math.round(share)}%`;
+    const card = $(`#primer-options [data-choice="${key}"]`);
+    card.querySelector('.choice-track').style.setProperty('--fill', barWidth(share));
+    card.classList.toggle('leading', primerTotal > 0 && value === primerBest);
   });
+  $('#primer-total').textContent = primerTotal;
   const arch = state.polls.architecture;
   $('#arch-two').textContent = arch.two;
   $('#arch-four').textContent = arch.four;
   $('#arch-eight').textContent = arch.eight;
   const archVotes = arch.two + arch.four + arch.eight;
+  const archPeak = Math.max(arch.two, arch.four, arch.eight);
+  $$('.architecture-results span').forEach((node, index) => {
+    const value = [arch.two, arch.four, arch.eight][index];
+    node.querySelector('i').style.setProperty('--fill', archPeak ? barWidth(value / archPeak * 100) : '0%');
+  });
   const audienceHidden = audienceArchitecture();
   const modelHidden = validArchitecture(currentModel?.hidden || state.model?.hidden);
   const hidden = modelHidden || pendingHiddenUnits || chosenArchitecture();
@@ -443,23 +454,37 @@ function renderPolls() {
     button.setAttribute('aria-pressed', String(manualArchitecture === null));
   });
   drawNetwork(hidden);
-  setPairBars('trust', state.polls.trust.deploy, state.polls.trust.verify, 'deploy', 'verify');
+  setTally('trust', Object.entries(state.polls.trust));
 
   const returns = state.polls.return;
-  const total = Object.values(returns).reduce((sum, value) => sum + value, 0) || 1;
+  const total = Object.values(returns).reduce((sum, value) => sum + value, 0);
+  const best = Math.max(...Object.values(returns));
   Object.entries(returns).forEach(([key, value]) => {
-    const percent = Math.round(value / total * 100);
+    const percent = total ? Math.round(value / total * 100) : 0;
     $(`#return-${key}`).style.width = `${percent}%`;
     $(`#return-${key}-n`).textContent = `${percent}%`;
+    $(`#return-${key}`).closest('article').classList.toggle('leading', total > 0 && value === best);
   });
+  $('#return-total').textContent = total;
 }
 
-function setPairBars(prefix, a, b, aKey, bKey) {
-  const total = a + b || 1;
-  $(`#${prefix}-${aKey}`).style.width = `${a / total * 100}%`;
-  $(`#${prefix}-${bKey}`).style.width = `${b / total * 100}%`;
-  $(`#${prefix}-${aKey}-n`).textContent = a;
-  $(`#${prefix}-${bKey}-n`).textContent = b;
+// Every poll on the stage reads the same way: a bar per option in the act's accent, a count big
+// enough for the back row, the share beside it, and full-strength ink on whatever is leading.
+function barWidth(share) {
+  return `${Math.round(share * 10) / 10}%`;
+}
+
+function setTally(prefix, entries) {
+  const total = entries.reduce((sum, [, value]) => sum + value, 0);
+  const best = Math.max(...entries.map(([, value]) => value));
+  entries.forEach(([key, value]) => {
+    const share = total ? value / total * 100 : 0;
+    $(`#${prefix}-${key}`).style.width = barWidth(share);
+    $(`#${prefix}-${key}-n`).textContent = value;
+    $(`#${prefix}-${key}-p`).textContent = total ? `${Math.round(share)}%` : '—';
+    $(`#${prefix}-${key}-row`).classList.toggle('leading', total > 0 && value === best);
+  });
+  $(`#${prefix}-total`).textContent = total;
 }
 
 function renderReveals() {
@@ -940,8 +965,47 @@ function drawOrbit(canvas, speed = 1, progress = 1) {
   context.strokeStyle = trajectory.outcome === 'CRASH' ? '#ff7868' : ['ESCAPE', 'HIGH ORBIT'].includes(trajectory.outcome) ? '#9fa8ff' : '#baff66';
   context.lineWidth = 2.4; context.shadowColor = context.strokeStyle; context.shadowBlur = 12; context.stroke(); context.shadowBlur = 0;
   const point = trajectory.points[Math.min(count - 1, trajectory.points.length - 1)];
-  context.beginPath(); context.arc(centre.x + point.x * scale, centre.y - point.y * scale, 5, 0, Math.PI * 2); context.fillStyle = '#ffe06b'; context.fill();
+  drawSatellite(context, centre.x + point.x * scale, centre.y - point.y * scale, centre, scale);
   return trajectory;
+}
+
+// HELIX–7 is a laboratory, so it is drawn as one: a body with two solar wings and a dish. The
+// craft is turned to keep its dish facing Earth, which puts the wings along the path and keeps
+// the whole glyph inside the narrow gap between Earth's surface and the orbit.
+function drawSatellite(context, x, y, centre, scale) {
+  const unit = Math.max(4, scale * .055);
+  const wing = [-unit * .38, unit * .76, unit * 1.4];
+  context.save();
+  context.translate(x, y);
+  context.rotate(Math.atan2(centre.y - y, centre.x - x));
+  context.shadowColor = 'rgba(255,224,107,.7)';
+  context.shadowBlur = 14;
+  // A dark ring keeps every part of the craft legible where it crosses Earth's bright limb.
+  context.strokeStyle = '#07100f';
+  context.lineWidth = 2;
+  context.fillStyle = '#9fa8ff';
+  [-unit * 2.5, unit * 1.1].forEach(top => {
+    context.fillRect(wing[0], top, wing[1], wing[2]);
+    context.shadowBlur = 0;
+    context.strokeRect(wing[0], top, wing[1], wing[2]);
+  });
+  context.strokeStyle = 'rgba(241,250,247,.75)';
+  context.lineWidth = Math.max(1, unit * .16);
+  context.beginPath();
+  context.moveTo(0, -unit * 1.1); context.lineTo(0, -unit * .55);
+  context.moveTo(0, unit * 1.1); context.lineTo(0, unit * .55);
+  context.stroke();
+  context.fillStyle = '#ffe06b';
+  context.fillRect(-unit * .55, -unit * .55, unit * 1.1, unit * 1.1);
+  context.strokeStyle = '#07100f';
+  context.lineWidth = 2;
+  context.strokeRect(-unit * .55, -unit * .55, unit * 1.1, unit * 1.1);
+  context.beginPath();
+  context.arc(unit * .88, 0, unit * .36, 0, Math.PI * 2);
+  context.fillStyle = '#f1faf7';
+  context.fill();
+  context.stroke();
+  context.restore();
 }
 
 function updateOrbitConcept(speed) {
@@ -963,11 +1027,41 @@ function medianBurn() {
   return median / 100;
 }
 
+// Ten 0.05× bins from 0.96× to 1.45×, the full range a phone can send.
+const BURN_BIN_COUNT = 10;
+const BURN_BIN_WIDTH = 5;
+
+function burnBin(value) {
+  return Math.max(0, Math.min(BURN_BIN_COUNT - 1, Math.floor((value - 96) / BURN_BIN_WIDTH)));
+}
+
+function renderBurnHistogram() {
+  const host = $('#hist-bins');
+  if (!host) return;
+  while (host.children.length < BURN_BIN_COUNT) {
+    const column = document.createElement('i');
+    column.appendChild(document.createElement('b'));
+    host.appendChild(column);
+  }
+  const counts = new Array(BURN_BIN_COUNT).fill(0);
+  state.burns.forEach(item => { counts[burnBin(item.value)] += 1; });
+  const peak = Math.max(1, ...counts);
+  const medianColumn = state.burns.length ? burnBin(medianBurn() * 100) : -1;
+  [...host.children].forEach((column, index) => {
+    column.style.setProperty('--h', `${counts[index] / peak * 100}%`);
+    column.classList.toggle('empty', counts[index] === 0);
+    column.classList.toggle('median', index === medianColumn);
+    // Only the bins that hold a choice are labelled; a zero on every empty bin reads as noise.
+    column.querySelector('b').textContent = counts[index] || '';
+  });
+}
+
 function renderOrbitState() {
   const speed = medianBurn();
   const shownSpeed = activeOrbitSpeed ?? speed;
   $('#median-burn').textContent = state.burns.length ? `${shownSpeed.toFixed(2)}×` : '—';
   $('#burn-count').textContent = state.burns.length;
+  renderBurnHistogram();
   $('#telemetry-vel').textContent = state.burns.length ? `${(7.67 * shownSpeed).toFixed(2)} km/s` : '—';
   if (!orbitAnimating) {
     const sameAsLastRun = lastOrbitOutcome && Math.abs((lastOrbitSpeed ?? -1) - speed) < .0001;

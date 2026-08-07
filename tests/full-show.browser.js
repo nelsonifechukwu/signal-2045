@@ -190,19 +190,26 @@ async function realClick(page, selector, { allowDisabled = false } = {}) {
   await mouseClickAt(page, info.x, info.y);
 }
 
-// The first activity assigns nothing: each phone chooses its own point on the graph, so the
-// test has to click a specific position inside the picker rather than its centre.
-async function pickSamplePoint(page, water, carbon) {
-  const info = await elementState(page, '#sample-picker');
-  assert.equal(info.exists && info.visible && info.hit && !info.inert, true, `${page.name}: the sample picker is not usable`);
+// Nothing is assigned: the phone chooses its own point on the graph, both for the training label
+// and for the sample the trained model classifies. The test has to click a specific position
+// inside the picker rather than its centre, then read back what the picker recorded.
+async function pickPoint(page, selector, water, carbon) {
+  const info = await elementState(page, selector);
+  assert.equal(info.exists && info.visible && info.hit && !info.inert, true, `${page.name}: ${selector} is not usable`);
   const box = await page.evaluate(`(() => {
-    const rect = document.querySelector('#sample-picker').getBoundingClientRect();
+    const rect = document.querySelector('${selector}').getBoundingClientRect();
     return { left: rect.left, top: rect.top, width: rect.width, height: rect.height };
   })()`);
   await mouseClickAt(page, box.left + box.width * water / 100, box.top + box.height * (1 - carbon / 100));
-  await waitFor(() => page.evaluate('Boolean(samplePoint)'), `${page.name} did not register a chosen sample point`);
-  return page.evaluate('({ ...samplePoint })');
+  await waitFor(() => page.evaluate(`document.querySelector('${selector}').classList.contains('placed')`), `${page.name}: ${selector} did not register a chosen point`);
+  return page.evaluate(`(() => {
+    const readout = document.querySelector('${selector}-readout');
+    const value = key => Number(readout.querySelector('[data-read="' + key + '"]').textContent.split('/')[0]);
+    return { water: value('water'), carbon: value('carbon') };
+  })()`);
 }
+
+const pickSamplePoint = (page, water, carbon) => pickPoint(page, '#sample-picker', water, carbon);
 
 async function realClicks(page, selector, count) {
   const info = await elementState(page, selector);
@@ -374,7 +381,10 @@ async function run() {
   if (screenshotDir) fs.mkdirSync(screenshotDir, { recursive: true });
   const takeShot = async (page, name) => {
     if (!screenshotDir) return;
-    await delay(300);
+    // A background tab throttles its transitions, so bring the page forward and let the bars,
+    // fills and reveals settle before capturing—otherwise every shot freezes mid-animation.
+    await page.call('Page.bringToFront');
+    await delay(700);
     await page.screenshot(path.join(screenshotDir, `${name}.png`));
   };
 
@@ -430,16 +440,14 @@ async function run() {
     assert.equal(await main.evaluate("document.querySelector('[data-sample=\"working\"]').disabled"), true);
     await realClick(main, '#submit-sample', { allowDisabled: true });
     assert.equal(await stage.evaluate('state.samples.length'), 0);
-    assert.equal(await text(main, '#read-water'), '—');
+    assert.equal(await text(main, '#sample-picker-readout [data-read="water"]'), '—');
     await takeShot(main, 'phone-sample-empty');
 
     // Choosing a point shows its two readings, and the arrow keys nudge the same point.
     const picked = await pickSamplePoint(main, 34, 82);
-    assert.equal(await text(main, '#read-water'), `${picked.water}/100`);
-    assert.equal(await text(main, '#read-carbon'), `${picked.carbon}/100`);
     await pressKey(main, 'ArrowRight');
     await waitFor(() => main.evaluate(`samplePoint.water === ${picked.water + 1}`), 'The arrow keys did not move the chosen sample');
-    assert.equal(await text(main, '#read-water'), `${picked.water + 1}/100`);
+    assert.equal(await text(main, '#sample-picker-readout [data-read="water"]'), `${picked.water + 1}/100`);
     await takeShot(main, 'phone-sample-picker');
     const mainPoint = await main.evaluate('({ ...samplePoint })');
     const mainCorrect = mainPoint.water >= 60 && mainPoint.carbon >= 60 ? 'working' : 'changed';
@@ -505,6 +513,19 @@ async function run() {
     await realClick(main, '[data-vote="no"]');
     await realClick(phones[1], '[data-vote="yes"]');
     await waitFor(() => stage.evaluate('state.polls.microscope.no === 1 && state.polls.microscope.yes === 1'), 'Both microscope choices did not register');
+
+    // The live tally: counts, shares, running total, and a tie that leads on both rows.
+    assert.deepEqual(await stage.evaluate("['micro-yes-n','micro-no-n','micro-yes-p','micro-no-p','micro-total'].map(id => document.getElementById(id).textContent)"),
+      ['1', '1', '50%', '50%', '2'], 'The microscope tally did not follow the votes');
+    assert.deepEqual(await stage.evaluate("['yes','no'].map(key => document.getElementById('micro-'+key+'-row').classList.contains('leading'))"), [true, true],
+      'A tied vote did not mark both options as leading');
+    assert.deepEqual(await stage.evaluate("['yes','no'].map(key => document.getElementById('micro-'+key).style.width)"), ['50%', '50%'], 'The tally bars did not follow the votes');
+    await realClick(phones[2], '[data-vote="no"]');
+    await waitFor(() => text(stage, '#micro-no-n').then(value => value === '2'), 'A third vote did not raise the tally count');
+    assert.deepEqual(await stage.evaluate("['yes','no'].map(key => document.getElementById('micro-'+key+'-row').classList.contains('leading'))"), [false, true],
+      'The leading option did not move to the option with more votes');
+    assert.equal(await text(stage, '#micro-total'), '3');
+    await takeShot(stage, 'scene-04-microscope-vote');
     await realClick(stage, '#reveal-microscope-button');
     await waitFor(() => stage.evaluate('state.reveals.microscope === true'), 'Microscope reveal did not register');
     assert.equal(await stage.evaluate("document.querySelector('#reveal-microscope-button').disabled"), true);
@@ -553,6 +574,13 @@ async function run() {
     for (let index = 0; index < primerChoices.length; index += 1) await realClick(phones[index], `[data-vote="${primerChoices[index]}"]`);
     await waitFor(() => stage.evaluate('Object.values(state.polls.primer).every(value => value === 1)'), 'All primer choices did not register');
     assert.deepEqual(await stage.evaluate("['gacac','ctgtg','gtgtg','random'].map(key => document.querySelector('#primer-'+key).textContent)"), ['25%', '25%', '25%', '25%']);
+    assert.equal(await text(stage, '#primer-total'), '4');
+    assert.deepEqual(await stage.evaluate("['gacac','ctgtg','gtgtg','random'].map(key => document.querySelector('#primer-options [data-choice=\"'+key+'\"] .choice-track').style.getPropertyValue('--fill'))"),
+      ['25%', '25%', '25%', '25%'], 'The primer option bars did not follow the votes');
+    await realClick(phones[4], '[data-vote="gacac"]');
+    await waitFor(() => text(stage, '#primer-gacac').then(value => value === '40%'), 'A fifth primer vote did not change the shares');
+    assert.deepEqual(await stage.evaluate("['gacac','ctgtg'].map(key => document.querySelector('#primer-options [data-choice=\"'+key+'\"]').classList.contains('leading'))"), [true, false],
+      'The leading primer option did not follow the votes');
     await assertPassive(stage, primerChoices.map(choice => `#primer-options [data-choice="${choice}"]`), 'Primer results');
     await realClick(stage, '#reveal-primer-button');
     await waitFor(() => stage.evaluate('state.reveals.primer'), 'Primer reveal did not register');
@@ -647,6 +675,11 @@ async function run() {
     await waitFor(() => stage.evaluate('state.polls.architecture.eight === 3'), 'The leading audience model size did not update');
     assert.equal(await text(stage, '#hidden-neuron-count'), '5', 'A later audience vote overwrote the presenter counter');
     assert.equal(await stage.evaluate("document.querySelector('.architecture-results span:nth-child(3)').classList.contains('winner')"), true);
+    // The three columns are scaled against the busiest choice, so the leader fills its track.
+    assert.deepEqual(await stage.evaluate("[...document.querySelectorAll('.architecture-results i')].map(node => node.style.getPropertyValue('--fill'))"),
+      ['33.3%', '33.3%', '100%'], 'The model-size columns did not follow the votes');
+    assert.deepEqual(await stage.evaluate("['arch-two','arch-four','arch-eight'].map(id => document.getElementById(id).textContent)"), ['1', '1', '3']);
+    await takeShot(stage, 'scene-11-model-size-vote');
 
     await realClick(stage, '[data-hidden-units="audience"]');
     assert.equal(await text(stage, '#hidden-neuron-count'), '8');
@@ -699,23 +732,26 @@ async function run() {
     await waitFor(() => stage.evaluate('state.training.epoch === 500 && Boolean(state.model)'), 'Second training run did not finish', 12000);
     assert.equal(await stage.evaluate('state.model.hidden'), 7);
 
-    // Real challenge ranges, result lock/re-enable, update-in-place, and visible retraining feedback.
+    // The challenge sample is chosen on the graph, not with sliders: nothing can be predicted
+    // until a point exists, the result locks after sending, and moving the dot re-arms it.
     await navigate(stage, phones, 'ArrowRight', 13);
-    await setRangeWithKeys(main, '#challenge-water', 0);
-    await setRangeWithKeys(main, '#challenge-carbon', 100);
+    assert.equal(await main.evaluate("document.querySelector('#predict-button').disabled"), true, 'Prediction was offered before a sample was chosen');
+    assert.equal(await exists(main, '#challenge-water'), false, 'The challenge sliders are still on the phone');
+    const firstChallenge = await pickPoint(main, '#challenge-picker', 18, 88);
     await realClick(main, '#predict-button');
     await waitFor(() => stage.evaluate('state.challenges.length === 1'), 'First AI challenge did not reach the stage');
+    assert.deepEqual(await stage.evaluate('({ water: state.challenges[0].water, carbon: state.challenges[0].carbon })'), firstChallenge,
+      'The stage plotted a different challenge point from the one that was chosen');
     assert.match(await text(main, '#phone-prediction'), /PREDICTED: (WORKING|CHANGED)/);
     assert.equal(await main.evaluate("document.querySelector('#predict-button').disabled"), true);
-    assert.equal(await text(main, '#predict-button'), 'Move a slider to test again');
+    assert.equal(await text(main, '#predict-button'), 'Move the dot to test again');
     await realClick(main, '#predict-button', { allowDisabled: true });
     assert.equal(await stage.evaluate('state.challenges.length'), 1);
-    await setRangeWithKeys(main, '#challenge-water', 86);
-    await setRangeWithKeys(main, '#challenge-carbon', 78);
+    const secondChallenge = await pickPoint(main, '#challenge-picker', 86, 78);
     assert.equal(await main.evaluate("document.querySelector('#predict-button').disabled"), false);
     assert.equal(await text(main, '#predict-button'), 'Test the updated sample');
     await realClick(main, '#predict-button');
-    await waitFor(() => stage.evaluate('state.challenges.length === 1 && state.challenges[0].water === 86 && state.challenges[0].carbon === 78'), 'Second challenge did not update the existing phone point');
+    await waitFor(() => stage.evaluate(`state.challenges.length === 1 && state.challenges[0].water === ${secondChallenge.water} && state.challenges[0].carbon === ${secondChallenge.carbon}`), 'Second challenge did not update the existing phone point');
     await takeShot(main, 'phone-ai-challenge');
     const firstModelTime = await stage.evaluate('state.model.trainedAt');
     await realClick(stage, '#contaminate-button');
@@ -734,6 +770,7 @@ async function run() {
     await realClick(phones[0], '[data-vote="deploy"]');
     await realClick(phones[1], '[data-vote="verify"]');
     await waitFor(() => stage.evaluate('state.polls.trust.deploy === 1 && state.polls.trust.verify === 1'), 'Both trust choices did not register');
+    await takeShot(stage, 'scene-14-trust-vote');
     await realClick(stage, '#reveal-trust-button');
     await waitFor(() => stage.evaluate('state.reveals.trust'), 'Trust reveal did not register');
     assert.equal(await text(stage, '#reveal-trust-button'), 'Checks shown');
@@ -768,10 +805,23 @@ async function run() {
     // No-data simulation branch, burn lock/revisit/update, and two animated outcomes.
     await realClick(stage, '#simulate-orbit-button');
     assert.match(await text(stage, '#flight-result'), /WAITING FOR AT LEAST ONE/);
+    assert.equal(await stage.evaluate("document.querySelectorAll('#hist-bins i').length"), 10, 'The speed histogram did not build its bins');
+    assert.equal(await stage.evaluate("[...document.querySelectorAll('#hist-bins i')].every(node => node.classList.contains('empty') && !node.classList.contains('median'))"), true,
+      'The speed histogram showed columns before any speed was sent');
     assert.equal(await text(main, '#lock-burn'), 'Send this speed');
     await setRangeWithKeys(main, '#burn-slider', 97);
     await realClick(main, '#lock-burn');
     await waitFor(() => stage.evaluate('state.burns.length === 1 && state.burns[0].value === 97'), 'First burn did not reach the stage');
+
+    // The speed histogram: 0.97× lands in the first bin, which is also the median, and the other
+    // nine bins stay empty. A second, faster choice moves the median off that column.
+    assert.deepEqual(await stage.evaluate("[...document.querySelectorAll('#hist-bins i')].map(node => node.classList.contains('empty'))"),
+      [false, true, true, true, true, true, true, true, true, true], 'The speed histogram did not bin the first choice');
+    assert.deepEqual(await stage.evaluate("[...document.querySelectorAll('#hist-bins i')].map(node => node.classList.contains('median'))"),
+      [true, false, false, false, false, false, false, false, false, false], 'The histogram did not mark the median column');
+    assert.deepEqual(await stage.evaluate("[...document.querySelectorAll('#hist-bins b')].map(node => node.textContent)"),
+      ['1', '', '', '', '', '', '', '', '', ''], 'The histogram labelled empty bins');
+    await takeShot(stage, 'scene-16-speed-histogram');
     assert.equal(await text(main, '#lock-burn'), 'Speed sent');
     assert.equal(await main.evaluate("document.querySelector('#lock-burn').disabled"), true);
     assert.match(await text(main, '#burn-send-status'), /Speed sent\. Move the slider/);
@@ -804,6 +854,13 @@ async function run() {
     for (const [index, choice] of ['earth', 'orbit', 'remote'].entries()) await realClick(phones[index], `[data-vote="${choice}"]`);
     await waitFor(() => stage.evaluate('state.polls.return.earth === 1 && state.polls.return.orbit === 1 && state.polls.return.remote === 1'), 'All return choices did not register');
     assert.deepEqual(await stage.evaluate("['earth','orbit','remote'].map(key => document.querySelector('#return-'+key+'-n').textContent)"), ['33%', '33%', '33%']);
+    assert.equal(await text(stage, '#return-total'), '3');
+    assert.deepEqual(await stage.evaluate("['earth','orbit','remote'].map(key => document.querySelector('#return-'+key).style.width)"), ['33%', '33%', '33%'], 'The decision bars did not follow the votes');
+    await realClick(phones[3], '[data-vote="orbit"]');
+    await waitFor(() => text(stage, '#return-orbit-n').then(value => value === '50%'), 'A fourth decision vote did not change the shares');
+    assert.deepEqual(await stage.evaluate("['earth','orbit','remote'].map(key => document.querySelector('#return-'+key).closest('article').classList.contains('leading'))"), [false, true, false],
+      'The leading decision option did not follow the votes');
+    await takeShot(stage, 'scene-17-decision-vote');
     await assertPassive(stage, ['.return-options article:nth-child(1)', '.return-options article:nth-child(2)', '.return-options article:nth-child(3)'], 'Return results');
     await navigate(stage, phones, 'ArrowRight', 18);
     assert.match(await text(main, '#phone-content'), /Thanks for taking part/);
