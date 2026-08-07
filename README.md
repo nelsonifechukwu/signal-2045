@@ -174,4 +174,5 @@ npm run test:show
 - A small neural network trains live in the stage browser.
 - Canvas draws the AI classification map and the simplified Newtonian orbit.
 - Anonymous browser IDs prevent duplicate submissions after reconnection. The visible `HELIX-######` codes are only participant labels.
+- Stage text sizes come from four `--label-*` steps in `public/styles.css`, each a `clamp()` that grows with the projector: on a 1920-wide projection the smallest lands near 14px, which is the floor for reading from the back of a room. Use those variables for any new stage label instead of a fixed pixel size. Laptop-only chrome (footer rail, presenter badge, notes, shortcut hints) and the phone interface keep their own smaller sizes, because both are read from arm's length.
 - Local use does not require a CDN, account, cloud database or internet API.

@@ -587,6 +587,12 @@ async function run() {
     assert.equal(await text(stage, '#reveal-primer-button'), 'Match shown');
     assert.equal(await stage.evaluate("document.querySelector('#reveal-primer-button').disabled"), true);
     await realClick(stage, '#reveal-primer-button', { allowDisabled: true });
+    // The reveal animates a max-height, so once it has finished opening its own box must not crop
+    // the answer at projector type sizes.
+    await waitFor(() => stage.evaluate(`(() => {
+      const box = document.querySelector('#primer-reveal');
+      return box.scrollHeight <= box.clientHeight;
+    })()`), 'The primer reveal clips its own explanation');
     await takeShot(stage, 'scene-06-dna-match');
 
     await navigate(stage, phones, 'ArrowRight', 7);
@@ -957,6 +963,22 @@ async function run() {
       })()`);
       assert.deepEqual(clipped, [], `Scene ${index} clips meaningful content at 1280×720`);
       await assertNoHorizontalOverflow(main);
+    }
+
+    // Contact sheet: every scene at projector size with data on screen, for reviewing legibility
+    // from the back of a room. Costs nothing unless SHOW_SCREENSHOT_DIR is set.
+    if (screenshotDir) {
+      await stage.viewport(1920, 1080);
+      await blurControls(stage);
+      await pressKey(stage, 'd');
+      await waitFor(() => stage.evaluate('state.demoComplete && state.samples.length > 0'), 'Demo data did not load for the contact sheet');
+      await stage.evaluate('setScene(12); startTraining()');
+      await waitFor(() => stage.evaluate('Boolean(state.model)'), 'Contact-sheet training did not finish', 20000);
+      for (let index = 0; index <= 18; index += 1) {
+        await stage.evaluate(`setScene(${index})`);
+        await waitForScene(stage, phones, index);
+        await takeShot(stage, `deck-${String(index).padStart(2, '0')}`);
+      }
     }
 
     assert.equal(serverStderr.trim(), '', `Server wrote to stderr:\n${serverStderr}`);
