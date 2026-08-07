@@ -177,6 +177,39 @@ test('accepts one sample per audience member with working and changed labels', a
   assert.equal(audienceView.sampleCount, 2);
 });
 
+test('tells each phone what the server has recorded from it, and forgets it on reset', async t => {
+  const { host } = await freshMission(t);
+  const first = await connectAudience(t, 'OWN-PROGRESS');
+  assert.deepEqual(first.state.you, { sample: false, polls: [], pcrTaps: 0, photons: 0, burn: null });
+
+  await setScene(host, 1);
+  const sampleLanded = waitForState(host, state => state.samples.some(sample => sample.id === 'OWN-PROGRESS'));
+  first.socket.emit('sample', { water: 71, carbon: 69, label: 'working' });
+  await sampleLanded;
+  await setScene(host, 4);
+  const voteLanded = waitForState(host, state => state.polls.microscope.no === 1);
+  first.socket.emit('vote', { poll: 'microscope', choice: 'no' });
+  await voteLanded;
+  first.socket.close();
+  await delay(40);
+
+  // A reloaded phone must be told the truth by the server rather than trust its own storage.
+  const rejoined = await connectAudience(t, 'OWN-PROGRESS');
+  assert.equal(rejoined.state.you.sample, true);
+  assert.deepEqual(rejoined.state.you.polls, ['microscope']);
+
+  // A stranger with the same run must not inherit any of it.
+  const stranger = await connectAudience(t, 'OWN-PROGRESS-OTHER');
+  assert.equal(stranger.state.you.sample, false);
+  assert.deepEqual(stranger.state.you.polls, []);
+
+  // Resetting the run wipes the record, so every activity is offered again.
+  const afterReset = waitForState(rejoined.socket, state => state.runId > rejoined.state.runId);
+  host.emit('host', { type: 'reset' });
+  const view = await afterReset;
+  assert.deepEqual(view.you, { sample: false, polls: [], pcrTaps: 0, photons: 0, burn: null });
+});
+
 test('accepts each vote only on its scene and blocks duplicate votes', async t => {
   const { host } = await freshMission(t);
   const { socket: audience } = await connectAudience(t, 'VOTE-LEDGER');

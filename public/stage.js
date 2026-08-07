@@ -1,7 +1,10 @@
-const hostTokenFromUrl = new URLSearchParams(window.location.search).get('host');
+const launchParams = new URLSearchParams(window.location.search);
+const hostTokenFromUrl = launchParams.get('host');
+// ?keep survives the tidy-up of the presenter code so a rehearsal can be reloaded without a reset.
+const keepRunOnLoad = launchParams.has('keep');
 if (hostTokenFromUrl) {
   window.sessionStorage.setItem('signal2045-host-token', hostTokenFromUrl);
-  window.history.replaceState({}, '', `${window.location.pathname}${window.location.hash}`);
+  window.history.replaceState({}, '', `${window.location.pathname}${keepRunOnLoad ? '?keep' : ''}${window.location.hash}`);
 }
 const socket = io({
   auth: {
@@ -13,6 +16,17 @@ const socket = io({
 socket.on('connect_error', error => {
   if (error?.data?.code !== 'HOST_AUTH_REQUIRED') return;
   showHostAccessPanel();
+});
+
+// Loading the stage page starts a fresh run: the presentation returns to the QR lobby and every
+// audience response is deleted, so a reload can never leave phones holding activities from an
+// earlier rehearsal. Only the first connection of a page load resets; later ones are network
+// reconnections and must keep the live run. Open the stage with ?keep to reload without wiping.
+let requestedFreshRun = false;
+socket.on('connect', () => {
+  if (keepRunOnLoad || requestedFreshRun) return;
+  requestedFreshRun = true;
+  socket.emit('host', { type: 'reset' });
 });
 
 function showHostAccessPanel() {

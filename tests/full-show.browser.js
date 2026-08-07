@@ -854,6 +854,34 @@ async function run() {
     await pressKey(stage, 'R', 8);
     await waitFor(() => stage.evaluate('state.scene === 0 && state.pcrTaps === 0 && !state.reveals.pcrComplete'), 'Final reset did not clear PCR');
 
+    // Reloading the stage starts a fresh run, and the phones follow: a phone that already sent a
+    // label is offered the task again, because the server no longer holds a sample from it.
+    await blurControls(stage);
+    await pressKey(stage, 'd');
+    await waitFor(() => stage.evaluate('state.samples.length > 0 && state.demoComplete'), 'Demo data did not load before the reload test');
+    await navigate(stage, phones, 'ArrowRight', 1);
+    const runBeforeReload = await stage.evaluate('state.runId');
+    await stage.call('Page.reload', { ignoreCache: true });
+    await waitFor(() => stage.evaluate("document.readyState === 'complete' && socket.connected"), 'Stage did not reconnect after the reload');
+    await stage.evaluate('window.confirm = () => true');
+    await waitFor(() => stage.evaluate(`state.runId > ${runBeforeReload} && state.scene === 0 && state.samples.length === 0 && !state.demo && !state.demoComplete`),
+      'Reloading the stage did not start a fresh run');
+    await waitFor(() => text(main, '#phone-content').then(value => /shaping.*scientific futures/i.test(value)), 'A phone did not return to the lobby after the stage reload');
+    await navigate(stage, phones, 'ArrowRight', 1);
+    await Promise.all(phones.map(phone => waitFor(() => exists(phone, '#sample-picker'), `${phone.name} was not offered the sample task again after the stage reload`)));
+
+    // Reloading a phone must not hide the task either: its own storage no longer decides that.
+    await main.call('Page.reload', { ignoreCache: true });
+    await waitFor(() => main.evaluate("document.readyState === 'complete' && socket.connected"), 'The phone did not reconnect after its own reload');
+    await waitFor(() => exists(main, '#sample-picker'), 'A reloaded phone hid a sample task it had never completed in this run');
+    const afterReloadPoint = await pickSamplePoint(main, 72, 78);
+    await realClick(main, `[data-sample="${afterReloadPoint.water >= 60 && afterReloadPoint.carbon >= 60 ? 'working' : 'changed'}"]`);
+    await realClick(main, '#submit-sample');
+    await waitFor(() => stage.evaluate('state.samples.length === 1'), 'The reloaded phone could not send a label in the fresh run');
+    await blurControls(stage);
+    await pressKey(stage, 'R', 8);
+    await waitFor(() => stage.evaluate('state.scene === 0'), 'Reset after the reload test did not return to the lobby');
+
     // 1280×720 projector bounds, active/inert invariants, and phone width on every scene.
     await stage.viewport(1280, 720);
     for (let index = 0; index <= 18; index += 1) {

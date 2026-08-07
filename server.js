@@ -75,7 +75,21 @@ function audienceUrl(req) {
   return `http://${localAddress()}:${PORT}/audience.html`;
 }
 
-function audienceSnapshot() {
+// Each phone is told what the server has actually recorded from it. A phone must never decide
+// that from its own storage: after a reset, or after the page is reloaded, a local ledger can be
+// wrong in both directions and would hide an activity nobody has completed.
+function ownProgress(clientId) {
+  if (!clientId) return null;
+  return {
+    sample: state.samples.some(sample => sample.id === clientId),
+    polls: Object.keys(voteLedger).filter(poll => voteLedger[poll].has(clientId)),
+    pcrTaps: pcrLedger.get(clientId) || 0,
+    photons: photonLedger.get(clientId) || 0,
+    burn: state.burns.find(item => item.id === clientId)?.value ?? null
+  };
+}
+
+function audienceSnapshot(clientId) {
   return {
     ...state,
     samples: [],
@@ -83,17 +97,18 @@ function audienceSnapshot() {
     burns: [],
     sampleCount: state.samples.length,
     challengeCount: state.challenges.length,
-    burnCount: state.burns.length
+    burnCount: state.burns.length,
+    you: ownProgress(clientId)
   };
 }
 
 function emitState(target) {
   if (target) {
-    target.emit('state', target.data.role === 'host' ? state : audienceSnapshot());
+    target.emit('state', target.data.role === 'host' ? state : audienceSnapshot(target.data.clientId));
     return;
   }
   for (const connected of io.sockets.sockets.values()) {
-    connected.emit('state', connected.data.role === 'host' ? state : audienceSnapshot());
+    connected.emit('state', connected.data.role === 'host' ? state : audienceSnapshot(connected.data.clientId));
   }
 }
 

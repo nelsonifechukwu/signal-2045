@@ -54,6 +54,10 @@ If too few phones connect, select **Load demo audience** or press `D`. Wait for 
 
 To clear a rehearsal, press `Shift + R` and confirm the warning. This resets the presentation, samples, votes, taps, AI model and speed choices. Connected phones remain open and start a new session.
 
+**Reloading the stage page does the same thing.** Every load of the stage starts a new run: the deck returns to the QR lobby, all audience responses are deleted, and every phone re-arms its activities. That keeps a reload from leaving phones stuck on activities they completed in an earlier rehearsal — but it also means an accidental reload during a live show loses the responses so far. To reload without wiping the run, open the stage as `/?keep` and reload from that address.
+
+A phone reload never hides an activity: each phone asks the server what it has already sent, so it can only skip work the server actually holds.
+
 Rehearse once with two real phones and once using only the demo fallback.
 
 ## Presenter controls

@@ -46,6 +46,10 @@ If the network is unreliable or too few people join, select **Load demo audience
 
 To clear a rehearsal, press `Shift + R`, read the warning and confirm. This returns the stage to Scene 0 and clears samples, votes, taps, the AI model and speed choices. Connected phones stay open and start a new session.
 
+Reloading the stage page has the same effect, without the warning: each load of the stage starts a new run, so a refresh is the quickest way to hand the audience a completely fresh set of activities. During the live show, avoid reloading the stage—the responses collected so far would be deleted and the deck would return to Scene 0. If you must reload and keep the run, open the stage at `/?keep` and reload from that address.
+
+Phones never decide for themselves whether an activity is finished; they ask the server. A phone that reloads, or joins late, is offered exactly the activities the server has no response for.
+
 ## Presenter controls
 
 - `→` or Page Down: next scene

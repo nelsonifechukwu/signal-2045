@@ -12,6 +12,7 @@ let sampleChoice = null;
 let samplePoint = null;
 let pcrTaps = 0;
 let photons = 0;
+let sentBurn = null;
 let challenge = { water: 72, carbon: 66 };
 let lastChallengeKey = '';
 let lastModelVersion = null;
@@ -35,7 +36,7 @@ socket.on('state', next => {
   if (runChanged) resetLocal();
   if (localRunId !== next.runId) {
     localRunId = next.runId;
-    restoreLocal();
+    restoreLocal(next);
   }
   state = next;
   const sceneChanged = next.scene !== lastScene;
@@ -82,24 +83,36 @@ function resetLocal() {
   samplePoint = null;
   pcrTaps = 0;
   photons = 0;
+  sentBurn = null;
   challenge = { water: 72, carbon: 66 };
   lastChallengeKey = '';
   currentMode = '';
 }
 
-function restoreLocal() {
-  submittedSample = localStorage.getItem(`signal2045-sample-${localRunId}`) === 'sent';
-  try {
-    votes = new Set(JSON.parse(localStorage.getItem(`signal2045-votes-${localRunId}`) || '[]'));
-  } catch {
-    votes = new Set();
-  }
-  pcrTaps = Number(localStorage.getItem(`signal2045-pcr-${localRunId}`)) || 0;
-  photons = Number(localStorage.getItem(`signal2045-photons-${localRunId}`)) || 0;
+// Everything the server records for this phone comes back from the server, so a reload—or a
+// presenter who has started a fresh run—can never leave an activity looking done when it is not.
+// Only the two self-marked quizzes are local, because the server never sees their answers.
+function restoreLocal(snapshot) {
+  const mine = snapshot.you || {};
+  submittedSample = Boolean(mine.sample);
+  votes = new Set([...(mine.polls || []), ...restoreQuizzes()]);
+  pcrTaps = Number(mine.pcrTaps) || 0;
+  photons = Number(mine.photons) || 0;
+  sentBurn = Number.isFinite(mine.burn) ? mine.burn : null;
 }
 
-function saveVotes() {
-  localStorage.setItem(`signal2045-votes-${localRunId}`, JSON.stringify([...votes]));
+const QUIZZES = ['nano', 'gravity'];
+
+function restoreQuizzes() {
+  try {
+    return JSON.parse(localStorage.getItem(`signal2045-quiz-${localRunId}`) || '[]').filter(key => QUIZZES.includes(key));
+  } catch {
+    return [];
+  }
+}
+
+function saveQuizzes() {
+  localStorage.setItem(`signal2045-quiz-${localRunId}`, JSON.stringify(QUIZZES.filter(key => votes.has(key))));
 }
 
 function updatePhoneChrome(scene) {
@@ -255,7 +268,6 @@ function renderSampleCard() {
     }
     socket.emit('sample', { water: samplePoint.water, carbon: samplePoint.carbon, label: sampleChoice });
     submittedSample = true;
-    localStorage.setItem(`signal2045-sample-${localRunId}`, 'sent');
     vibrate([20, 30, 20]);
     waiting('Label sent', 'Your labelled sample is now on the graph and will be used to train the AI model.');
     window.setTimeout(renderPhone, 900);
@@ -284,7 +296,6 @@ function renderVote(poll, title, copy, options, columns = 'two') {
   root.querySelectorAll('[data-vote]').forEach(button => button.addEventListener('click', () => {
     if (!socket.connected) return waiting('Reconnecting…', 'Keep this page open. Your vote has not been sent yet.');
     votes.add(poll);
-    saveVotes();
     socket.emit('vote', { poll, choice: button.dataset.vote });
     vibrate(18);
     waiting('Vote sent', 'Your vote is included in the result on the main screen.');
@@ -303,7 +314,6 @@ function renderPCRControl() {
     if (!socket.connected) return waiting('Reconnecting…', 'Your tap was not sent. Try again when CONNECTED appears at the top.');
     if (pcrTaps >= 24 || state.pcrTaps >= 120) return;
     pcrTaps += 1;
-    localStorage.setItem(`signal2045-pcr-${localRunId}`, pcrTaps);
     socket.emit('pcr-tap');
     document.querySelector('#my-pcr-taps').textContent = pcrTaps;
     if (pcrTaps >= 24) {
@@ -332,7 +342,7 @@ function renderNanoQuiz() {
       : '<p class="subhead" style="color:#ff7868;margin:14px 0 0">Try again—think one billionth of a metre.</p>';
     if (correct) {
       votes.add('nano');
-      saveVotes();
+      saveQuizzes();
       lockQuiz('[data-nano]', button);
     }
   }));
@@ -357,7 +367,6 @@ function renderPhotonControl() {
     if (!socket.connected) return waiting('Reconnecting…', 'Your UV tap was not sent. Try again when CONNECTED appears at the top.');
     if (photons >= 24 || state.photonCount >= 48 || state.reveals?.chip) return;
     photons += 1;
-    localStorage.setItem(`signal2045-photons-${localRunId}`, photons);
     socket.emit('photon', { x: event.clientX / window.innerWidth * 100 });
     document.querySelector('#my-photons').textContent = photons;
     if (photons >= 24) {
@@ -440,7 +449,7 @@ function renderGravityQuiz() {
       : '<p class="subhead" style="color:#ff7868;margin:14px 0 0">Gravity is still strong there. Try the other answer.</p>';
     if (button.dataset.gravity === 'right') {
       votes.add('gravity');
-      saveVotes();
+      saveQuizzes();
       lockQuiz('[data-gravity]', button);
     }
   }));
@@ -454,9 +463,8 @@ function renderGravityQuiz() {
 
 function renderBurnControl() {
   currentMode = 'burn';
-  const stored = Number(localStorage.getItem(`signal2045-burn-${localRunId}`)) || 100;
-  const saved = Math.max(96, Math.min(145, stored));
-  const alreadySent = localStorage.getItem(`signal2045-burn-sent-${localRunId}`) === 'yes';
+  const alreadySent = sentBurn !== null;
+  const saved = Math.max(96, Math.min(145, Number(sentBurn) || 100));
   let sent = alreadySent;
   root.innerHTML = `
     <div class="phone-kicker">CHOOSE THE ORBITAL SPEED</div><h2>Set the speed for<br><mark>the simulation.</mark></h2>
@@ -480,8 +488,7 @@ function renderBurnControl() {
   document.querySelector('#lock-burn').addEventListener('click', () => {
     if (!socket.connected) return waiting('Reconnecting…', 'Your speed has not been sent. Try again when CONNECTED appears at the top.');
     const value = Number(document.querySelector('#burn-slider').value);
-    localStorage.setItem(`signal2045-burn-${localRunId}`, value);
-    localStorage.setItem(`signal2045-burn-sent-${localRunId}`, 'yes');
+    sentBurn = value;
     sent = true;
     socket.emit('burn', { value });
     document.querySelector('#lock-burn').textContent = 'Speed sent';
@@ -494,7 +501,7 @@ function renderBurnControl() {
 function renderFinale() {
   currentMode = 'finale';
   const primer = votes.has('primer') ? 'submitted' : 'not submitted';
-  const flight = localStorage.getItem(`signal2045-burn-${localRunId}`) ? 'locked' : 'observed';
+  const flight = sentBurn !== null ? 'locked' : 'observed';
   root.innerHTML = `
     <div class="phone-kicker">ACTIVITY COMPLETE / ${callsign}</div><h1>Thanks for<br> <mark>taking part.</mark></h1>
     <div class="phone-card"><dl class="phone-readouts two"><div><dt>SAMPLE LABEL</dt><dd>${submittedSample ? 'SENT' : 'NOT SENT'}</dd></div><div><dt>DNA VOTE</dt><dd>${primer.toUpperCase()}</dd></div><div><dt>UV TAPS</dt><dd>${photons}</dd></div><div><dt>FLIGHT SPEED</dt><dd>${flight === 'locked' ? 'SENT' : 'NOT SENT'}</dd></div></dl></div>
