@@ -1,7 +1,7 @@
 window.SHOW_CONFIG = {
   presenters: [
-    { name: 'Student One', role: 'Genetics Lead' },
-    { name: 'Student Two', role: 'Chip and AI Lead' },
-    { name: 'Student Three', role: 'Spaceflight Lead' }
+    { name: 'Dr. Wynn', role: 'Genetics Lead' },
+    { name: 'Dr. Daniella', role: 'Chip and AI Lead' },
+    { name: 'Dr. Alex', role: 'Spaceflight Lead' }
   ]
 };
