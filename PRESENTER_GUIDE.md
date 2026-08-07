@@ -34,11 +34,11 @@ Say while people join:
 
 > “Keep this page open. Your phone will become part of the presentation in a moment.”
 
-Then, once Scene 1 is on the screen and each phone shows its practice sample:
+Then, once Scene 1 is on the screen and each phone shows its sample graph:
 
-> “Your phone has a fictional practice sample for the AI. Choose CIRCUIT WORKING only if both scores are 60 or higher. Otherwise choose CIRCUIT CHANGED.”
+> “Tap anywhere on the graph to choose one sample for the AI. Your two scores appear under the graph. Choose CIRCUIT WORKING only if both scores are 60 or higher. Otherwise choose CIRCUIT CHANGED.”
 
-Each phone receives one control-gene PCR score and one GFP-light score. Tapping **Send this label** should show **Label sent** and raise the stage’s sample count. This rule is only for the first activity. Scene 13 explains why real labels need independent tests.
+Each phone picks its own control-gene PCR score and GFP-light score by tapping or dragging on the graph, and faint guide lines mark 60 on both axes. Tapping **Send this label** should show **Label sent** and raise the stage’s sample count. This rule is only for the first activity. Scene 13 explains why real labels need independent tests.
 
 ## Fallback and reset
 
@@ -70,7 +70,9 @@ At the end of every numbered scene below, the laptop operator presses `→` once
 
 Once the problem is stated, point the audience at their phones:
 
-> “The control-gene PCR and GFP-light scores on your phone are simulated. Use the rule on the screen to label the sample WORKING or CHANGED.”
+> “Choose your own sample: tap a point on your phone’s graph. Across is the control-gene PCR score, up is the GFP-light score. Then use the rule on the screen to label it WORKING or CHANGED.”
+
+Encourage people to spread out across the graph rather than all tapping the same corner, so the training set contains both groups. Moving the dot clears the label, because a different point can need a different one.
 
 People can keep labelling through Scenes 2 and 3, so nobody who is still arriving is left out.
 

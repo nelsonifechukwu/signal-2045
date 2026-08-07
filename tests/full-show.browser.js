@@ -190,6 +190,20 @@ async function realClick(page, selector, { allowDisabled = false } = {}) {
   await mouseClickAt(page, info.x, info.y);
 }
 
+// The first activity assigns nothing: each phone chooses its own point on the graph, so the
+// test has to click a specific position inside the picker rather than its centre.
+async function pickSamplePoint(page, water, carbon) {
+  const info = await elementState(page, '#sample-picker');
+  assert.equal(info.exists && info.visible && info.hit && !info.inert, true, `${page.name}: the sample picker is not usable`);
+  const box = await page.evaluate(`(() => {
+    const rect = document.querySelector('#sample-picker').getBoundingClientRect();
+    return { left: rect.left, top: rect.top, width: rect.width, height: rect.height };
+  })()`);
+  await mouseClickAt(page, box.left + box.width * water / 100, box.top + box.height * (1 - carbon / 100));
+  await waitFor(() => page.evaluate('Boolean(samplePoint)'), `${page.name} did not register a chosen sample point`);
+  return page.evaluate('({ ...samplePoint })');
+}
+
 async function realClicks(page, selector, count) {
   const info = await elementState(page, selector);
   assert.equal(info.exists && info.visible && info.hit && !info.disabled && !info.inert, true, `${page.name}: ${selector} is not repeatedly clickable`);
@@ -411,23 +425,50 @@ async function run() {
     await navigate(stage, phones, 'ArrowRight', 1);
     await Promise.all(phones.map(phone => waitFor(() => exists(phone, '[data-sample]'), `${phone.name} did not receive the sample task on scene 1`)));
 
-    // Disabled submit, wrong/correct branches, then six real sample submissions.
+    // Nothing can be labelled or sent until a point has been chosen on the graph.
     assert.equal(await main.evaluate("document.querySelector('#submit-sample').disabled"), true);
+    assert.equal(await main.evaluate("document.querySelector('[data-sample=\"working\"]').disabled"), true);
     await realClick(main, '#submit-sample', { allowDisabled: true });
     assert.equal(await stage.evaluate('state.samples.length'), 0);
-    const mainCorrect = await main.evaluate("assignedSample.hiddenTruth ? 'working' : 'changed'");
+    assert.equal(await text(main, '#read-water'), '—');
+    await takeShot(main, 'phone-sample-empty');
+
+    // Choosing a point shows its two readings, and the arrow keys nudge the same point.
+    const picked = await pickSamplePoint(main, 34, 82);
+    assert.equal(await text(main, '#read-water'), `${picked.water}/100`);
+    assert.equal(await text(main, '#read-carbon'), `${picked.carbon}/100`);
+    await pressKey(main, 'ArrowRight');
+    await waitFor(() => main.evaluate(`samplePoint.water === ${picked.water + 1}`), 'The arrow keys did not move the chosen sample');
+    assert.equal(await text(main, '#read-water'), `${picked.water + 1}/100`);
+    await takeShot(main, 'phone-sample-picker');
+    const mainPoint = await main.evaluate('({ ...samplePoint })');
+    const mainCorrect = mainPoint.water >= 60 && mainPoint.carbon >= 60 ? 'working' : 'changed';
     const mainWrong = mainCorrect === 'working' ? 'changed' : 'working';
+
+    // Wrong/correct label branches, then a re-chosen point clearing the label it invalidates.
     await realClick(main, `[data-sample="${mainWrong}"]`);
     assert.equal(await main.evaluate(`document.querySelector('[data-sample="${mainWrong}"]').getAttribute('aria-checked')`), 'true');
     await realClick(main, '#submit-sample');
     assert.match(await text(main, '#sample-help'), /Check the rule again/);
     assert.equal(await stage.evaluate('state.samples.length'), 0);
     await realClick(main, `[data-sample="${mainCorrect}"]`);
+    assert.equal(await main.evaluate("document.querySelector('#submit-sample').disabled"), false);
+    const rechosen = await pickSamplePoint(main, 30, 78);
+    assert.equal(await main.evaluate('sampleChoice'), null, 'Moving the sample kept a label chosen for the old point');
+    assert.equal(await main.evaluate("document.querySelector('#submit-sample').disabled"), true);
+    const rechosenCorrect = rechosen.water >= 60 && rechosen.carbon >= 60 ? 'working' : 'changed';
+    await realClick(main, `[data-sample="${rechosenCorrect}"]`);
     await realClick(main, '#submit-sample');
     await waitFor(() => stage.evaluate('state.samples.length === 1'), 'Main sample did not reach the stage');
+    assert.deepEqual(await stage.evaluate('({ water: state.samples[0].water, carbon: state.samples[0].carbon })'), rechosen,
+      'The stage plotted a different point from the one that was chosen');
+
+    // The other five phones each choose their own point, spread across both label groups.
+    const spread = [[18, 74], [76, 88], [42, 26], [88, 68], [64, 14]];
     for (let index = 1; index < phones.length; index += 1) {
       const phone = phones[index];
-      const answer = await phone.evaluate("assignedSample.hiddenTruth ? 'working' : 'changed'");
+      const point = await pickSamplePoint(phone, spread[index - 1][0], spread[index - 1][1]);
+      const answer = point.water >= 60 && point.carbon >= 60 ? 'working' : 'changed';
       await realClick(phone, `[data-sample="${answer}"]`);
       await realClick(phone, '#submit-sample');
       await waitFor(() => stage.evaluate(`state.samples.length === ${index + 1}`), `${phone.name} sample did not reach the stage`);

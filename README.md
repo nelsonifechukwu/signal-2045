@@ -34,8 +34,8 @@ Press `F` for full screen. The countdown begins when the presenter moves from th
 3. Scan the QR code on each phone.
 4. Check that **CONNECTED** appears at the top of the phone, above a short welcome message.
 5. Check that the stage’s phone count rises.
-6. Move to Scene 1. The practice sample now appears on every phone.
-7. Label the sample using the rule shown on the phone and tap **Send this label**.
+6. Move to Scene 1. The sample task now appears on every phone.
+7. Tap a point on the phone’s graph to choose a sample, label it using the rule shown on the phone and tap **Send this label**.
 8. Check that the stage’s sample count rises.
 
 The phones stay on the welcome message for the whole lobby, so nobody is asked to label a sample before Scene 1 has explained the problem. Keep the phone page open. Each activity appears automatically when the presenter changes scenes.
@@ -83,7 +83,7 @@ The exact 15-minute speaking, clicking and feedback sequence is in [PRESENTER_GU
 | Scene | Audience activity | Main point |
 |---|---|---|
 | Lobby | Welcome message only | Phones connect while people are still arriving. |
-| 1–3, and 10 for latecomers | Labels one practice sample | Supervised AI needs examples with known labels. |
+| 1–3, and 10 for latecomers | Chooses one sample on the graph and labels it | Supervised AI needs examples with known labels. |
 | 4 | Votes on whether a microscope can read a DNA sequence | Seeing DNA material is different from identifying its sequence. |
 | 5 | Adds taps to the PCR demonstration | Repeated PCR cycles can rapidly copy one short section of the control gene. |
 | 6 | Matches the strand paired with `CTGTG` | Complementary DNA bases pair A–T and C–G. |

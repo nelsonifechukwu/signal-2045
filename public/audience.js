@@ -2,8 +2,6 @@ const callsign = getCallsign();
 const clientId = getClientId();
 const socket = io({ auth: { role: 'audience', clientId }, reconnection: true });
 const root = document.querySelector('#phone-content');
-const stationNumber = Number(callsign.split('-')[1]);
-const assignedSample = makeAssignedSample(stationNumber);
 
 let state = null;
 let lastScene = -1;
@@ -11,6 +9,7 @@ let localRunId = null;
 let submittedSample = false;
 let votes = new Set();
 let sampleChoice = null;
+let samplePoint = null;
 let pcrTaps = 0;
 let photons = 0;
 let challenge = { water: 72, carbon: 66 };
@@ -76,20 +75,11 @@ function getClientId() {
   return value;
 }
 
-function makeAssignedSample(seed) {
-  const working = seed % 3 !== 0;
-  const offsetA = seed % 17;
-  const offsetB = (seed * 7) % 19;
-  if (working) return { water: 67 + offsetA, carbon: 61 + offsetB, hiddenTruth: 1 };
-  return seed % 2
-    ? { water: 72 + offsetA, carbon: 18 + offsetB, hiddenTruth: 0 }
-    : { water: 24 + offsetA, carbon: 58 + offsetB, hiddenTruth: 0 };
-}
-
 function resetLocal() {
   submittedSample = false;
   votes = new Set();
   sampleChoice = null;
+  samplePoint = null;
   pcrTaps = 0;
   photons = 0;
   challenge = { water: 72, carbon: 66 };
@@ -179,42 +169,102 @@ function renderWelcome() {
 function renderSampleCard() {
   currentMode = 'sample';
   root.innerHTML = `
-    <div class="phone-kicker">PRACTICE SAMPLE / ${callsign}</div>
-    <h2>Label this sample<br>for AI <mark>training.</mark></h2>
-    <p class="subhead">Use this rule for the first batch: choose WORKING only if both readings are 60 or higher. Otherwise choose CHANGED.</p>
+    <div class="phone-kicker">TRAINING SAMPLE / ${callsign}</div>
+    <h2>Choose a sample,<br>then <mark>label it.</mark></h2>
+    <p class="subhead">Tap anywhere on the graph to choose one sample. Its two readings appear underneath. Then use this rule for the first batch: choose WORKING only if both readings are 60 or higher. Otherwise choose CHANGED.</p>
     <div class="phone-card">
-      <div class="sample-mini-plot"><i style="--x:${assignedSample.water}%;--y:${assignedSample.carbon}%"></i></div>
-      <div class="phone-slider"><label>CONTROL-GENE PCR SCORE <b>${assignedSample.water}/100</b></label><div class="phone-progress"><i style="--progress:${assignedSample.water}%"></i></div></div>
-      <div class="phone-slider"><label>GFP-LIGHT SCORE · SENSOR <b>${assignedSample.carbon}/100</b></label><div class="phone-progress"><i style="--progress:${assignedSample.carbon}%"></i></div></div>
-      <div class="phone-choice two" role="radiogroup" aria-label="Choose a label for this sample"><button type="button" role="radio" aria-checked="false" data-sample="changed">CIRCUIT CHANGED</button><button type="button" role="radio" aria-checked="false" data-sample="working">CIRCUIT WORKING</button></div>
+      <div class="sample-picker-wrap">
+        <span class="picker-axis-y">GFP-LIGHT SCORE →</span>
+        <div class="sample-picker" id="sample-picker" role="application" tabindex="0"
+          aria-label="Sample chooser. Tap the graph to place your sample, or use the arrow keys: left and right change the control-gene PCR score, up and down change the GFP-light score."
+          aria-describedby="sample-readout">
+          <i class="guide-x"></i><i class="guide-y"></i>
+          <s class="tick-x">60</s><s class="tick-y">60</s>
+          <b id="sample-dot"></b>
+          <span class="picker-hint">TAP THE GRAPH<br>TO CHOOSE A SAMPLE</span>
+        </div>
+        <span class="picker-axis-x">CONTROL-GENE PCR SCORE →</span>
+      </div>
+      <dl class="phone-readouts two" id="sample-readout" role="status" aria-live="polite">
+        <div><dt>CONTROL-GENE PCR SCORE</dt><dd id="read-water">—</dd></div>
+        <div><dt>GFP-LIGHT SCORE<small>sensor</small></dt><dd id="read-carbon">—</dd></div>
+      </dl>
+      <div class="phone-choice two" role="radiogroup" aria-label="Choose a label for this sample"><button type="button" role="radio" aria-checked="false" data-sample="changed" disabled>CIRCUIT CHANGED</button><button type="button" role="radio" aria-checked="false" data-sample="working" disabled>CIRCUIT WORKING</button></div>
       <p class="subhead" id="sample-help" role="status" aria-live="polite" style="margin:12px 0 0"></p>
       <button class="phone-action" type="button" id="submit-sample" disabled>Send this label</button>
     </div>`;
+  const picker = document.querySelector('#sample-picker');
+  const paint = () => {
+    picker.classList.toggle('placed', Boolean(samplePoint));
+    document.querySelector('#read-water').textContent = samplePoint ? `${samplePoint.water}/100` : '—';
+    document.querySelector('#read-carbon').textContent = samplePoint ? `${samplePoint.carbon}/100` : '—';
+    if (samplePoint) {
+      document.querySelector('#sample-dot').style.setProperty('--x', `${samplePoint.water}%`);
+      document.querySelector('#sample-dot').style.setProperty('--y', `${samplePoint.carbon}%`);
+    }
+    root.querySelectorAll('[data-sample]').forEach(item => {
+      item.disabled = !samplePoint;
+      item.classList.toggle('selected', item.dataset.sample === sampleChoice);
+      item.setAttribute('aria-checked', String(item.dataset.sample === sampleChoice));
+    });
+    document.querySelector('#submit-sample').disabled = !samplePoint || !sampleChoice;
+  };
+  const setPoint = (water, carbon) => {
+    const next = { water: clampScore(water), carbon: clampScore(carbon) };
+    // A different point can need a different label, so moving the dot clears the chosen label.
+    if (!samplePoint || next.water !== samplePoint.water || next.carbon !== samplePoint.carbon) {
+      sampleChoice = null;
+      document.querySelector('#sample-help').textContent = '';
+    }
+    samplePoint = next;
+    paint();
+  };
+  const setPointFromPointer = event => {
+    const box = picker.getBoundingClientRect();
+    setPoint((event.clientX - box.left) / box.width * 100, (1 - (event.clientY - box.top) / box.height) * 100);
+  };
+  picker.addEventListener('pointerdown', event => {
+    picker.setPointerCapture(event.pointerId);
+    setPointFromPointer(event);
+    vibrate(8);
+  });
+  picker.addEventListener('pointermove', event => {
+    if (picker.hasPointerCapture(event.pointerId)) setPointFromPointer(event);
+  });
+  picker.addEventListener('keydown', event => {
+    const steps = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowDown: [0, -1], ArrowUp: [0, 1] };
+    if (!steps[event.key]) return;
+    event.preventDefault();
+    if (!samplePoint) return setPoint(50, 50);
+    const size = event.shiftKey ? 10 : 1;
+    setPoint(samplePoint.water + steps[event.key][0] * size, samplePoint.carbon + steps[event.key][1] * size);
+  });
   root.querySelectorAll('[data-sample]').forEach(button => button.addEventListener('click', () => {
     sampleChoice = button.dataset.sample;
-    root.querySelectorAll('[data-sample]').forEach(item => {
-      item.classList.toggle('selected', item === button);
-      item.setAttribute('aria-checked', String(item === button));
-    });
     document.querySelector('#sample-help').textContent = '';
-    document.querySelector('#submit-sample').disabled = false;
+    paint();
   }));
   document.querySelector('#submit-sample').addEventListener('click', () => {
-    if (!sampleChoice) return;
+    if (!samplePoint || !sampleChoice) return;
     if (!socket.connected) return waiting('Reconnecting…', 'Keep this page open, then try again when CONNECTED appears at the top.');
-    const correctChoice = assignedSample.hiddenTruth ? 'working' : 'changed';
+    const correctChoice = samplePoint.water >= 60 && samplePoint.carbon >= 60 ? 'working' : 'changed';
     if (sampleChoice !== correctChoice) {
       document.querySelector('#sample-help').textContent = 'Check the rule again: both readings must be 60 or higher for WORKING.';
       vibrate(30);
       return;
     }
-    socket.emit('sample', { water: assignedSample.water, carbon: assignedSample.carbon, label: sampleChoice });
+    socket.emit('sample', { water: samplePoint.water, carbon: samplePoint.carbon, label: sampleChoice });
     submittedSample = true;
     localStorage.setItem(`signal2045-sample-${localRunId}`, 'sent');
     vibrate([20, 30, 20]);
     waiting('Label sent', 'Your labelled sample is now on the graph and will be used to train the AI model.');
     window.setTimeout(renderPhone, 900);
   });
+  paint();
+}
+
+function clampScore(value) {
+  return Math.max(0, Math.min(100, Math.round(value)));
 }
 
 function renderVote(poll, title, copy, options, columns = 'two') {
